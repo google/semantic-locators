@@ -1,0 +1,278 @@
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {getNameFor} from './accessible_name';
+import {findBySemanticLocator} from './find_by_semantic_locator';
+import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
+import {getRole, isHidden} from './role';
+import {SemanticLocator, SemanticNode} from './semantic_locator';
+import {assert, hasTagName} from './util';
+
+/**
+ * Build a semantic locator with one node (e.g. {button 'OK'}) for the given
+ * element. Returns `null` if no semantic locator exists.
+ */
+export function simpleLocatorFor(
+    element: HTMLElement, rootEl?: HTMLElement): string|null {
+  const root = resolveRoot(element, rootEl);
+  if (!root) {
+    return null;
+  }
+  return semanticNodeFor(element)?.toString() ?? null;
+}
+
+/**
+ * Builds the most precise locator which matches `element`. "Precise" means that
+ * it matches the fewest other elements, while being as short as possible.
+ */
+export function preciseLocatorFor(
+    element: HTMLElement, rootEl?: HTMLElement): string|null {
+  const root = resolveRoot(element, rootEl);
+  if (!root) {
+    return null;
+  }
+  const firstNode = semanticNodeFor(element);
+  if (firstNode === null) {
+    return null;
+  }
+
+  let nodes: SemanticNode[] = [];
+  if (element.parentElement !== null) {
+    nodes = closestFullLocator(element.parentElement, root)?.nodes ?? [];
+  }
+  nodes.push(firstNode);
+
+  return refine(nodes, element, root).toString();
+}
+
+/**
+ * Builds a semantic locator which matches `element`. If `element` does not have
+ * a role, return a semantic locator which matches the closest ancestor with a
+ * role. Returns `null` if no semantic locator exists for any element before
+ * `<body>`.
+ */
+export function closestSimpleLocatorFor(
+    element: HTMLElement, rootEl?: HTMLElement): string|null {
+  const root = resolveRoot(element, rootEl);
+  if (!root) {
+    return null;
+  }
+  return closestSemanticNode(element)?.node?.toString() ?? null;
+}
+
+/**
+ * Builds the most precise locator which matches `element`. If `element` does
+ * not have a role, return a semantic locator which matches the closest ancestor
+ * with a role. "Precise" means that it matches the fewest other elements, while
+ * being as short as possible.
+ */
+export function closestPreciseLocatorFor(
+    element: HTMLElement, rootEl?: HTMLElement): string|null {
+  const root = resolveRoot(element, rootEl);
+  if (!root) {
+    return null;
+  }
+  const full = closestFullLocator(element, root);
+  if (full === null) {
+    return null;
+  }
+  return refine(full.nodes, full.element, root).toString();
+}
+
+/**
+ * Resolves the root element in which we are generating a locator. If no
+ * explicit root is passed, the body of the document in which the element is
+ * attached will be chosen.
+ *
+ * Returns null if the explicit `root` does not contain `element` or if the
+ * `element` is not attached to any document.
+ */
+function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
+    null {
+  if (root && !root.contains(element)) {
+    throw new Error(
+        'Can\'t generate locator for element that is not contained within the root element.');
+  }
+
+  if (!root) {
+    const ownerDocument = element.ownerDocument;
+    if (!ownerDocument) {
+      throw new Error('Can\'t generate locator for detached element');
+    }
+    root = ownerDocument.body;
+  }
+
+  return root;
+}
+
+/**
+ * Returns a list of one SemanticNode for each semantic ancestor of `element`,
+ * and the closest semantic element to `element`.
+ */
+function closestFullLocator(element: HTMLElement, root: HTMLElement):
+    {nodes: SemanticNode[], element: HTMLElement}|null {
+  const first = closestSemanticNode(element);
+  if (first === null) {
+    return null;
+  }
+  const nodes = [first.node];
+  let target = first.element.parentElement;
+  while (target !== null) {
+    const nextTreeNode = closestSemanticNode(target);
+    if (nextTreeNode !== null) {
+      nodes.unshift(nextTreeNode.node);
+    }
+    target = nextTreeNode?.element.parentElement ?? null;
+  }
+  assert(
+      findByNodes(nodes, root).includes(first.element),
+      `Cannot find element again with locator we just generated:\n` +
+          `Nodes: ${nodes}\n` +
+          `Element: ${first.element.outerHTML}\n`);
+  return {nodes, element: first.element};
+}
+
+/**
+ * Removes any `SemanticNodes` which don't affect which elements the nodes
+ * match, and adds "outer" if it helps. Returns `null` if `nodes` is empty
+ */
+function refine(nodes: SemanticNode[], element: HTMLElement, root: HTMLElement):
+    SemanticLocator {
+  assert(nodes.length !== 0, 'Trying to refine empty array of nodes');
+  const requiredNodes = removeRedundantNodes(nodes, root);
+  assert(
+      findByNodes(requiredNodes, root).includes(element),
+      `Removing redundant nodes does not resolve element anymore:\n` +
+          `Initial nodes: ${nodes}\n` +
+          `After refinement: ${requiredNodes}\n`);
+  return possiblyAddOuter(requiredNodes, element, root);
+}
+
+/**
+ * Returns the closest ancestor (or `element` itself) with semantics along
+ * with that element's SemanticNode. Doesn't include the `{document}` node from
+ * `<body>`.
+ */
+function closestSemanticNode(el: HTMLElement):
+    {node: SemanticNode, element: HTMLElement}|null {
+  let element: HTMLElement|null = el;
+  // Exclude body elements as the `{document}` node would alwasys be stripped
+  // out
+  while (element !== null && !hasTagName(element, 'body')) {
+    const node = semanticNodeFor(element);
+    if (node !== null) {
+      return {node, element};
+    }
+    element = element.parentElement;
+  }
+  return null;
+}
+
+function semanticNodeFor(element: HTMLElement): SemanticNode|null {
+  if (isHidden(element)) {
+    return null;
+  }
+  const role = getRole(element);
+  if (role === null) {
+    return null;
+  }
+  return new SemanticNode(
+      role,
+      // TODO(alexlloyd) generate attributes - e.g. to refine a locator which
+      // matches many similar elements
+      [],
+      getNameFor(element),
+  );
+}
+
+/**
+ * Adds "outer" to a locator if it would add any specificity (match less nodes)
+ * while still matching the target node.
+ */
+function possiblyAddOuter(
+    nodes: readonly SemanticNode[],
+    trueTarget: HTMLElement,
+    root: HTMLElement,
+    ): SemanticLocator {
+  // TODO: outer will never be added in the middle of a locator right now. For
+  // that to happen removeRedundantNodes should see if it can add outer as it
+  // goes and if the result is 'better' than the result without outer or with
+  // outer at the start
+  const withoutOuter = new SemanticLocator(nodes, []);
+  const withoutOuterResult = assuredFindByLocator(withoutOuter, root);
+  const withOuter = new SemanticLocator([], nodes);
+  const outerResult = assuredFindByLocator(withOuter, root);
+
+  if (outerResult.includes(trueTarget) &&
+      outerResult.length < withoutOuterResult.length) {
+    return withOuter;
+  }
+  return withoutOuter;
+}
+
+/**
+ * This function wraps the `findBySemanticLocator` function, but asserts that
+ * something is always found. This is useful as the generation code needs to
+ * assume that the nodes it is generating selectors for can be found again with
+ * said selectors.
+ */
+function assuredFindByLocator(
+    locator: SemanticLocator, root: HTMLElement): readonly HTMLElement[] {
+  const result = findBySemanticLocator(locator, root);
+  assert(
+      isNonEmptyResult(result), `Locator ${locator} didn't find any elements`);
+  return (result as NonEmptyResult).found;
+}
+
+
+function findByNodes(
+    nodes: readonly SemanticNode[], root: HTMLElement): readonly HTMLElement[] {
+  const locator = new SemanticLocator(nodes, []);
+  return assuredFindByLocator(locator, root);
+}
+
+/**
+ * Removes nodes from `nodes` which don't effect which elements are found. The
+ * last node is always important and won't be removed.
+ *
+ * This function prefers locators with semantic nodes closer to the target. e.g.
+ * for `<ul><li><button id="foo">OK</button></li></ul>`, `{listitem} {button
+ * 'OK'}` will be chosen over `{list} {button 'OK'}`. This is because:
+ *   * Closer elements in the tree are more likely to change together so
+ *     locators should be less brittle
+ *   * The semantics of closer elements should contain more relevant info for
+ *     about the target element so locators should be more human readable
+ */
+function removeRedundantNodes(
+    nodes: readonly SemanticNode[],
+    root: HTMLElement): readonly SemanticNode[] {
+  if (nodes.length <= 1) {
+    return nodes;
+  }
+  const targets = findByNodes(nodes, root);
+  const requiredNodes: SemanticNode[] = [];
+  // Try removing nodes one at a time (left to right), adding those which are
+  // truly required to `requiredNodes`
+  for (let i = 0; i < nodes.length - 1; i++) {
+    const trial = requiredNodes.concat(nodes.slice(i + 1));
+    if (findByNodes(trial, root).length > targets.length) {
+      requiredNodes.push(nodes[i]);
+    }
+  }
+  requiredNodes.push(nodes[nodes.length - 1]);
+  return requiredNodes;
+}

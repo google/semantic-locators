@@ -1,0 +1,46 @@
+{
+  "name": "semantic-locators",
+  "version": "0.1.0",
+  "description": "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements.",
+  "main": "dist/src/semantic_locators.js",
+  "module": "dist/src/semantic_locators.js",
+  "types": "dist/src/semantic_locators.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "build": "yarn && tsc",
+    "ibuild": "yarn && tsc --watch",
+    "test": "yarn build && karma start --browsers ChromeHeadless"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/semantic-locators.git"
+  },
+  "keywords": [
+    "testing",
+    "accessibility"
+  ],
+  "author": "Alex Lloyd",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/semantic-locators/issues"
+  },
+  "homepage": "https://github.com/google/semantic-locators#readme",
+  "dependencies": {
+    "accname": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.6.2",
+    "jasmine-core": "^3.6.0",
+    "karma": "^5.2.3",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^2.1.0",
+    "karma-jasmine": "^4.0.1",
+    "karma-spec-reporter": "0.0.32",
+    "karma-typescript": "^5.2.0",
+    "karma-typescript-es6-transform": "^5.2.0",
+    "lit-html": "^1.3.0",
+    "typescript": "^4.1.3"
+  }
+}
