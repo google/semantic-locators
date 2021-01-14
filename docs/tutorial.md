@@ -12,7 +12,9 @@ In the locator `{button 'OK'}` the role is `button` and the accessible name is
 
 ## Chrome Extension
 
-Coming soon - use a Chrome Extension to automatically generate Semantic Locators.
+Use the Semantic Locators
+[Chrome Extension](https://chrome.google.com/webstore/detail/semantic-locators/cgjejnjgdbcogfgamjebgceckcmfcmji)
+to auto-generate Semantic Locators.
 
 ## Chrome Developer Console
 

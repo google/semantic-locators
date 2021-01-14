@@ -79,7 +79,10 @@ Semantic locator for the same button: `{button 'Send'}`.
 
 ### Easy to write
 
-Semantic Locators can be automatically generated using a Chrome Extension, or easily written with the help of browser dev tools. See the [tutorial](docs/tutorial.md) for a guide.
+Semantic Locators can be automatically generated using a
+[Chrome Extension](https://chrome.google.com/webstore/detail/semantic-locators/cgjejnjgdbcogfgamjebgceckcmfcmji),
+or easily written with the help of browser dev tools. See the
+[tutorial](docs/tutorial.md) for a guide.
 
 ## Getting started
 
