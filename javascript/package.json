@@ -1,6 +1,6 @@
 {
   "name": "semantic-locators",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements.",
   "main": "dist/src/semantic_locators.js",
   "module": "dist/src/semantic_locators.js",
@@ -8,10 +8,14 @@
   "directories": {
     "lib": "lib"
   },
+  "files": [
+    "dist/src/**/*"
+  ],
   "scripts": {
     "build": "yarn && tsc",
     "ibuild": "yarn && tsc --watch",
-    "test": "yarn build && karma start --browsers ChromeHeadless"
+    "test": "yarn build && karma start --browsers ChromeHeadless --single-run",
+    "prepack": "yarn test"
   },
   "repository": {
     "type": "git",
