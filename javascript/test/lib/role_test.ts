@@ -164,6 +164,18 @@ describe('findByRole', () => {
       document.getElementById('foo')!
     ]);
   });
+
+  it('ignores descendants of roles with presentational children', () => {
+    render(
+        html`
+        <div role="button" id="foo">
+          <div><div role="button">Inner</div></div>
+        </div>
+        `,
+        container);
+    expect(findByRole('button', container, false))
+        .toEqual([document.getElementById('foo')!]);
+  });
 });
 
 describe('getRole', () => {
