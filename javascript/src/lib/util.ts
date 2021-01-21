@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+/** Flip to `true` to enable assertions and extra validation checks. */
+const DEBUG_MODE = false;
 
 /**
  * For use at the end of a switch/series of checks. This function fails to
@@ -103,5 +105,5 @@ export function assert(condition: boolean, givenMessage?: string): boolean {
 /** Are we in debug mode? */
 export function debug(): boolean {
   return (window as unknown as {goog?: {DEBUG?: boolean}})?.goog?.DEBUG ||
-      false;
+      DEBUG_MODE;
 }
