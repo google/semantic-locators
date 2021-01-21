@@ -87,28 +87,6 @@ const ARIA_ONLY_ROLES_ARRAY = [
  */
 export const ARIA_ONLY_ROLES = new Set<string>(ARIA_ONLY_ROLES_ARRAY);
 
-// TODO(alexlloyd) generate this list from the spec
-/**
- * Roles with presentational children.
- * https://www.w3.org/TR/wai-aria-practices-1.1/#children_presentational
- */
-export const CHILDREN_PRESENTATIONAL = [
-  'button',
-  'checkbox',
-  'img',
-  'math',
-  'menuitemcheckbox',
-  'menuitemradio',
-  'option',
-  'progressbar',
-  'radio',
-  'scrollbar',
-  'separator',
-  'slider',
-  'switch',
-  'tab',
-] as const;
-
 // clang-format off
 const CONST_ROLE_MAP = {
  'article': {
