@@ -135,6 +135,19 @@ describe('preciseLocatorFor', () => {
     expect(preciseLocatorFor(document.getElementById('foo')!))
         .toEqual('outer {listitem}');
   });
+
+  it(`doesn't add non-leaf semantic nodes with presentational children`, () => {
+    render(
+        html`
+          <div role="button" aria-label="outer">
+            <div role="button" aria-label="OK" id="foo">blah</div>
+          </div>
+          <div role="button" aria-label="OK">blah</div>
+        `,
+        container);
+
+    expect(preciseLocatorFor(document.getElementById('foo')!)).toBeNull();
+  });
 });
 
 describe('closestPreciseLocatorFor', () => {
@@ -169,6 +182,20 @@ describe('closestPreciseLocatorFor', () => {
        const button = iframeDocument.querySelector('button')!;
 
        expect(preciseLocatorFor(button)).toEqual(`{button 'Inside iframe'}`);
+     });
+
+  it(`returns the locator for an ancestor if the element is a presentational child`,
+     () => {
+       render(
+           html`
+          <div role="button" aria-label="outer">
+            <div role="button" aria-label="OK" id="foo">blah</div>
+          </div>
+        `,
+           container);
+
+       expect(closestPreciseLocatorFor(document.getElementById('foo')!))
+           .toEqual(`{button 'outer'}`);
      });
 });
 

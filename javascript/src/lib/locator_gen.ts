@@ -19,6 +19,7 @@ import {getNameFor} from './accessible_name';
 import {findBySemanticLocator} from './find_by_semantic_locator';
 import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
 import {getRole, isHidden} from './role';
+import {isChildrenPresentational} from './role_map';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
 import {assert, hasTagName} from './util';
 
@@ -45,18 +46,11 @@ export function preciseLocatorFor(
   if (!root) {
     return null;
   }
-  const firstNode = semanticNodeFor(element);
-  if (firstNode === null) {
+  const full = closestFullLocator(element, root);
+  if (full === null || full.element !== element) {
     return null;
   }
-
-  let nodes: SemanticNode[] = [];
-  if (element.parentElement !== null) {
-    nodes = closestFullLocator(element.parentElement, root)?.nodes ?? [];
-  }
-  nodes.push(firstNode);
-
-  return refine(nodes, element, root).toString();
+  return refine(full.nodes, full.element, root).toString();
 }
 
 /**
@@ -105,13 +99,13 @@ function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
     null {
   if (root && !root.contains(element)) {
     throw new Error(
-        'Can\'t generate locator for element that is not contained within the root element.');
+        `Can't generate locator for element that is not contained within the root element.`);
   }
 
   if (!root) {
     const ownerDocument = element.ownerDocument;
     if (!ownerDocument) {
-      throw new Error('Can\'t generate locator for detached element');
+      throw new Error(`Can't generate locator for detached element`);
     }
     root = ownerDocument.body;
   }
@@ -125,15 +119,28 @@ function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
  */
 function closestFullLocator(element: HTMLElement, root: HTMLElement):
     {nodes: SemanticNode[], element: HTMLElement}|null {
-  const first = closestSemanticNode(element);
+  let first = closestSemanticNode(element);
   if (first === null) {
     return null;
   }
-  const nodes = [first.node];
+  let nodes = [first.node];
   let target = first.element.parentElement;
+
   while (target !== null) {
     const nextTreeNode = closestSemanticNode(target);
     if (nextTreeNode !== null) {
+      if (isChildrenPresentational(nextTreeNode.node.role)) {
+        console.warn(
+            `Element ${nextTreeNode.element} has a role of` +
+            ` ${nextTreeNode.node.role}, so it has presentational children` +
+            ` (https://www.w3.org/TR/wai-aria-practices/#children_presentational).` +
+            ` However it also has descendant elements which would otherwise` +
+            ` have semantics - matched by semantic locator` +
+            ` ${new SemanticLocator(nodes, [])}. These presentational` +
+            ` elements will be ignored while generating this semantic locator`);
+        nodes = [];
+        first = nextTreeNode;
+      }
       nodes.unshift(nextTreeNode.node);
     }
     target = nextTreeNode?.element.parentElement ?? null;
