@@ -17,9 +17,7 @@
 
 import {InvalidLocatorError} from './error';
 import {parse as pegParse} from './parser';
-import {isAriaRole} from './role_map';
 import {SemanticLocator} from './semantic_locator';
-import {SUPPORTED_ATTRIBUTES} from './types';
 import {debug} from './util';
 
 /**
@@ -31,10 +29,13 @@ export function parse(input: string): SemanticLocator {
   let parsed;
   try {
     parsed = pegParse(input);
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof InvalidLocatorError) {
+      throw error;
+    }
     throw new InvalidLocatorError(
-        `Failed to parse semantic locator "${input}". Error message: ` +
-        `${error.message}`);
+        `Failed to parse semantic locator "${input}". ` +
+        `${(error as Error).message ?? error}`);
   }
 
   if (debug() && !(parsed instanceof SemanticLocator)) {
@@ -43,25 +44,9 @@ export function parse(input: string): SemanticLocator {
         ` Return value ${JSON.stringify(parsed)}`);
   }
   const locator = parsed as SemanticLocator;
+
   if (locator.preOuter.length === 0 && locator.postOuter.length === 0) {
     throw new InvalidLocatorError('Locator is empty');
-  }
-  const allNodes = locator.preOuter.concat(locator.postOuter);
-  for (const node of allNodes) {
-    if (!isAriaRole(node.role)) {
-      throw new InvalidLocatorError(
-          `Unknown role: ${node.role}.` +
-          ` The list of valid roles can be found at` +
-          ` https://www.w3.org/TR/wai-aria/#role_definitions`);
-    }
-    for (const attribute of node.attributes) {
-      if (!SUPPORTED_ATTRIBUTES.includes(attribute.name)) {
-        throw new InvalidLocatorError(
-            `Unsupported attribute: ${attribute.name}.` +
-            ` Supported attributes: ${SUPPORTED_ATTRIBUTES}`);
-      }
-      // TODO(alexlloyd) validate the type of attributes also (e.g. true/false)
-    }
   }
 
   return locator;

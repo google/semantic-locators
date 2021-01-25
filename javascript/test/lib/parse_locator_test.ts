@@ -87,7 +87,7 @@ describe('parser', () => {
     expect(() => parse('{list} {listitem} outer '))
         .toThrowError(
             'Failed to parse semantic locator "{list} {listitem} outer ". ' +
-            'Error message: Expected "{" but end of input found.');
+            'Expected "{" but end of input found.');
   });
   it('should allow attributes', () => {
     expect(
@@ -122,6 +122,6 @@ describe('parser', () => {
     expect(() => parse('{button "OK"'))
         .toThrowError(
             'Failed to parse semantic locator "{button "OK"". ' +
-            'Error message: Expected "}" or [a-z] but end of input found.');
+            'Expected "}" or [a-z] but end of input found.');
   });
 });

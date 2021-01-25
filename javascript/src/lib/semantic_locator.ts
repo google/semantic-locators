@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
+import {InvalidLocatorError} from './error';
 import {AriaRole} from './role_map';
+import {isAriaRole} from './role_map';
 import {SupportedAttributeType} from './types';
+import {SUPPORTED_ATTRIBUTES} from './types';
 
 /** An attribute-value pair. */
 export interface Attribute {
@@ -28,7 +31,32 @@ export interface Attribute {
 export class SemanticLocator {
   constructor(
       readonly preOuter: readonly SemanticNode[],
-      readonly postOuter: readonly SemanticNode[]) {}
+      readonly postOuter: readonly SemanticNode[]) {
+    const allNodes = preOuter.concat(postOuter);
+    for (const node of allNodes) {
+      // The TypeScript compiler should check this at compile time, but parsing
+      // user-provided locators is not type-safe
+      if (!isAriaRole(node.role)) {
+        throw new InvalidLocatorError(
+            `Invalid locator: ${this}` +
+            ` Unknown role: ${node.role}.` +
+            ` The list of valid roles can be found at` +
+            ` https://www.w3.org/TR/wai-aria/#role_definitions`);
+      }
+
+      // The TypeScript compiler should check this at compile time, but parsing
+      // user-provided locators is not type-safe
+      for (const attribute of node.attributes) {
+        if (!SUPPORTED_ATTRIBUTES.includes(attribute.name)) {
+          throw new InvalidLocatorError(
+              `Invalid locator: ${this}` +
+              ` Unsupported attribute: ${attribute.name}.` +
+              ` Supported attributes: ${SUPPORTED_ATTRIBUTES}`);
+        }
+        // TODO(alexlloyd) validate the type of attributes (e.g. true/false)
+      }
+    }
+  }
 
   toString(): string {
     const resultBuilder: string[] = [];
