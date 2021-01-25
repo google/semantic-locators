@@ -70,77 +70,91 @@ describe('SemanticNode.toString', () => {
      });
 });
 
-describe('SemanticLocator.toString', () => {
-  it('returns a valid locator for a single preOuter SemanticNode', () => {
-    expect(new SemanticLocator(
-               [new SemanticNode(
-                   'button',
-                   [
-                     {name: 'checked', value: 'false'},
-                     {name: 'disabled', value: 'true'},
-                   ],
-                   'OK',
-                   )],
-               [])
-               .toString())
-        .toEqual(`{button 'OK' checked:false disabled:true}`);
+describe('SemanticLocator', () => {
+  describe('constructor', () => {
+    it('throws an error if a role with presentational children is in a non=final SemanticNode',
+       () => {
+         expect(
+             () => new SemanticLocator(
+                 [new SemanticNode('button', [])],
+                 [new SemanticNode('list', [])]))
+             .toThrowError(/The role "button" has presentational children./);
+       });
   });
 
-  it('returns a valid locator for multiple preOuter SemanticNodes', () => {
-    expect(new SemanticLocator(
-               [
-                 new SemanticNode('list', [], 'My calendars'),
-                 new SemanticNode(
+  describe('toString', () => {
+    it('returns a valid locator for a single preOuter SemanticNode', () => {
+      expect(new SemanticLocator(
+                 [new SemanticNode(
                      'button',
                      [
                        {name: 'checked', value: 'false'},
                        {name: 'disabled', value: 'true'},
                      ],
                      'OK',
-                     )
-               ],
-               [])
-               .toString())
-        .toEqual(
-            `{list 'My calendars'} {button 'OK' checked:false disabled:true}`);
-  });
+                     )],
+                 [])
+                 .toString())
+          .toEqual(`{button 'OK' checked:false disabled:true}`);
+    });
 
-  it('returns a valid locator for multiple postOuter SemanticNodes', () => {
-    expect(new SemanticLocator(
-               [],
-               [
-                 new SemanticNode('list', [], 'My calendars'),
-                 new SemanticNode(
-                     'button',
-                     [
-                       {name: 'checked', value: 'false'},
-                       {name: 'disabled', value: 'true'},
-                     ],
-                     'OK',
-                     )
-               ])
-               .toString())
-        .toEqual(
-            `outer {list 'My calendars'} {button 'OK' checked:false disabled:true}`);
-  });
+    it('returns a valid locator for multiple preOuter SemanticNodes', () => {
+      expect(new SemanticLocator(
+                 [
+                   new SemanticNode('list', [], 'My calendars'),
+                   new SemanticNode(
+                       'button',
+                       [
+                         {name: 'checked', value: 'false'},
+                         {name: 'disabled', value: 'true'},
+                       ],
+                       'OK',
+                       )
+                 ],
+                 [])
+                 .toString())
+          .toEqual(
+              `{list 'My calendars'} {button 'OK' checked:false disabled:true}`);
+    });
 
-  it('returns a valid locator for both preOuter and postOuter SemanticNodes', () => {
-    expect(new SemanticLocator(
-               [
-                 new SemanticNode('list', [], 'My calendars'),
-               ],
-               [
-                 new SemanticNode(
-                     'button',
-                     [
-                       {name: 'checked', value: 'false'},
-                       {name: 'disabled', value: 'true'},
-                     ],
-                     'OK',
-                     ),
-               ])
-               .toString())
-        .toEqual(
-            `{list 'My calendars'} outer {button 'OK' checked:false disabled:true}`);
+    it('returns a valid locator for multiple postOuter SemanticNodes', () => {
+      expect(new SemanticLocator(
+                 [],
+                 [
+                   new SemanticNode('list', [], 'My calendars'),
+                   new SemanticNode(
+                       'button',
+                       [
+                         {name: 'checked', value: 'false'},
+                         {name: 'disabled', value: 'true'},
+                       ],
+                       'OK',
+                       )
+                 ])
+                 .toString())
+          .toEqual(
+              `outer {list 'My calendars'} {button 'OK' checked:false disabled:true}`);
+    });
+
+    it('returns a valid locator for both preOuter and postOuter SemanticNodes',
+       () => {
+         expect(new SemanticLocator(
+                    [
+                      new SemanticNode('list', [], 'My calendars'),
+                    ],
+                    [
+                      new SemanticNode(
+                          'button',
+                          [
+                            {name: 'checked', value: 'false'},
+                            {name: 'disabled', value: 'true'},
+                          ],
+                          'OK',
+                          ),
+                    ])
+                    .toString())
+             .toEqual(
+                 `{list 'My calendars'} outer {button 'OK' checked:false disabled:true}`);
+       });
   });
 });

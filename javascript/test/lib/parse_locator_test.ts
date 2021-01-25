@@ -63,12 +63,12 @@ describe('parser', () => {
     expect(() => parse('{button "OK}')).toThrow();
   });
   it('should allow multiple semantic nodes', () => {
-    expect(parse(`{button} {list 'foo'} {listitem}`))
+    expect(parse(`{list 'foo'} {listitem} {button}`))
         .toEqual(new SemanticLocator(
             [
-              new SemanticNode('button', []),
               new SemanticNode('list', [], 'foo'),
               new SemanticNode('listitem', []),
+              new SemanticNode('button', []),
             ],
             []));
   });

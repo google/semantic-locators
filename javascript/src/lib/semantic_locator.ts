@@ -16,10 +16,8 @@
  */
 
 import {InvalidLocatorError} from './error';
-import {AriaRole} from './role_map';
-import {isAriaRole} from './role_map';
-import {SupportedAttributeType} from './types';
-import {SUPPORTED_ATTRIBUTES} from './types';
+import {AriaRole, isAriaRole, isChildrenPresentational} from './role_map';
+import {SUPPORTED_ATTRIBUTES, SupportedAttributeType} from './types';
 
 /** An attribute-value pair. */
 export interface Attribute {
@@ -42,6 +40,17 @@ export class SemanticLocator {
             ` Unknown role: ${node.role}.` +
             ` The list of valid roles can be found at` +
             ` https://www.w3.org/TR/wai-aria/#role_definitions`);
+      }
+
+      if (node !== allNodes[allNodes.length - 1] &&
+          isChildrenPresentational(node.role)) {
+        throw new InvalidLocatorError(
+            `Invalid locator: ${this}` +
+            ` The role "${node.role}" has presentational children.` +
+            ` That means its descendants cannot have semantics, so an element` +
+            ` with a role of ${node.role} may only` +
+            ` be the final element of a Semantic Locator.` +
+            ` https://www.w3.org/TR/wai-aria-practices/#children_presentational`);
       }
 
       // The TypeScript compiler should check this at compile time, but parsing
