@@ -38,8 +38,7 @@ If the element you want to locate has an explicit role then use that. The list
 of roles can be found on
 [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
 
-e.g. `{button 'Today*'}`:
-![Explicit semantics](img/explicit_semantics.png)
+e.g. `{button 'Today*'}`: ![Explicit semantics](img/explicit_semantics.png)
 
 #### Does the element have native semantics?
 
@@ -60,8 +59,8 @@ e.g. `{link 'More information...'}`:
 #### Can you use an ancestor element instead?
 
 If the element itself has no explicit or implicit semantics then you can select
-an ancestor element (parent or grandparent or...). Sometimes selecting the ancestor
-will be sufficient.
+an ancestor element (parent or grandparent or...). Sometimes selecting the
+ancestor will be sufficient.
 
 ### Finding the value
 
@@ -82,7 +81,8 @@ e.g. `{tree 'Global settings'}`
 
 #### Does the element contain text?
 
-You can use this text as the value if the role supports [name from content](https://www.w3.org/TR/wai-aria/#namefromcontent).
+You can use this text as the value if the role supports
+[name from content](https://www.w3.org/TR/wai-aria/#namefromcontent).
 
 e.g. `{link 'More information...'}`:
 ![Native semantics link](img/native_semantics_link.png)
@@ -92,8 +92,7 @@ e.g. `{link 'More information...'}`:
 Values accept `*` as a wildcard at the start and end (e.g. `'* view'` `'Calendar
 name: *'`, `'*.google.com/*'`)
 
-e.g. `{button 'Today*'}`:
-![Wildcard name](img/wildcard_name.png)
+e.g. `{button 'Today*'}`: ![Wildcard name](img/wildcard_name.png)
 
 #### Is a value necessary?
 
@@ -108,17 +107,18 @@ If you have nested elements which both match the same locator you can use the
 `outer` keyword to match only one of them.
 
 e.g. `outer {listitem}` will match the outer `li`, `{listitem} {listitem}` will
-match the inner `li`
-![Outer and inner](img/outer.png)
+match the inner `li` ![Outer and inner](img/outer.png)
 
 #### Attributes
 
-To select a checked checkbox (checked either with native html `checked` or `aria-checked`), use `{checkbox 'Name' checked:true}`. The list of supported attributes can be found in `SUPPORTED_ATTRIBUTES` at [types.ts](../javascript/lib/types.ts).
+To select a checked checkbox (checked either with native html `checked` or
+`aria-checked`), use `{checkbox 'Name' checked:true}`. The list of supported
+attributes can be found in `SUPPORTED_ATTRIBUTES` at
+[types.ts](../javascript/lib/types.ts).
 
 #### Multiple Semantic Locator elements
 
 Semantic locators can be combined, with later elements being descendants of
 earlier elements.
 
-e.g. `{listitem 'foo'} {listitem 'bar'}`
-![Outer and inner](img/outer.png)
+e.g. `{listitem 'foo'} {listitem 'bar'}` ![Outer and inner](img/outer.png)

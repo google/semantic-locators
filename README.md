@@ -1,20 +1,20 @@
 # Semantic Locators
 
+Semantic locators are a human readable, resilient and a11y-enforcing way to find
+web elements.
 
-Semantic locators are a human readable, resilient and a11y-enforcing way to
-find web elements.
-
-They're available in JavaScript and TypeScript. WebDriver bindings are coming soon.
+They're available in JavaScript and TypeScript. WebDriver bindings are coming
+soon.
 
 TL;DR: Use semantic locators like this:
 
-| HTML                                              | Semantic Locator           |
-| ------------------------------------------------- | -------------------------- |
-| `<button>OK</button>`                             | `{button 'OK'}`            |
-| `<div role="tab" aria-label="Meeting">`           | `{tab 'Meeting'}`          |
-| `<ul><li>`                                        | `{list} {listitem}`        |
-| `<button>User id: 32659768187</button>`           | `{button 'User id: *'}`    |
-| `<div role="checkbox" aria-checked="false"></div>`| `{checkbox checked:false}` |
+HTML                                               | Semantic Locator
+-------------------------------------------------- | --------------------------
+`<button>OK</button>`                              | `{button 'OK'}`
+`<div role="tab" aria-label="Meeting">`            | `{tab 'Meeting'}`
+`<ul><li>`                                         | `{list} {listitem}`
+`<button>User id: 32659768187</button>`            | `{button 'User id: *'}`
+`<div role="checkbox" aria-checked="false"></div>` | `{checkbox checked:false}`
 
 ## Introduction
 
@@ -84,7 +84,6 @@ or easily written with the help of browser dev tools. See the
 [tutorial](docs/tutorial.md) for a guide.
 
 ## Getting started
-
 
 ### JavaScript/TypeScript
 
