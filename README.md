@@ -3,8 +3,11 @@
 Semantic locators are a human readable, resilient and a11y-enforcing way to find
 web elements.
 
-They're available in JavaScript and TypeScript. WebDriver bindings are coming
-soon.
+They're available in [JavaScript and TypeScript](javascript/README.md).
+WebDriver bindings are coming soon.
+
+**Just want to get started writing semantic locators? See the
+[tutorial](docs/tutorial.md).**
 
 TL;DR: Use semantic locators like this:
 
@@ -85,20 +88,11 @@ or easily written with the help of browser dev tools. See the
 
 ## Getting started
 
-### JavaScript/TypeScript
+See the getting started instructions for your environment:
 
-```bash
-$ npm install semantic-locators
-```
-
-Once installed, use Semantic Locators as follows:
-
-```typescript
-import {findElementBySemanticLocator, findElementsBySemanticLocator} from 'semantic-locators';
-...
-const searchButton = findElementBySemanticLocator("{button 'Google search'}");
-const allButtons = findElementsBySemanticLocator("{button}");
-```
+*   [JavaScript/TypeScript in the browser](javascript/README.md)
+*   Something else? Adding support for a new platform is usually simple. See
+    [DEVELOPING.md](go/semantic-locators-developing) for instructions
 
 ## Limitations
 
