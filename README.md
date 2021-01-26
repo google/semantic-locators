@@ -8,14 +8,13 @@ They're available in JavaScript and TypeScript. WebDriver bindings are coming so
 
 TL;DR: Use semantic locators like this:
 
-| HTML                                    | Semantic Locator           |
-| --------------------------------------- | -------------------------- |
-| `<button>OK</button>`                   | `{button 'OK'}`            |
-| `<div role="tab" aria-label="Meeting">` | `{tab 'Meeting'}`          |
-| `<ul><li>`                              | `{list} {listitem}`        |
-| `<button>User id: 32659768187</button>` | `{button 'User id: *'}`    |
-| `<div role="checkbox"                   | `{checkbox checked:false}` |
-: aria-checked="false"></div>`            :                            :
+| HTML                                              | Semantic Locator           |
+| ------------------------------------------------- | -------------------------- |
+| `<button>OK</button>`                             | `{button 'OK'}`            |
+| `<div role="tab" aria-label="Meeting">`           | `{tab 'Meeting'}`          |
+| `<ul><li>`                                        | `{list} {listitem}`        |
+| `<button>User id: 32659768187</button>`           | `{button 'User id: *'}`    |
+| `<div role="checkbox" aria-checked="false"></div>`| `{checkbox checked:false}` |
 
 ## Introduction
 
