@@ -12,9 +12,8 @@ In the locator `{button 'OK'}` the role is `button` and the accessible name is
 
 ## Chrome Extension
 
-Use the Semantic Locators
-[Chrome Extension](https://chrome.google.com/webstore/detail/semantic-locators/cgjejnjgdbcogfgamjebgceckcmfcmji)
-to auto-generate Semantic Locators.
+The easiest way to create Semantic Locators is to auto-generate them with a
+[Chrome Extension](https://chrome.google.com/webstore/detail/semantic-locators/cgjejnjgdbcogfgamjebgceckcmfcmji).
 
 ## Chrome Developer Console
 
@@ -38,7 +37,9 @@ If the element you want to locate has an explicit role then use that. The list
 of roles can be found on
 [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
 
-e.g. `{button 'Today*'}`: ![Explicit semantics](img/explicit_semantics.png)
+e.g. `{button 'Today*'}`:
+
+![Explicit semantics](img/explicit_semantics.png)
 
 #### Does the element have native semantics?
 
@@ -46,6 +47,7 @@ Many HTML tags have implicit semantics, for example `<button>` has the aria role
 of `button`.
 
 e.g. `{button 'Create'}`:
+
 ![Native semantics button](img/native_semantics_button.png)
 
 The role of an element isn't always the same as the tag name. For example the
@@ -54,6 +56,7 @@ given to native HTML can be found in the first 2 columns of
 [this table](https://www.w3.org/TR/html-aria/#docconformance).
 
 e.g. `{link 'More information...'}`:
+
 ![Native semantics link](img/native_semantics_link.png)
 
 #### Can you use an ancestor element instead?
@@ -69,6 +72,7 @@ ancestor will be sufficient.
 Then the label is your value.
 
 e.g. `{button 'Create'}`:
+
 ![Native semantics button](img/native_semantics_button.png)
 
 #### Does the element have the `aria-labelledby` attribute?
@@ -76,7 +80,8 @@ e.g. `{button 'Create'}`:
 Find the labelling element (ctrl+f in the Chrome developer console for the id).
 Then follow these steps again to find a value for that element.
 
-e.g. `{tree 'Global settings'}`
+e.g. `{tree 'Global settings'}`:
+
 ![Native semantics button](img/aria_labelledby_example.png)
 
 #### Does the element contain text?
@@ -85,6 +90,7 @@ You can use this text as the value if the role supports
 [name from content](https://www.w3.org/TR/wai-aria/#namefromcontent).
 
 e.g. `{link 'More information...'}`:
+
 ![Native semantics link](img/native_semantics_link.png)
 
 #### Don't know exactly what the value will be? (Or value is very long)
@@ -92,7 +98,9 @@ e.g. `{link 'More information...'}`:
 Values accept `*` as a wildcard at the start and end (e.g. `'* view'` `'Calendar
 name: *'`, `'*.google.com/*'`)
 
-e.g. `{button 'Today*'}`: ![Wildcard name](img/wildcard_name.png)
+e.g. `{button 'Today*'}`:
+
+![Wildcard name](img/wildcard_name.png)
 
 #### Is a value necessary?
 
@@ -107,18 +115,22 @@ If you have nested elements which both match the same locator you can use the
 `outer` keyword to match only one of them.
 
 e.g. `outer {listitem}` will match the outer `li`, `{listitem} {listitem}` will
-match the inner `li` ![Outer and inner](img/outer.png)
+match the inner `li`
+
+![Outer and inner](img/outer.png)
 
 #### Attributes
 
 To select a checked checkbox (checked either with native html `checked` or
 `aria-checked`), use `{checkbox 'Name' checked:true}`. The list of supported
 attributes can be found in `SUPPORTED_ATTRIBUTES` at
-[types.ts](../javascript/lib/types.ts).
+[types.ts](../javascript/lib/types.ts)
 
 #### Multiple Semantic Locator elements
 
 Semantic locators can be combined, with later elements being descendants of
 earlier elements.
 
-e.g. `{listitem 'foo'} {listitem 'bar'}` ![Outer and inner](img/outer.png)
+e.g. `{listitem 'foo'} {listitem 'bar'}`:
+
+![Outer and inner](img/outer.png)
