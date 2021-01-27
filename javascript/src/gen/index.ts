@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-export {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from './lib/locator_gen';
+export {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from '../lib/locator_gen';
