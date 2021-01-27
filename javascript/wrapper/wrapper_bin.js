@@ -43,18 +43,7 @@ d.push(f)}e=[];d=x(d);for(f=d.next();!f.done;f=d.next())if(f=f.value,!b.g.Y.incl
 a.getAttribute("placeholder"):null:null}};function Pa(a){var b=void 0===b?ra():b;a=Qa(a,b);return{name:a.name.trim(),J:a.J,K:a.K}}function Qa(a,b){b=void 0===b?ra():b;b.g.J.add(a);for(var c=x(Object.entries(Oa)),d=c.next();!d.done;d=c.next()){var e=x(d.value);d=e.next().value;e=e.next().value;e=e(a,b,Qa);if(null!==e)return b.g.K.add(d),{name:e.replace(/\s+/g," "),J:b.g.J,K:b.g.K}}return{name:"",J:b.g.J,K:b.g.K}};/*
 
  Copyright 2021 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ SPDX-License-Identifier: Apache-2.0
 */
 var K=function(){var a=Error.apply(this,arguments);this.message=a.message;"stack"in a&&(this.stack=a.stack);this.R="SemanticLocatorError"};A(K,Error);K.prototype.W=function(){return this.R+": "+this.message};var Ra=function(){K.apply(this,arguments);this.R="NoSuchElementError"};A(Ra,K);var Sa=function(){K.apply(this,arguments);this.R="ValueError"};A(Sa,K);var L=function(){K.apply(this,arguments);this.R="InvalidLocatorError"};A(L,K);function Ta(a){return Pa(a).name};var Ua="checked current disabled selected colindex level posinset readonly rowindex".split(" ");var M=new Set("alert alertdialog application directory feed grid log marquee menu menubar menuitem menuitemcheckbox menuitemradio note radiogroup scrollbar search switch tab tablist tabpanel timer toolbar tooltip tree treegrid treeitem".split(" ")),Va="button checkbox img math menuitemcheckbox menuitemradio option progressbar radio scrollbar separator slider switch tab".split(" "),N={article:{h:"article"},banner:{l:[{j:"header",conditions:[{type:1,X:'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]'}]}]},
 button:{h:"button,summary",l:[{j:"input",conditions:[{type:5,propertyName:"type",values:["button","image","reset","submit"]}]}]},cell:{l:[{j:"td",conditions:[{type:6,tag:"table",i:"table"}]},{j:'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',conditions:[{type:6,tag:"table",i:"table"},{type:8,T:!0},{type:7,O:!0}]}]},checkbox:{l:[{j:"input",conditions:[{type:5,propertyName:"type",values:["checkbox"]}]}]},columnheader:{h:'th[scope="col"],th[scope="colgroup"]',
