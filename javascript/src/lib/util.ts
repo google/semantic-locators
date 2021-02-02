@@ -72,11 +72,21 @@ export function hasTagName(el: Element, name: string): boolean {
   return el.tagName.toLowerCase() === name;
 }
 
+/** Type guard for Node */
+export function isNode(e: EventTarget): e is Node {
+  return (e as Node).nodeName !== null;
+}
+
+/** Type guard for Element */
+function isElement(node: Node): node is Element {
+  return node.nodeType === Node.ELEMENT_NODE;
+}
+
 const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
-/** Check whether `el` is a HTMLElement. */
-export function isHTMLElement(el: Element): el is HTMLElement {
-  return el.namespaceURI === HTML_NAMESPACE;
+/** Check whether `node` is a HTMLElement. */
+export function isHTMLElement(node: Node): node is HTMLElement {
+  return isElement(node) && node.namespaceURI === HTML_NAMESPACE;
 }
 
 /** Throw an exception if the condition is false. */
