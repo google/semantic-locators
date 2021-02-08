@@ -16,10 +16,19 @@ You generally only need to submit a CLA once, so if you've already submitted one
 (even if it was for a different project), you probably don't need to do it
 again.
 
+## File an issue
+
+Before you start developing with Semantic Locators, please file an issue (or
+comment on an existing one) so we can track what's being worked on.
+
+## Developing
+
+See [DEVELOPING.md](docs/DEVELOPING.md)
+
 ## Code reviews
 
-All submissions, including submissions by project members, require review. We
-use GitHub pull requests for this purpose. Consult
+All submissions, including submissions by project members, require review.
+Please open a pull request and it will be reviewed. See
 [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
 information on using pull requests.
 
