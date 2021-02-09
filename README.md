@@ -3,8 +3,8 @@
 Semantic locators are a human readable, resilient and a11y-enforcing way to find
 web elements.
 
-They're available in [JavaScript and TypeScript](javascript/README.md).
-WebDriver bindings are coming soon.
+They're available in [JavaScript and TypeScript](javascript/README.md) and
+[Java WebDriver](webdriver_java/README.md). More bindings are coming soon.
 
 **Just want to get started writing semantic locators? See the
 [tutorial](docs/tutorial.md).**
