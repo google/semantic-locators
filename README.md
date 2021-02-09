@@ -91,6 +91,7 @@ or easily written with the help of browser dev tools. See the
 See the getting started instructions for your environment:
 
 *   [JavaScript/TypeScript in the browser](javascript/README.md)
+*   [Java WebDriver](webdriver_java/README.md)
 *   Something else? Adding support for a new platform is usually simple. See
     [DEVELOPING.md](go/semantic-locators-developing) for instructions
 
