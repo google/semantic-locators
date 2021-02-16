@@ -54,7 +54,7 @@ export function closestSimpleLocatorFor(
   if (!root) {
     return null;
   }
-  return closestSemanticNode(element)?.node?.toString() ?? null;
+  return closestSemanticNode(element, root)?.node?.toString() ?? null;
 }
 
 /**
@@ -104,11 +104,12 @@ function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
 
 /**
  * Returns a list of one SemanticNode for each semantic ancestor of `element`,
- * and the closest semantic element to `element`.
+ * and the closest semantic element to `element` (the element matched by the
+ * semantic nodes).
  */
 function closestFullLocator(element: HTMLElement, root: HTMLElement):
     {nodes: SemanticNode[], element: HTMLElement}|null {
-  let first = closestSemanticNode(element);
+  let first = closestSemanticNode(element, root);
   if (first === null) {
     return null;
   }
@@ -116,7 +117,7 @@ function closestFullLocator(element: HTMLElement, root: HTMLElement):
   let target = first.element.parentElement;
 
   while (target !== null) {
-    const nextTreeNode = closestSemanticNode(target);
+    const nextTreeNode = closestSemanticNode(target, root);
     if (nextTreeNode !== null) {
       if (isChildrenPresentational(nextTreeNode.node.role)) {
         console.warn(
@@ -163,12 +164,13 @@ function refine(nodes: SemanticNode[], element: HTMLElement, root: HTMLElement):
  * with that element's SemanticNode. Doesn't include the `{document}` node from
  * `<body>`.
  */
-function closestSemanticNode(el: HTMLElement):
+function closestSemanticNode(el: HTMLElement, root: HTMLElement):
     {node: SemanticNode, element: HTMLElement}|null {
   let element: HTMLElement|null = el;
   // Exclude body elements as the `{document}` node would alwasys be stripped
   // out
-  while (element !== null && !hasTagName(element, 'body')) {
+  while (element !== null &&
+         root.contains(element) && root !== element) {
     const node = semanticNodeFor(element);
     if (node !== null) {
       return {node, element};

@@ -186,6 +186,28 @@ describe('closestPreciseLocatorFor', () => {
        expect(closestPreciseLocatorFor(document.getElementById('foo')!))
            .toEqual(`{button 'outer'}`);
      });
+
+  it(`returns locators which are precise within a root`, () => {
+    render(
+        html`
+        <div id="root">
+          <div role="region">
+            <div role="tab" id="tab">foo</div>
+          </div>
+        </div>
+        <div role="tab">
+          <div>foo</div>
+        </div>
+        `,
+        container);
+
+    expect(closestPreciseLocatorFor(document.getElementById('tab')!))
+        .toEqual(`{region} {tab 'foo'}`);
+    expect(closestPreciseLocatorFor(
+               document.getElementById('tab')!, document.getElementById('root')!
+               ))
+        .toEqual(`{tab 'foo'}`);
+  });
 });
 
 async function iframeLoadedPromise(iframe: HTMLIFrameElement) {
