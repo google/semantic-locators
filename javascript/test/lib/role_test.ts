@@ -29,10 +29,10 @@ describe('findByRole', () => {
     <div id="foo" role="button"></div>
     <button id="bar" role="checkbox"></button>`,
         container);
-    expect(findByRole('button', container, false)).toEqual([
+    expect(findByRole('button', container, false, false)).toEqual([
       document.getElementById('foo')!
     ]);
-    expect(findByRole('checkbox', container, false)).toEqual([
+    expect(findByRole('checkbox', container, false, false)).toEqual([
       document.getElementById('bar')!
     ]);
   });
@@ -46,7 +46,8 @@ describe('findByRole', () => {
     <div role="button"></div>`,
         container);
     expect(
-        findByRole('button', document.getElementById('context-node')!, false))
+        findByRole(
+            'button', document.getElementById('context-node')!, false, false))
         .toEqual([document.getElementById('foo')!]);
   });
 
@@ -61,20 +62,20 @@ describe('findByRole', () => {
     <datalist id="my-list-id"><option value="only-option"></option></datalist>
     <input id='tutu'>`,
         container);
-    expect(findByRole('button', container, false)).toEqual([
+    expect(findByRole('button', container, false, false)).toEqual([
       document.getElementById('foo')!,
       document.getElementById('bar')!,
     ]);
-    expect(findByRole('listitem', container, false)).toEqual([
+    expect(findByRole('listitem', container, false, false)).toEqual([
       document.getElementById('baz')!
     ]);
-    expect(findByRole('cell', container, false)).toEqual([
+    expect(findByRole('cell', container, false, false)).toEqual([
       document.getElementById('qux')!
     ]);
-    expect(findByRole('combobox', container, false)).toEqual([
+    expect(findByRole('combobox', container, false, false)).toEqual([
       document.getElementById('toto')!
     ]);
-    expect(findByRole('textbox', container, false)).toEqual([
+    expect(findByRole('textbox', container, false, false)).toEqual([
       document.getElementById('tutu')!
     ]);
   });
@@ -90,16 +91,16 @@ describe('findByRole', () => {
     <section aria-label="anything" id="qux"></section>
     <section></section>`,
         container);
-    expect(findByRole('banner', container, false)).toEqual([
+    expect(findByRole('banner', container, false, false)).toEqual([
       document.getElementById('foo')!
     ]);
-    expect(findByRole('combobox', container, false)).toEqual([
+    expect(findByRole('combobox', container, false, false)).toEqual([
       document.getElementById('bar')!
     ]);
-    expect(findByRole('listbox', container, false)).toEqual([
+    expect(findByRole('listbox', container, false, false)).toEqual([
       document.getElementById('baz')!
     ]);
-    expect(findByRole('region', container, false)).toEqual([
+    expect(findByRole('region', container, false, false)).toEqual([
       document.getElementById('qux')!
     ]);
   });
@@ -120,13 +121,13 @@ describe('findByRole', () => {
         <div role="search" style="display:none;">My Cool search</div>
         `,
         container);
-    expect(findByRole('list', container, false)).toEqual([
+    expect(findByRole('list', container, false, false)).toEqual([
       document.getElementById('foo')!
     ]);
-    expect(findByRole('listitem', container, false)).toEqual([
+    expect(findByRole('listitem', container, false, false)).toEqual([
       document.getElementById('bar')!
     ]);
-    expect(findByRole('search', container, false)).toEqual([]);
+    expect(findByRole('search', container, false, false)).toEqual([]);
   });
 
   it('includes hidden elements if `includeHidden = true`', () => {
@@ -145,14 +146,42 @@ describe('findByRole', () => {
         <div id="foo" role="search" style="display:none;">My Cool search</div>
         `,
         container);
-    expect(findByRole('list', container, true))
+    expect(findByRole('list', container, true, false))
         .toEqual(Array.from(container.querySelectorAll('ul')));
-    expect(findByRole('listitem', container, true))
+    expect(findByRole('listitem', container, true, false))
         .toEqual(Array.from(container.querySelectorAll('li')));
-    expect(findByRole('search', container, true)).toEqual([
+    expect(findByRole('search', container, true, false)).toEqual([
       document.getElementById('foo')!
     ]);
   });
+
+  it('excludes descendants of roles with presentational children if `includePresentational = false`',
+     () => {
+       render(
+           html`
+        <div role="button" id="foo">
+          <div><div role="button">Inner</div></div>
+        </div>
+        `,
+           container);
+       expect(findByRole('button', container, false, false)).toEqual([
+         document.getElementById('foo')!
+       ]);
+     });
+
+  it('includes descendants of roles with presentational children if `includePresentational = true`',
+     () => {
+       render(
+           html`
+        <div role="button" id="foo">
+          <div><div role="button" id="bar">Inner</div></div>
+        </div>
+        `,
+           container);
+       expect(findByRole('button', container, false, true)).toEqual([
+         document.getElementById('foo')!, document.getElementById('bar')!
+       ]);
+     });
 });
 
 describe('getRole', () => {

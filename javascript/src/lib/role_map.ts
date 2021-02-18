@@ -88,7 +88,7 @@ export const CHILDREN_PRESENTATIONAL = [
   'math',
   'menuitemcheckbox',
   'menuitemradio',
-  'option',
+  // 'option', // TODO(b/180594818) enforce for option
   'progressbar',
   'radio',
   'scrollbar',

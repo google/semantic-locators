@@ -49,8 +49,13 @@ export function findElementBySemanticLocator(
       hiddenMatches =
           isEmptyResultsMetadata(hiddenResult) ? [] : hiddenResult.found;
     }
-    throw new NoSuchElementError(
-        buildFailureMessage(parsed, result, hiddenMatches));
+    const presentationalResult =
+        findBySemanticLocator(parsed, root, false, true);
+    const presentationalMatches = isEmptyResultsMetadata(presentationalResult) ?
+        [] :
+        presentationalResult.found;
+    throw new NoSuchElementError(buildFailureMessage(
+        parsed, result, hiddenMatches, presentationalMatches));
   }
   return result.found[0];
 }
@@ -63,9 +68,10 @@ export function findBySemanticLocator(
     locator: SemanticLocator,
     root: HTMLElement = document.body,
     includeHidden: boolean = false,
+    includePresentational: boolean = false,
     ): Result {
-  const searchBase =
-      findBySemanticNodes(locator.preOuter, [root], includeHidden);
+  const searchBase = findBySemanticNodes(
+      locator.preOuter, [root], includeHidden, includePresentational);
   if (isEmptyResultsMetadata(searchBase)) {
     return searchBase;
   }
@@ -82,7 +88,8 @@ export function findBySemanticLocator(
           // duplicates rather than concat + sort in separate steps.
           .map(
               base => findBySemanticNodes(
-                  locator.postOuter, [base], includeHidden));
+                  locator.postOuter, [base], includeHidden,
+                  includePresentational));
   const elementsFound = results.filter(isNonEmptyResult)
                             .flatMap(result => outerNodesOnly(result.found));
 
@@ -117,9 +124,11 @@ function findBySemanticNodes(
     nodes: readonly SemanticNode[],
     searchBase: readonly HTMLElement[],
     includeHidden: boolean,
+    includePresentational: boolean,
     ): Result {
   for (let i = 0; i < nodes.length; i++) {
-    const result = findBySemanticNode(nodes[i], searchBase, includeHidden);
+    const result = findBySemanticNode(
+        nodes[i], searchBase, includeHidden, includePresentational);
     if (isEmptyResultsMetadata(result)) {
       return {
         closestFind: nodes.slice(0, i),
@@ -142,6 +151,7 @@ function findBySemanticNode(
     node: SemanticNode,
     searchBase: readonly HTMLElement[],
     includeHidden: boolean,
+    includePresentational: boolean,
     ): Result {
   // Filter out non-outer elements as an optimisation. Suppose A and B are in
   // searchBase, and A contains B. Then all nodes below B are also below A so
@@ -151,8 +161,9 @@ function findBySemanticNode(
   // in document order.
   searchBase = outerNodesOnly(searchBase);
 
-  let elements =
-      searchBase.flatMap(base => findByRole(node.role, base, includeHidden));
+  let elements = searchBase.flatMap(
+      base =>
+          findByRole(node.role, base, includeHidden, includePresentational));
   if (elements.length === 0) {
     return {
       closestFind: [],

@@ -33,6 +33,7 @@ describe('buildFailureMessage', () => {
                  notFound: {role: 'button'},
                },
                [],
+               [],
                ))
         .toEqual(`${START} No elements have an ARIA role of button.`);
   });
@@ -50,6 +51,7 @@ describe('buildFailureMessage', () => {
               ],
               notFound: {role: 'button'}
             },
+            [],
             [],
             ))
         .toEqual(`${
@@ -70,6 +72,7 @@ describe('buildFailureMessage', () => {
               notFound: {name: 'OK'}
             },
             [],
+            [],
             ))
         .toEqual(`${
             START} 2 descendants of {list} with an ARIA role of listitem were found. However none had an accessible name of "OK". No matching elements had an accessible name.`);
@@ -86,6 +89,7 @@ describe('buildFailureMessage', () => {
                  notFound: {name: 'OK'}
                },
                [],
+               [],
                ))
         .toEqual(`${
             START} 1 descendant of {list} with an ARIA role of listitem were found. However it didn't have an accessible name of "OK". Accessible names found: ["Not OK"].`);
@@ -101,6 +105,7 @@ describe('buildFailureMessage', () => {
                  elementsFound: [document.getElementById('foo')!],
                  notFound: {attribute: {name: 'checked', value: 'false'}},
                },
+               [],
                [],
                ))
         .toEqual(`${
@@ -123,6 +128,7 @@ describe('buildFailureMessage', () => {
                  notFound: {attribute: {name: 'checked', value: 'true'}}
                },
                [],
+               [],
                ))
         .toEqual(`${
             START} 1 descendant of {list} with an ARIA role of listitem, aria-disabled = false, and an accessible name of "bar" were found. However it didn't have aria-checked = true. Values found for aria-checked: ["false"].`);
@@ -137,8 +143,24 @@ describe('buildFailureMessage', () => {
                  notFound: {role: 'button'},
                },
                [document.createElement('div')],
+               [],
                ))
         .toEqual(`${
             START} No elements have an ARIA role of button. 1 hidden element matched the locator. Pass includeHidden=true in findElement(s)BySemanticLocator to include these elements.`);
+  });
+
+  it('hints if presentational elements are missing', () => {
+    expect(buildFailureMessage(
+               DUMMY_LOCATOR,
+               {
+                 closestFind: [],
+                 elementsFound: [],
+                 notFound: {role: 'button'},
+               },
+               [],
+               [document.createElement('div')],
+               ))
+        .toEqual(`${
+            START} No elements have an ARIA role of button. 1 element would have matched the locator, but it has an ancestor with presentational children (https://www.w3.org/TR/wai-aria-practices/#children_presentational), erasing its semantics.`);
   });
 });

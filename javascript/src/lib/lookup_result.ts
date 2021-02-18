@@ -80,6 +80,7 @@ export function buildFailureMessage(
     locator: SemanticLocator,
     metadata: EmptyResultsMetadata,
     hiddenElements: readonly HTMLElement[],
+    presentationalElements: readonly HTMLElement[],
     ): string {
   let result =
       `Didn't find any elements matching semantic locator ${locator}. `;
@@ -120,6 +121,16 @@ export function buildFailureMessage(
         `element${hiddenPlural ? 's' : ''} matched the locator. Pass ` +
         `includeHidden=true in findElement(s)BySemanticLocator to include ` +
         `these elements.`;
+  }
+
+  if (presentationalElements.length > 0) {
+    const presentationalPlural = presentationalElements.length > 1;
+    result += ` ${presentationalElements.length} ` +
+        `element${presentationalPlural ? 's' : ''} would have matched the ` +
+        `locator, but ${presentationalPlural ? 'have' : 'it has'} an ` +
+        `ancestor with presentational children ` +
+        `(https://www.w3.org/TR/wai-aria-practices/#children_presentational), ` +
+        `erasing its semantics.`;
   }
 
   return result;

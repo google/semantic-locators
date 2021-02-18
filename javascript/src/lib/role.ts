@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {AriaRole, IGNORED_ROLES, IMPLICIT_ROLES_FOR_TAGNAME, ImplicitRole, isAriaOnlyRole, isAriaRole, ROLE_MAP} from './role_map';
+import {AriaRole, CHILDREN_PRESENTATIONAL, IGNORED_ROLES, IMPLICIT_ROLES_FOR_TAGNAME, ImplicitRole, isAriaOnlyRole, isAriaRole, isImplicitRole, ROLE_MAP} from './role_map';
 import {hasDataInColumn, hasDataInRow} from './table';
 import {Condition, ConditionType} from './types';
-import {checkExhaustive, compareNodeOrder, debug} from './util';
+import {checkExhaustive, compareNodeOrder} from './util';
 
 /**
  * Return, in document order, a list of elements below the contextNode which
@@ -17,13 +17,15 @@ export function findByRole(
     role: AriaRole,
     contextNode: HTMLElement,
     includeHidden: boolean,
+    includePresentational: boolean,
     ): HTMLElement[] {
   const explicitSelector = `[role="${role}"]`;
   const matchExplicitSelector =
       Array.from(contextNode.querySelectorAll<HTMLElement>(explicitSelector));
 
   if (isAriaOnlyRole(role)) {
-    return matchExplicitSelector.filter(el => includeHidden || !isHidden(el));
+    return matchExplicitSelector.filter(el => includeHidden || !isHidden(el))
+        .filter(el => includePresentational || !isPresentationalChild(el));
   }
 
   const elements = new Set(matchExplicitSelector);
@@ -52,6 +54,7 @@ export function findByRole(
   // duplicates rather than concat + sort in separate steps.
   return Array.from(elements)
       .filter(el => includeHidden || !isHidden(el))
+      .filter(el => includePresentational || !isPresentationalChild(el))
       .sort(compareNodeOrder);
 }
 
@@ -183,11 +186,10 @@ export function positionWithinAncestorRole(
   }
 
   const index =
-      descendantRoles.flatMap(role => findByRole(role, ancestor, false))
+      descendantRoles.flatMap(role => findByRole(role, ancestor, false, false))
           .filter(
-              descendant =>
-                  closestWithRole(descendant.parentElement!, ancestorRole) ===
-                  ancestor)
+              descendant => ancestor ===
+                  closestWithRole(descendant.parentElement!, ancestorRole))
           .sort(compareNodeOrder)
           .indexOf(element);
   // `indexOf` is 0-indexed but the ARIA attributes are 1-indexed
@@ -210,51 +212,77 @@ function matchesImplicitRole(
 }
 
 /**
- * Finds the closest ancestor element to `element` with role `role`. This
- * function is analogous to `Node.closest` as `findByRole` is analogous to
- * `Element.querySelectorAll`.
+ * Check whether `element` has any ancestors with a presentational children
+ * role, implying that `element` is presentational.
+ * https://www.w3.org/TR/wai-aria-practices/#children_presentational
+ */
+function isPresentationalChild(element: HTMLElement): boolean {
+  for (const role of CHILDREN_PRESENTATIONAL) {
+    const presentationalChild =
+        closestWithRole(element.parentElement!, role) !== null;
+    if (presentationalChild) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns an ancestor of `element` (or `element` itself) with role `role`. If
+ * `returnClosest` is true, returns the closest element to `element` (like
+ * `Node.closest`), otherwise just return any ancestor.
+ *
+ * Note that this is not implemented for all roles - it throws an error if a
+ * conditionalSelector has conditions which must be checked.
  */
 function closestWithRole(element: HTMLElement, role: AriaRole): HTMLElement|
     null {
-  const explicitSelector = `[role="${role}"]`;
-  const matchExplicitSelector = closest(element, explicitSelector);
+  // Build a selector equivalent to the role
+  let selector = `[role="${role}"]`;
 
-  if (isAriaOnlyRole(role)) {
-    return matchExplicitSelector;
+  if (isImplicitRole(role)) {
+    const implicitDefinition = ROLE_MAP[role];
+    if (implicitDefinition.exactSelector !== undefined) {
+      selector += ',' + noExplicitRole(implicitDefinition.exactSelector);
+    }
+
+    for (const conditionalSelector of implicitDefinition.conditionalSelectors ??
+         []) {
+      // Check if an element which matches this selector can have children. If
+      // it cannot then we don't need to check for that element as an ancestor.
+      // The condition is very crude, but is the only way we can hit this code
+      // path. A test in role_map_test.ts verifies this.
+      if (canHaveChildren(conditionalSelector.greedySelector)) {
+        throw new Error(
+            `Not implemented: closestWithRole called with a role which requires a condition to be checked. Role: ${
+                role}; Selector: ${implicitDefinition}`);
+      }
+    }
   }
 
-  let closestFound = matchExplicitSelector;
-
-  const implicitDefinition = ROLE_MAP[role];
-
-  const exactSelector = implicitDefinition.exactSelector;
-  if (exactSelector) {
-    closestFound = inner(
-        closestFound,
-        closest(
-            element,
-            exactSelector.split(',').map(s => `${s}:not([role])`).join(',')));
-  }
-
-  if (debug() && implicitDefinition.conditionalSelectors !== undefined &&
-      implicitDefinition.conditionalSelectors.length > 0) {
-    throw new Error(
-        `Not implemented: closestWithRole called with a role which requires a condition. Role: ${
-            role}; Selector: ${implicitDefinition}`);
-  }
-
-  return closestFound;
+  return closest(element, selector);
 }
 
-/** Find all elements matching the given `selector` in document order. */
+/**
+ * Whether an element matching this selector may have child nodes. This
+ * function is incomplete, only covering greedySelectors for roles where some
+ * code path leads to `closestWithRole` being called for that role.
+ */
+function canHaveChildren(selector: string): boolean {
+  return selector !== 'input';
+}
+
+/**
+ * Find all elements matching the given `selector` in document order.
+ */
 function resolveImplicitSelector(
     selector: string,
     contextNode: HTMLElement,
     conditions?: readonly Condition[],
     ): HTMLElement[] {
   // Ignore elements with explicit `role` attribute.
-  const elements = Array.from(contextNode.querySelectorAll<HTMLElement>(
-      selector.split(',').map(s => `${s}:not([role])`).join(',')));
+  const elements = Array.from(
+      contextNode.querySelectorAll<HTMLElement>(noExplicitRole(selector)));
 
   if (conditions) {
     return elements.filter(
@@ -263,25 +291,9 @@ function resolveImplicitSelector(
   return elements;
 }
 
-/**
- * Returns whichever element is inside the other. If one argument is null,
- * return the other argument.
- */
-function inner(a: HTMLElement|null, b: HTMLElement|null): HTMLElement|null {
-  if (a === null) {
-    return b;
-  } else if (b === null) {
-    return a;
-  } else if (a.contains(b)) {
-    return b;
-  } else if (b.contains(a)) {
-    return a;
-  } else {
-    throw new Error(`The elements ${a} and ${
-        b} are not anctors/descendants of each other.`);
-  }
+function noExplicitRole(selector: string): string {
+  return selector.split(',').map(s => `${s}:not([role])`).join(',');
 }
-
 
 /** `element.matches(selector)` with a polyfill for IE */
 function matches(element: Element, selector: string): boolean {
