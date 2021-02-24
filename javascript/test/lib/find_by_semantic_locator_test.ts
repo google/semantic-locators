@@ -299,6 +299,17 @@ describe('findElementsBySemanticLocator', () => {
           findElementsBySemanticLocator('{button "*This is fine*"}', container))
           .toEqual([document.getElementById('foo')!]);
     });
+
+    it('handles non-ASCII characters', () => {
+      render(
+          html`<button id="foo" aria-label="блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!&quot;_+">OK</button>`,
+          container);
+
+      expect(
+          findElementsBySemanticLocator(
+              `{button 'блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!"_+'}`))
+          .toEqual([document.getElementById('foo')!]);
+    });
   });
 
   it('finds by explicit ARIA attributes', () => {

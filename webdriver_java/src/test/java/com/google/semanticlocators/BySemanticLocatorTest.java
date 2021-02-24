@@ -59,6 +59,10 @@ public final class BySemanticLocatorTest {
                 "{region} outer {list}",
                 "<div role='region'><ul id='target'><li><ul><li>foo</li></ul></li></ul></div>"),
             asList(
+                "{button 'блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!\"_+'}",
+                "<button id='target'"
+                    + " aria-label='блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!&quot;_+'>OK</button>"),
+            asList(
                 "{ button '\\'escaped quotes\\\\\\' and unescaped\\\\\\\\'}",
                 "<button id='target'>'escaped quotes\\' and unescaped\\\\</button>")));
   }
@@ -111,7 +115,7 @@ public final class BySemanticLocatorTest {
                   + "\")");
 
     } else {
-      driver.get("data:text/html," + html);
+      driver.get("data:text/html;charset=utf-8," + html);
     }
   }
 
