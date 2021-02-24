@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {CHILDREN_PRESENTATIONAL, isAriaOnlyRole, ROLE_MAP} from './role_map';
+import {CHILDREN_PRESENTATIONAL, isAriaOnlyRole, ROLE_MAP} from '../../src/lib/role_map';
 
 describe('CHILDREN_PRESENTATIONAL', () => {
   // If every role with presentational children is either:
