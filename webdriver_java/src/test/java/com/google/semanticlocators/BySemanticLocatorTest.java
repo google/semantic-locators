@@ -1,10 +1,10 @@
 package com.google.semanticlocators;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.semanticlocators.WebDrivers.DRIVERS;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,18 +19,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 @RunWith(JUnitParamsRunner.class)
 public final class BySemanticLocatorTest {
-  // Use a string to identify browsers so the test names are readable
-  private static final ImmutableMap<String, WebDriver> DRIVERS =
-      ImmutableMap.of(
-          "chrome", new ChromeDriver(),
-          "firefox", new FirefoxDriver());
-
   @AfterClass
   public static void quitServer() throws Exception {
     DRIVERS.values().forEach(WebDriver::quit);
