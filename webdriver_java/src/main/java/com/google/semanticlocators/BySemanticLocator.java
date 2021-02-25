@@ -2,13 +2,13 @@ package com.google.semanticlocators;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.joining;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptException;
@@ -28,17 +28,18 @@ import org.openqa.selenium.remote.RemoteWebElement;
  * ArrayList<WebElement> allButtons = driver.findElements(new BySemanticLocator("{button}"));
  * }</pre>
  */
+// TODO(alexlloyd) make class final again
 public class BySemanticLocator extends By {
   private static final String JS_IMPLEMENTATION;
 
   static {
-    try {
-      try (InputStream in = BySemanticLocator.class.getResourceAsStream("/wrapper_bin.js")) {
-        JS_IMPLEMENTATION =
-            new BufferedReader(new InputStreamReader(in, UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
+    try (InputStream in = BySemanticLocator.class.getResourceAsStream("wrapper_bin.js")) {
+      if (in == null) {
+        throw new ExceptionInInitializerError(
+            "Failed to initialize semantic locators - couldn't open resource wrapper_bin.js");
       }
+      JS_IMPLEMENTATION =
+          new BufferedReader(new InputStreamReader(in, UTF_8)).lines().collect(joining("\n"));
     } catch (IOException e) {
       throw new ExceptionInInitializerError(e);
     }

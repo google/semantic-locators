@@ -6,7 +6,7 @@
 
   <groupId>com.google.semanticlocators</groupId>
   <artifactId>semantic-locators</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
 
   <name>semantic-locators</name>
   <url>http://github.com/google/semantic-locators</url>
@@ -76,7 +76,7 @@
                 <goal>copy-resources</goal>
               </goals>
               <configuration>
-                <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                <outputDirectory>${basedir}/src/main/resources/com/google/semanticlocators</outputDirectory>
                 <resources>
                   <resource>
                     <directory>${basedir}/../javascript/wrapper</directory>
