@@ -17,3 +17,6 @@ const allButtons = findElementsBySemanticLocator("{button}");
 
 const generated = closestPreciseLocatorFor(searchButton); // {button 'Google search'}
 ```
+
+General Semantic Locator documentation can be found on
+[GitHub](http://github.com/google/semantic-locators#readme).

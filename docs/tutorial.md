@@ -12,8 +12,11 @@ In the locator `{button 'OK'}` the role is `button` and the accessible name is
 
 ## Chrome Extension
 
-The easiest way to create Semantic Locators is to auto-generate them with a
+The **easiest way** to create Semantic Locators is to auto-generate them with a
 [Chrome Extension](https://chrome.google.com/webstore/detail/semantic-locators/cgjejnjgdbcogfgamjebgceckcmfcmji).
+
+The rest of this document describes manually writing Semantic Locators if the
+Chrome Extension doesn't work for you.
 
 ## Chrome Developer Console
 
@@ -122,9 +125,10 @@ match the inner `li`
 #### Attributes
 
 To select a checked checkbox (checked either with native html `checked` or
-`aria-checked`), use `{checkbox 'Name' checked:true}`. The list of supported
-attributes can be found in `SUPPORTED_ATTRIBUTES` at
-[types.ts](../javascript/lib/types.ts)
+`aria-checked`), use `{checkbox 'Name' checked:true}`.
+
+The source of truth for supported attributes is
+[`SUPPORTED_ATTRIBUTES`](https://github.com/google/semantic-locators/search?q=SUPPORTED_ATTRIBUTES+filename%3Atypes.ts).
 
 #### Multiple Semantic Locator elements
 

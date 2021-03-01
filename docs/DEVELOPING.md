@@ -33,10 +33,21 @@ Two markdown files are required for new integrations in this repository:
 1.  `README.md` explaining how a user can install and use your code
 2.  `DEVELOPING.md` explaining how a developer can test and deploy your code
 
-### Execute JavaScript
+### Wrapper Binary
 
-TODO(alexlloyd)
+[`javascript/wrapper_bin.js`](../javascript/wrapper/wrapper_bin.js) contains the
+compiled definition of Semantic Locators to be used from wrapper libraries.
+Avoid duplicating the file within this repo, instead it should be copied as part
+of a build script. For example see the `copy-resources` section in
+[`webdriver_java/pom.xml`](../webdriver_java/pom.xml).
 
-### Handle Errors
+### Execution
 
-TODO(alexlloyd)
+See
+[`BySemanticLocator.java`](../webdriver_java/src/main/java/com/google/semanticlocators/BySemanticLocator.java)
+for a reference implementation. The basic flow is:
+
+*   Read `wrapper_bin.js`
+*   Execute the script in the browser
+*   Run `return window.<semantic locator function>.apply(null, arguments);`
+*   Parse any failures and throw an appropriate exception

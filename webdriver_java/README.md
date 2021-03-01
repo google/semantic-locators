@@ -24,5 +24,5 @@ WebElement searchButton = driver.findElement(new BySemanticLocator("{button 'Goo
 ArrayList<WebElement> allButtons = driver.findElements(new BySemanticLocator("{button}"));
 ```
 
-See http://github.com/google/semantic-locators#readme for general documentation
-on Semantic Locators.
+General Semantic Locator documentation can be found on
+[GitHub](http://github.com/google/semantic-locators#readme).
