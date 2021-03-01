@@ -1,9 +1,9 @@
 # Semantic Locators
 
-Semantic locators are a human readable, resilient and a11y-enforcing way to find
+Semantic locators is a human readable, resilient and a11y-enforcing way to find
 web elements.
 
-They're available in [JavaScript and TypeScript](javascript/README.md) and
+It's available in [JavaScript and TypeScript](javascript/README.md) and
 [Java WebDriver](webdriver_java/README.md). More bindings are coming soon.
 
 **Just want to get started writing semantic locators? See the
@@ -22,8 +22,8 @@ HTML                                               | Semantic Locator
 ## Introduction
 
 There are various ways to define HTML elements which are semantically identical,
-i.e. they permit the same user interactions. The following all express the same
-semantics:
+i.e. they permit the same user interactions. All the following HTML elements have
+equivalent semantics:
 
 ```html
 <button>OK</button>
