@@ -1,5 +1,7 @@
 # Semantic Locators
 
+![Magnifying glass icon](docs/img/icon_64dp.svg)
+
 Semantic locators are a way to find web elements. They're stable, readable,
 enforce accessibility and can be auto-generated.
 
