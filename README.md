@@ -7,17 +7,16 @@ enforce accessibility and can be auto-generated.
 
 As an example, the locator for a Send button would be `{button 'Send'}`.
 
-Just want to get started writing semantic locators? See the
-[tutorial](docs/tutorial.md), or read on for an introduction.
+Just want to get started writing semantic locators? See the [tutorial](docs/tutorial.md), or read on for an introduction.
 
 ## Getting started
 
 See the getting started instructions for your environment:
 
-*   [JavaScript/TypeScript in the browser](javascript/README.md)
-*   [Java WebDriver](webdriver_java/README.md)
-*   Something else? Adding support for a new platform is simple. See
-    [DEVELOPING.md](docs/DEVELOPING.md) for instructions.
+* [JavaScript/TypeScript in the browser](javascript/README.md)
+* [Java WebDriver](webdriver_java/README.md)
+* Something else? Adding support for a new platform is simple. See
+[DEVELOPING.md](docs/DEVELOPING.md) for instructions.
 
 ## Examples
 
@@ -31,17 +30,11 @@ HTML                                               | Semantic Locator
 
 ## Why Semantic Locators?
 
-As the name suggests, Semantic Locators find elements based on their
-**semantics**. This has a number of benefits over other types of locators, but
-first we must define the term "semantics".
+As the name suggests, Semantic Locators find elements based on their **semantics**. This has a number of benefits over other types of locators, but first we must define the term "semantics".
 
-The semantics of an element describe its meaning to a user. Is it a button or a
-checkbox? Will it submit or cancel an operation? When using assistive
-technologies like screen readers, the semantics of an element determine how it
-is described to users.
+The semantics of an element describe its meaning to a user. Is it a button or a checkbox? Will it submit or cancel an operation? When using assistive technologies like screen readers, the semantics of an element determine how it is described to users.
 
-There are many semantically equivalent ways to implement OK buttons. The
-following elements are all matched by the semantic locator `{button 'OK'}`.
+There are many semantically equivalent ways to implement OK buttons. The following elements are all matched by the semantic locator `{button 'OK'}`.
 
 ```html
 <button>OK</button>
@@ -52,10 +45,9 @@ following elements are all matched by the semantic locator `{button 'OK'}`.
 <button id="element_id">...</button><label for="element_id">OK</label
 ```
 
-To be precise, `button` refers to the
-**[ARIA role](https://www.w3.org/TR/html-aria/#docconformance)** expressed by
-the element. `'OK'` refers to the
-**[accessible name](https://www.w3.org/TR/accname/)** of the element.
+To be precise, `button` refers to the **[ARIA role](https://www.w3.org/TR/html-aria/#docconformance)** expressed by the element.
+`'OK'` refers to the **[accessible name](https://www.w3.org/TR/accname/)** of
+the element.
 
 What benefits does matching semantics provide?
 

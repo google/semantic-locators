@@ -16,13 +16,11 @@ for more details about the implementation.
 Other directories such as `webdriver_java` contain "wrapper libraries", allowing
 for using Semantic Locators from other languages and environments. The purpose
 of these libraries is to execute the javascript implementation of Semantic
-Locators in the browser. Each should contain a `DEVELOPING.md` file with
-instructions specific to that environment
+Locators in the browser. Each should contain a `DEVELOPING.md` file with instructions specific to that environment
 
 ## Adding a new integration
 
-Integrating Semantic Locators with a new language/environment/library is usually
-a straightforward task (<1 day of effort).
+Integrating Semantic Locators with a new language/environment/library is usually a straightforward task (<1 day of effort).
 
 See [`webdriver_java`](../webdriver_java) for an example.
 
@@ -30,8 +28,8 @@ See [`webdriver_java`](../webdriver_java) for an example.
 
 Two markdown files are required for new integrations in this repository:
 
-1.  `README.md` explaining how a user can install and use your code
-2.  `DEVELOPING.md` explaining how a developer can test and deploy your code
+1. `README.md` explaining how a user can install and use your code
+2. `DEVELOPING.md` explaining how a developer can test and deploy your code
 
 ### Wrapper Binary
 
@@ -43,11 +41,9 @@ of a build script. For example see the `copy-resources` section in
 
 ### Execution
 
-See
-[`BySemanticLocator.java`](../webdriver_java/src/main/java/com/google/semanticlocators/BySemanticLocator.java)
-for a reference implementation. The basic flow is:
+See [`BySemanticLocator.java`](../webdriver_java/src/main/java/com/google/semanticlocators/BySemanticLocator.java) for a reference implementation. The basic flow is:
 
-*   Read `wrapper_bin.js`
-*   Execute the script in the browser
-*   Run `return window.<semantic locator function>.apply(null, arguments);`
-*   Parse any failures and throw an appropriate exception
+* Read `wrapper_bin.js`
+* Execute the script in the browser
+* Run `return window.<semantic locator function>.apply(null, arguments);`
+* Parse any failures and throw an appropriate exception

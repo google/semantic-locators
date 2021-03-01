@@ -34,15 +34,15 @@ a `button`) can be found in [`role_map.ts`](src/lib/role_map.ts).
 
 ### Locating by Selectors
 
-Let's take a high-level look at how a Semantic Locator is resolved - how do we
+Let's take a high-level look at  how a Semantic Locator is resolved - how do we
 go from `{button 'OK'}` to the correct elements in the DOM?
 
 #### Locating by Role
 
 First we find all elements which have a role of `button` in
 [`role.ts`](src/lib/role.ts). In order to do this efficiently we use CSS
-selectors wherever possible. [`role_map.ts`](src/lib/role_map.ts) gives us 2
-things for the role `button`:
+selectors wherever possible. [`role_map.ts`](src/lib/role_map.ts) gives
+us 2 things for the role `button`:
 
 1.  An exact selector - `button,summary`. We know that any element matching this
     selector has a role of button (unless that is overridden with an explicit

@@ -65,8 +65,8 @@ e.g. `{link 'More information...'}`:
 #### Can you use an ancestor element instead?
 
 If the element itself has no explicit or implicit semantics then you can select
-an ancestor element (parent or grandparent or...). Sometimes selecting the
-ancestor will be sufficient.
+an ancestor element (parent or grandparent or...). Sometimes selecting the ancestor
+will be sufficient.
 
 ### Finding the value
 
@@ -89,8 +89,7 @@ e.g. `{tree 'Global settings'}`:
 
 #### Does the element contain text?
 
-You can use this text as the value if the role supports
-[name from content](https://www.w3.org/TR/wai-aria/#namefromcontent).
+You can use this text as the value if the role supports [name from content](https://www.w3.org/TR/wai-aria/#namefromcontent).
 
 e.g. `{link 'More information...'}`:
 
