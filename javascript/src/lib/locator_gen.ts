@@ -10,7 +10,7 @@ import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
 import {getRole, isHidden} from './role';
 import {isChildrenPresentational} from './role_map';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
-import {assert, hasTagName} from './util';
+import {assert} from './util';
 
 /**
  * Build a semantic locator with one node (e.g. {button 'OK'}) for the given
