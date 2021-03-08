@@ -31,6 +31,7 @@ import org.openqa.selenium.remote.RemoteWebElement;
 // TODO(alexlloyd) make class final again
 public class BySemanticLocator extends By {
   private static final String JS_IMPLEMENTATION;
+
   static {
     try (InputStream in = BySemanticLocator.class.getResourceAsStream("wrapper_bin.js")) {
       if (in == null) {
@@ -51,7 +52,7 @@ public class BySemanticLocator extends By {
    * https://www.w3.org/TR/html-aria/#docconformance.
    */
   public BySemanticLocator(String semanticLocator) {
-      this.semanticLocator = semanticLocator;
+    this.semanticLocator = semanticLocator;
   }
 
   @Override
@@ -64,7 +65,7 @@ public class BySemanticLocator extends By {
 
   @Override
   public WebElement findElement(SearchContext context) {
-      return (WebElement) callJsFunction(context, "findElementBySemanticLocator", semanticLocator);
+    return (WebElement) callJsFunction(context, "findElementBySemanticLocator", semanticLocator);
   }
 
   protected static final Object callJsFunction(

@@ -1,10 +1,10 @@
 # Developing Semantic Locators Java
 
 Install
-  [Maven](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html),
-  [ChromeDriver](https://chromedriver.chromium.org/getting-started) and
-  [geckodriver](https://github.com/mozilla/geckodriver)
-  if they're not already installed.
+[Maven](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html),
+[ChromeDriver](https://chromedriver.chromium.org/getting-started) and
+[geckodriver](https://github.com/mozilla/geckodriver) if they're not already
+installed.
 
 Get a copy of the code and verify that tests pass on your system
 
