@@ -15,12 +15,6 @@ export class SemanticLocatorError extends Error {
   }
 }
 
-/** Type guard for SemanticLocatorError. */
-export function isSemanticLocatorError(error: Error):
-    error is SemanticLocatorError {
-  return (error as SemanticLocatorError).extendedMessage !== undefined;
-}
-
 /** No element found for the given locator. */
 export class NoSuchElementError extends SemanticLocatorError {
   errorName = 'NoSuchElementError';

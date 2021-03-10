@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {isSemanticLocatorError} from 'google3/third_party/semantic_locators/javascript/lib/error';
+import {SemanticLocatorError} from 'google3/third_party/semantic_locators/javascript/lib/error';
 import {findElementBySemanticLocator, findElementsBySemanticLocator} from 'semantic-locators';
-import {closestPreciseLocatorFor} from 'semantic-locators/gen';
+import {closestPreciseLocatorFor, preciseLocatorFor} from 'semantic-locators/gen';
 
 /**
  * Error class is lost when returning from WebDriver.executeScript, so include
  * the class name in the error message.
  */
-function wrapError<T extends unknown[], U>(func: Func<T, U>): Func<T, U> {
-  return (...args: T) => {
+function wrapError(func: Function): Function {
+  return (...args: unknown[]) => {
     try {
       return func(...args);
-    } catch (error) {
-      if (isSemanticLocatorError(error)) {
+    } catch (error: unknown) {
+      if (error instanceof SemanticLocatorError) {
         error = new Error(error.extendedMessage());
       }
       throw error;
@@ -25,18 +25,18 @@ function wrapError<T extends unknown[], U>(func: Func<T, U>): Func<T, U> {
   };
 }
 
-type Func<T extends unknown[], U> = (...args: T) => U;
+function exportGlobal(name: string, value: unknown) {
+  if (typeof value === 'function') {
+    value = wrapError(value);
+  }
+  // tslint:disable-next-line:no-any Set global.
+  (window as any)[name] = value;
+}
 
-// tslint:disable-next-line:no-any Set global.
-(window as any)['findElementsBySemanticLocator'] =
-    wrapError(findElementsBySemanticLocator);
-// tslint:disable-next-line:no-any Set global.
-(window as any)['findElementBySemanticLocator'] =
-    wrapError(findElementBySemanticLocator);
-// tslint:disable-next-line:no-any Set global.
-(window as any)['closestPreciseLocatorFor'] =
-    wrapError(closestPreciseLocatorFor);
+exportGlobal('findElementsBySemanticLocator', findElementsBySemanticLocator);
+exportGlobal('findElementBySemanticLocator', findElementBySemanticLocator);
+exportGlobal('closestPreciseLocatorFor', closestPreciseLocatorFor);
+exportGlobal('preciseLocatorFor', preciseLocatorFor);
 
 // Marker for clients to check that semantic locators have been loaded
-// tslint:disable-next-line:no-any Set global.
-(window as any)['semanticLocatorsReady'] = true;
+exportGlobal('semanticLocatorsReady', true);
