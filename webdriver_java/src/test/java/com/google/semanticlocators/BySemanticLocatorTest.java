@@ -14,7 +14,6 @@ import junitparams.Parameters;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -94,95 +93,6 @@ public final class BySemanticLocatorTest {
     assertThrows(
         NoSuchElementException.class,
         () -> driver.findElement(new BySemanticLocator("{button 'this label does not exist'}")));
-  }
-  
-  @Test
-  @Parameters(method = "preciseLocatorForWithoutRootTests")
-  public void preciseLocatorFor_generatesLocatorForElement(
-      String expected, String html, String driverName) {
-    WebDriver driver = getDriver(driverName);
-    renderHtml(html, driver);
-
-    WebElement target = driver.findElement(By.id("target"));
-    assertThat(BySemanticLocator.preciseLocatorFor(target)).isEqualTo(expected);
-  }
-
-  private static List<List<String>> preciseLocatorForWithoutRootTests() {
-    return withAllDriverNames(
-        asList(
-            asList("{button 'OK'}", "<button id='target'>OK</button>"),
-            asList(
-                "{listitem} {button 'OK'}",
-                "<ul><li><button id='target'>OK</button></li></ul><button>OK</button>"),
-            asList(null, "<button><div id='target'>OK</div></button>")));
-  }
-
-  @Test
-  @Parameters(method = "preciseLocatorForWithRootTests")
-  public void preciseLocatorFor_acceptsRootEl(String expected, String html, String driverName) {
-    WebDriver driver = getDriver(driverName);
-    renderHtml(html, driver);
-
-    WebElement target = driver.findElement(By.id("target"));
-    WebElement root = driver.findElement(By.id("root"));
-    assertThat(BySemanticLocator.preciseLocatorFor(target, root)).isEqualTo(expected);
-  }
-
-  private static List<List<String>> preciseLocatorForWithRootTests() {
-    return withAllDriverNames(
-        asList(
-            asList("{button 'OK'}", "<div id='root'><button id='target'>OK</button></div>"),
-            asList(
-                "{button 'OK'}",
-                "<div id='root'><ul><li><button id='target'>OK</button></li></ul></div>"
-                    + "<button>OK</button>"),
-            asList(null, "<div id='root'><button><div id='target'>OK</div></button></div>")));
-  }
-
-  @Test
-  @Parameters(method = "closestPreciseLocatorForWithoutRootTests")
-  public void closestPreciseLocatorFor_generatesLocatorForElement(
-      String expected, String html, String driverName) {
-    WebDriver driver = getDriver(driverName);
-    renderHtml(html, driver);
-
-    WebElement target = driver.findElement(By.id("target"));
-    assertThat(BySemanticLocator.closestPreciseLocatorFor(target)).isEqualTo(expected);
-  }
-
-  private static List<List<String>> closestPreciseLocatorForWithoutRootTests() {
-    return withAllDriverNames(
-        asList(
-            asList("{button 'OK'}", "<button id='target'>OK</button>"),
-            asList(
-                "{listitem} {button 'OK'}",
-                "<ul><li><button id='target'>OK</button></li></ul><button>OK</button>"),
-            asList("{button 'OK'}", "<button><div id='target'>OK</div></button>")));
-  }
-
-  @Test
-  @Parameters(method = "closestPreciseLocatorForWithRootTests")
-  public void closestPreciseLocatorFor_acceptsRootEl(
-      String expected, String html, String driverName) {
-    WebDriver driver = getDriver(driverName);
-    renderHtml(html, driver);
-
-    WebElement target = driver.findElement(By.id("target"));
-    WebElement root = driver.findElement(By.id("root"));
-    assertThat(BySemanticLocator.closestPreciseLocatorFor(target, root)).isEqualTo(expected);
-  }
-
-  private static List<List<String>> closestPreciseLocatorForWithRootTests() {
-    return withAllDriverNames(
-        asList(
-            asList("{button 'OK'}", "<div id='root'><button id='target'>OK</button></div>"),
-            asList(
-                "{button 'OK'}",
-                "<div id='root'><ul><li><button id='target'>OK</button></li></ul></div>"
-                    + "<button>OK</button>"),
-            asList(
-                "{button 'OK'}",
-                "<div id='root'><button><div id='target'>OK</div></button></div>")));
   }
 
   private static void renderHtml(String html, WebDriver driver) {

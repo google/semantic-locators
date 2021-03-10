@@ -22,8 +22,6 @@ import com.google.semanticlocators.BySemanticLocator;
 
 WebElement searchButton = driver.findElement(new BySemanticLocator("{button 'Google search'}"));
 ArrayList<WebElement> allButtons = driver.findElements(new BySemanticLocator("{button}"));
-
-String generated = BySemanticLocator.closestPreciseLocatorFor(searchButton); // {button 'Google search'}
 ```
 
 General Semantic Locator documentation can be found on

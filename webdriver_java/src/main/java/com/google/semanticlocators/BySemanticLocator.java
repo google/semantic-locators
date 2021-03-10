@@ -57,8 +57,7 @@ public class BySemanticLocator extends By {
 
   @Override
   public ArrayList<WebElement> findElements(SearchContext context) {
-    Object result =
-        callJsFunction(getExecutor(context), "findElementsBySemanticLocator", semanticLocator);
+    Object result = callJsFunction(context, "findElementsBySemanticLocator", semanticLocator);
     @SuppressWarnings("unchecked")
     ArrayList<WebElement> cast = (ArrayList<WebElement>) result;
     return cast;
@@ -66,68 +65,38 @@ public class BySemanticLocator extends By {
 
   @Override
   public WebElement findElement(SearchContext context) {
-    return (WebElement)
-        callJsFunction(getExecutor(context), "findElementBySemanticLocator", semanticLocator);
-  }
-
-  /**
-   * Builds the most precise locator which matches `element`. If `element` does not have a role,
-   * return a semantic locator which matches the closest ancestor with a role. "Precise" means that
-   * it matches the fewest other elements, while being as short as possible.
-   */
-  public static String closestPreciseLocatorFor(WebElement element) {
-    return (String) callJsFunction(getExecutor(element), "closestPreciseLocatorFor", element);
-  }
-
-  /**
-   * Builds the most precise locator which matches `element`, using `rootEl` as the root. If
-   * `element` does not have a role, return a semantic locator which matches the closest ancestor
-   * with a role. "Precise" means that it matches the fewest other elements, while being as short as
-   * possible.
-   */
-  public static String closestPreciseLocatorFor(WebElement element, WebElement rootEl) {
-    return (String)
-        callJsFunction(getExecutor(element), "closestPreciseLocatorFor", element, rootEl);
-  }
-
-  /**
-   * Builds the most precise locator which matches `element`. "Precise" means that it matches the
-   * fewest other elements, while being as short as possible.
-   */
-  public static String preciseLocatorFor(WebElement element) {
-    return (String) callJsFunction(getExecutor(element), "preciseLocatorFor", element);
-  }
-
-  /**
-   * Builds the most precise locator which matches `element`, using `rootEl` as the root. "Precise"
-   * means that it matches the fewest other elements, while being as short as possible.
-   */
-  public static String preciseLocatorFor(WebElement element, WebElement rootEl) {
-    return (String) callJsFunction(getExecutor(element), "preciseLocatorFor", element, rootEl);
+    return (WebElement) callJsFunction(context, "findElementBySemanticLocator", semanticLocator);
   }
 
   protected static final Object callJsFunction(
-      JavascriptExecutor executor, String function, Object... args) {
-    loadDefinition(executor);
-    String script = String.format("return window.%s.apply(null, arguments);", function);
+      SearchContext context, String function, Object argument) {
+    loadDefinition(context);
 
+    String script = "return window." + function + ".apply(null, arguments);";
+
+    Object result;
     try {
-      return executor.executeScript(script, args);
+      result =
+          context instanceof WebElement
+              ? getExecutor(context).executeScript(script, argument, context)
+              : getExecutor(context).executeScript(script, argument);
     } catch (JavascriptException e) {
       throw deserializeException(e);
     }
+    return result;
   }
 
-  private static void loadDefinition(JavascriptExecutor executor) {
+  private static void loadDefinition(SearchContext context) {
     // TODO(alexlloyd) it might actually be more efficient to load+call semantic locators in one
     // script each time. It depends how the round trip of a call to executeScript compares with the
     // time to load the definition
+    JavascriptExecutor executor = getExecutor(context);
     if ((Boolean) executor.executeScript("return window.semanticLocatorsReady !== true;")) {
       executor.executeScript(JS_IMPLEMENTATION);
     }
   }
 
-  protected static JavascriptExecutor getExecutor(SearchContext context) {
+  private static JavascriptExecutor getExecutor(SearchContext context) {
     if (context instanceof JavascriptExecutor) {
       return (JavascriptExecutor) context;
     } else if (context instanceof RemoteWebElement) {
