@@ -9,7 +9,7 @@ Add the following to your `pom.xml`:
 <dependency>
   <groupId>com.google.semanticlocators</groupId>
   <artifactId>semantic-locators</artifactId>
-  <version>0.3.1</version>
+  <version>1.0.0</version>
   <scope>test</scope>
 </dependency>
 ```

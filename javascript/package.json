@@ -1,6 +1,6 @@
 {
   "name": "semantic-locators",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements.",
   "main": "dist/src/semantic_locators.js",
   "module": "dist/src/semantic_locators.js",
