@@ -108,7 +108,7 @@ function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
  * semantic nodes).
  */
 function closestFullLocator(element: HTMLElement, root: HTMLElement):
-    {nodes: SemanticNode[], element: HTMLElement}|null {
+    {nodes: SemanticNode[]; element: HTMLElement}|null {
   let first = closestSemanticNode(element, root);
   if (first === null) {
     return null;
@@ -165,12 +165,11 @@ function refine(nodes: SemanticNode[], element: HTMLElement, root: HTMLElement):
  * `<body>`.
  */
 function closestSemanticNode(el: HTMLElement, root: HTMLElement):
-    {node: SemanticNode, element: HTMLElement}|null {
+    {node: SemanticNode; element: HTMLElement}|null {
   let element: HTMLElement|null = el;
   // Exclude body elements as the `{document}` node would alwasys be stripped
   // out
-  while (element !== null &&
-         root.contains(element) && root !== element) {
+  while (element !== null && root.contains(element) && root !== element) {
     const node = semanticNodeFor(element);
     if (node !== null) {
       return {node, element};

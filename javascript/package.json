@@ -20,8 +20,14 @@
     "build": "yarn && tsc",
     "ibuild": "yarn && tsc --watch",
     "pretest": "yarn build",
-    "test": "karma start --browsers ChromeHeadless --single-run",
-    "prepack": "yarn test"
+    "test": "karma start --browsers ChromeHeadless,FirefoxHeadless --single-run --no-auto-watch",
+    "itest": "karma start --browsers Chrome,Firefox",
+    "prepack": "yarn test",
+    "fix": "yarn fix-lint && yarn fix-format",
+    "check-lint": "eslint --ext .ts src test",
+    "fix-lint": "eslint --ext .ts --fix src test",
+    "check-format": "clang-format --version; find src test ! -path 'src/lib/parser.ts' | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file --dry-run -Werror",
+    "fix-format": "clang-format --version; find src test ! -path 'src/lib/parser.ts' | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
   },
   "repository": {
     "type": "git",
@@ -42,6 +48,14 @@
   },
   "devDependencies": {
     "@types/jasmine": "^3.6.2",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "clang-format": "^1.4.0",
+    "eslint": "^7.21.0",
+    "eslint-plugin-ban": "^1.5.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^32.2.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "jasmine-core": "^3.6.0",
     "karma": "^5.2.3",
     "karma-chrome-launcher": "^3.1.0",
@@ -49,7 +63,7 @@
     "karma-jasmine": "^4.0.1",
     "karma-spec-reporter": "0.0.32",
     "karma-typescript": "^5.2.0",
-    "karma-typescript-es6-transform": "^5.2.0",
+    "karma-typescript-es6-transform": "~5.3.0",
     "lit-html": "^1.3.0",
     "typescript": "^4.1.3"
   }

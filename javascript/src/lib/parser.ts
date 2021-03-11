@@ -18,6 +18,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// clang-format off
 // @ts-nocheck
 // tslint:disable
 import {SemanticLocator, SemanticNode} from "./semantic_locator";

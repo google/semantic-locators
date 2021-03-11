@@ -8,6 +8,9 @@ import {html, render} from 'lit-html';
 
 import {hasDataInColumn, hasDataInRow, TEST_ONLY} from '../../src/lib/table';
 
+// ESLint can't tell that RenderedGrid is a class and I can't work out a
+// configuration which allows this without being too lax
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const {gridFromTable, RenderedGrid} = TEST_ONLY;
 
 let container: HTMLElement;

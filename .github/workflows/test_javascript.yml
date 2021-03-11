@@ -1,0 +1,31 @@
+name: Test javascript
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+
+jobs:
+  test_javascript:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Cancel previous
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v1
+
+      - name: Test javascript
+        working-directory: ./javascript
+        run: |
+          yarn install --frozen-lockfile
+          yarn test

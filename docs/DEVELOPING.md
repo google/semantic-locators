@@ -51,3 +51,9 @@ for a reference implementation. The basic flow is:
 *   Execute the script in the browser
 *   Run `return window.<semantic locator function>.apply(null, arguments);`
 *   Parse any failures and throw an appropriate exception
+
+### CI
+
+It's strongly recommended to add Continuous Integration to test and lint your
+code. We use GitHub actions - see the existing workflows in
+`.github/workflows/*.yml`.
