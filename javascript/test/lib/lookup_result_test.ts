@@ -146,7 +146,7 @@ describe('buildFailureMessage', () => {
                [],
                ))
         .toEqual(`${
-            START} No elements have an ARIA role of button. 1 hidden element matched the locator. Pass includeHidden=true in findElement(s)BySemanticLocator to include these elements.`);
+            START} No elements have an ARIA role of button. 1 hidden element matched the locator. To match these elements, ensure they're not hidden (aria-hidden is false and they're not hidden by css).`);
   });
 
   it('hints if presentational elements are missing', () => {

@@ -118,9 +118,9 @@ export function buildFailureMessage(
   if (hiddenElements.length > 0) {
     const hiddenPlural = hiddenElements.length > 1;
     result += ` ${hiddenElements.length} hidden ` +
-        `element${hiddenPlural ? 's' : ''} matched the locator. Pass ` +
-        `includeHidden=true in findElement(s)BySemanticLocator to include ` +
-        `these elements.`;
+        `element${hiddenPlural ? 's' : ''} matched the locator. To match ` +
+        `these elements, ensure they're not hidden (aria-hidden is false ` +
+        `and they're not hidden by css).`;
   }
 
   if (presentationalElements.length > 0) {

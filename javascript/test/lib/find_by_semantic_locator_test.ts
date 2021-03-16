@@ -448,30 +448,6 @@ describe('findElementsBySemanticLocator', () => {
       document.getElementById('bar')!
     ]);
   });
-
-  it('includes hidden elements with `includeHidden`', () => {
-    render(
-        html`
-        <ul aria-hidden="true">
-          <li>OK</li>
-        </ul>
-        <ul style="visibility:hidden;">
-          <li>OK</li>
-        </ul>
-        <ul style="display:none;">
-          <li>OK</li>
-        </ul>
-        <ul id="foo">
-          <li id="bar">OK</li>
-        </ul>
-        `,
-        container);
-
-    expect(findElementsBySemanticLocator('{list}', container, true))
-        .toEqual(Array.from(container.querySelectorAll('ul')));
-    expect(findElementsBySemanticLocator('{listitem}', container, true))
-        .toEqual(Array.from(container.querySelectorAll('li')));
-  });
 });
 
 describe('findElementBySemanticLocator', () => {

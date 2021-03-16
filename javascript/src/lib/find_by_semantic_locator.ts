@@ -22,9 +22,8 @@ import {assertInDocumentOrder, compareNodeOrder, removeDuplicates} from './util'
 export function findElementsBySemanticLocator(
     locator: string,
     root: HTMLElement = document.body,
-    includeHidden: boolean = false,
     ): HTMLElement[] {
-  const result = findBySemanticLocator(parse(locator), root, includeHidden);
+  const result = findBySemanticLocator(parse(locator), root);
   if (isEmptyResultsMetadata(result)) {
     return [];
   }
@@ -38,17 +37,14 @@ export function findElementsBySemanticLocator(
 export function findElementBySemanticLocator(
     locator: string,
     root: HTMLElement = document.body,
-    includeHidden: boolean = false,
     ): HTMLElement {
   const parsed = parse(locator);
-  const result = findBySemanticLocator(parsed, root, includeHidden);
+  const result = findBySemanticLocator(parsed, root);
   if (isEmptyResultsMetadata(result)) {
     let hiddenMatches: readonly HTMLElement[] = [];
-    if (!includeHidden) {
-      const hiddenResult = findBySemanticLocator(parsed, root, true);
-      hiddenMatches =
-          isEmptyResultsMetadata(hiddenResult) ? [] : hiddenResult.found;
-    }
+    const hiddenResult = findBySemanticLocator(parsed, root, true);
+    hiddenMatches =
+        isEmptyResultsMetadata(hiddenResult) ? [] : hiddenResult.found;
     const presentationalResult =
         findBySemanticLocator(parsed, root, false, true);
     const presentationalMatches = isEmptyResultsMetadata(presentationalResult) ?
