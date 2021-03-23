@@ -39,16 +39,11 @@ matches:
 <button>example.com/abc-def-ghi</button>
 ```
 
-Wildcards can also be used at the start of a name, e.g. `*example.com'` for
+Wildcards can also be used anywhere in a name e.g. `{button
+'https://*.example.com/*'}` for
 
-```html {highlight="content:example\.com"}
-<button>https://example.com</button>
-```
-
-or at both the start and end, e.g. `*example.com*` for
-
-```html {highlight="content:example\.com"}
-<button>https://example.com/abc-def-ghi</button>
+```html {highlight="content:https:// content:\.example\.com/"}
+<button>https://subdomain.example.com/path</button>
 ```
 
 ## Attributes

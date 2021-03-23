@@ -19,16 +19,26 @@ export function nameMatches(expected: string, actual: string): boolean {
         '* is invalid as an accessible name. To match any ' +
         'accessible name omit it from the locator e.g. {button}.');
   }
-  if (expected.startsWith('*') && expected.endsWith('*')) {
-    return actual.includes(expected.slice(1, -1));
+  // TODO(alexlloyd) support escaping * to use in the accname (then this logic
+  // should probably be moved to the pegjs parser)
+  const nameParts = expected.split('*');
+
+  // If the expected string doesn't start/end with * then we must check the
+  // start/end of the actual value
+  if (!actual.startsWith(nameParts[0]) ||
+      !actual.endsWith(nameParts[nameParts.length - 1])) {
+    return false;
   }
-  if (expected.startsWith('*')) {
-    return actual.endsWith(expected.slice(1));
+
+  let currentIndex = 0;
+  for (const part of nameParts) {
+    currentIndex = actual.indexOf(part, currentIndex);
+    if (currentIndex === -1) {
+      return false;
+    }
+    currentIndex += part.length;
   }
-  if (expected.endsWith('*')) {
-    return actual.startsWith(expected.slice(0, -1));
-  }
-  return actual === expected;
+  return true;
 }
 
 /**

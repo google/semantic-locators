@@ -286,7 +286,7 @@ describe('findElementsBySemanticLocator', () => {
           .toEqual([document.getElementById('foo')!]);
     });
 
-    it('accepts leading and trailing wildcards', () => {
+    it('accepts wildcards everywhere', () => {
       render(
           html`
         <button id="foo">I think This is fine!</button>
@@ -296,7 +296,7 @@ describe('findElementsBySemanticLocator', () => {
           container);
 
       expect(
-          findElementsBySemanticLocator('{button "*This is fine*"}', container))
+          findElementsBySemanticLocator('{button "*This * fine*"}', container))
           .toEqual([document.getElementById('foo')!]);
     });
 

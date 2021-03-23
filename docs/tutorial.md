@@ -98,8 +98,8 @@ e.g. `{link 'More information...'}`:
 
 #### Don't know exactly what the value will be? (Or value is very long)
 
-Values accept `*` as a wildcard at the start and end (e.g. `'* view'` `'Calendar
-name: *'`, `'*.google.com/*'`)
+Values accept `*` as a wildcard (e.g. `'* view'` `'Calendar name: *'`,
+`'https://*.google.com/*'`)
 
 e.g. `{button 'Today*'}`:
 

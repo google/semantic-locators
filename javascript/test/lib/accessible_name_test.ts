@@ -37,10 +37,17 @@ describe('nameMatches', () => {
        expect(nameMatches('foo*', 'bar foo')).toBeFalse();
      });
 
-  it('matches with leading and trailing wildcard', () => {
-    expect(nameMatches('*foo*', 'foo')).toBeTrue();
-    expect(nameMatches('*foo*', 'this string has "foo" in the middle'))
-        .toBeTrue();
+  it('matches with wildcard in the middle', () => {
+    expect(nameMatches('foo*baz', 'foobarbaz')).toBeTrue();
+    expect(nameMatches('foo*baz', 'foobaz')).toBeTrue();
+    expect(nameMatches('foo*baz', 'fooaz')).toBeFalse();
+  });
+
+
+  it('matches with wildcards everywhere', () => {
+    expect(nameMatches('I am * Bat*', 'I am not Batman')).toBeTrue();
+    expect(nameMatches('I am * Bat*', 'I am a Bat')).toBeTrue();
+    expect(nameMatches('I am * Bat*', 'I am Bat')).toBeFalse();
   });
 
   it('doesn\'t match with leading and trailing wildcard if actual doesn\'t contain expected',
