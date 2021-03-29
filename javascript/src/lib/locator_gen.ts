@@ -145,10 +145,13 @@ function closestFullLocator(element: HTMLElement, root: HTMLElement):
 
 /**
  * Removes any `SemanticNodes` which don't affect which elements the nodes
- * match, and adds "outer" if it helps. Returns `null` if `nodes` is empty
+ * match, and adds "outer" if it helps. Returns `null` if `nodes` is empty.
+ *
+ * Assumes that `element` is matched by `new SemanticLocator(nodes, [])`.
  */
-function refine(nodes: SemanticNode[], element: HTMLElement, root: HTMLElement):
-    SemanticLocator {
+export function refine(
+    nodes: SemanticNode[], element: HTMLElement,
+    root: HTMLElement): SemanticLocator {
   assert(nodes.length !== 0, 'Trying to refine empty array of nodes');
   const requiredNodes = removeRedundantNodes(nodes, root);
   assert(
