@@ -113,4 +113,17 @@ describe('parser', () => {
             'Failed to parse semantic locator "{button "OK"". ' +
             'Expected "}" or [a-z] but end of input found.');
   });
+  it('should isolate any Unicode BiDi control chars in the accname', () => {
+    expect(parse('{button "\u202bfoo*"}'))
+        .toEqual(new SemanticLocator(
+            [new SemanticNode('button', [], '\u202bfoo*')], []));
+
+    expect(parse('{button "foo\u202b"}'))
+        .toEqual(new SemanticLocator(
+            [new SemanticNode('button', [], 'foo\u202b')], []));
+
+    expect(parse('{button "\u202efoo*"}'))
+        .toEqual(new SemanticLocator(
+            [new SemanticNode('button', [], '\u202efoo*')], []));
+  });
 });
