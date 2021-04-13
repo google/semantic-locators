@@ -11,8 +11,9 @@ import {buildFailureMessage, combineMostSpecific, EmptyResultsMetadata, isEmptyR
 import {outerNodesOnly} from './outer';
 import {parse} from './parse_locator';
 import {findByRole} from './role';
-import {SemanticLocator, SemanticNode} from './semantic_locator';
-import {assertInDocumentOrder, compareNodeOrder, removeDuplicates} from './util';
+import {AttributeMap, SemanticLocator, SemanticNode} from './semantic_locator';
+import {SupportedAttributeType} from './types';
+import {assertInDocumentOrder, compareNodeOrder, entries, removeDuplicates} from './util';
 
 
 /**
@@ -168,21 +169,21 @@ function findBySemanticNode(
     };
   }
 
-  const attributes = node.attributes;
-  for (let i = 0; i < attributes.length; i++) {
+  const resolvedAttributes: AttributeMap = {};
+  for (const [name, value] of entries(node.attributes)) {
     const nextElements = elements.filter(
-        element => computeARIAAttributeValue(element, attributes[i].name) ===
-            attributes[i].value);
+        element => computeARIAAttributeValue(element, name) === value);
 
     if (nextElements.length === 0) {
       return {
         closestFind: [],
         elementsFound: elements,
-        notFound: {attribute: attributes[i]},
-        partialFind: {role: node.role, attributes: attributes.slice(0, i)},
+        notFound: {attribute: {name, value}},
+        partialFind: {role: node.role, attributes: resolvedAttributes},
       };
     }
     elements = nextElements;
+    resolvedAttributes[name] = value;
   }
 
   if (node.name) {

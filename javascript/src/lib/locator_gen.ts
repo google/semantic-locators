@@ -194,9 +194,7 @@ function semanticNodeFor(element: HTMLElement): SemanticNode|null {
       role,
       // TODO(alexlloyd) generate attributes - e.g. to refine a locator which
       // matches many similar elements
-      [],
-      getNameFor(element),
-  );
+      getNameFor(element));
 }
 
 /**

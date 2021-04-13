@@ -9,7 +9,7 @@ import {html, render} from 'lit-html';
 import {buildFailureMessage} from '../../src/lib/lookup_result';
 import {SemanticLocator, SemanticNode} from '../../src/lib/semantic_locator';
 
-const DUMMY_LOCATOR = new SemanticLocator([new SemanticNode('button', [])], []);
+const DUMMY_LOCATOR = new SemanticLocator([new SemanticNode('button')], []);
 const START = `Didn't find any elements matching semantic locator {button}.`;
 
 let container: HTMLElement;
@@ -39,21 +39,19 @@ describe('buildFailureMessage', () => {
   });
 
   it('explains if role fails to match', () => {
-    expect(
-        buildFailureMessage(
-            DUMMY_LOCATOR,
-            {
-              closestFind: [
-                new SemanticNode('list', []), new SemanticNode('listitem', [])
-              ],
-              elementsFound: [
-                document.createElement('div'), document.createElement('div')
-              ],
-              notFound: {role: 'button'}
-            },
-            [],
-            [],
-            ))
+    expect(buildFailureMessage(
+               DUMMY_LOCATOR,
+               {
+                 closestFind:
+                     [new SemanticNode('list'), new SemanticNode('listitem')],
+                 elementsFound: [
+                   document.createElement('div'), document.createElement('div')
+                 ],
+                 notFound: {role: 'button'}
+               },
+               [],
+               [],
+               ))
         .toEqual(`${
             START} 2 elements matched the locator {list} {listitem}, but none had a descendant with an ARIA role of button.`);
   });
@@ -64,7 +62,7 @@ describe('buildFailureMessage', () => {
         buildFailureMessage(
             DUMMY_LOCATOR,
             {
-              closestFind: [new SemanticNode('list', [])],
+              closestFind: [new SemanticNode('list')],
               partialFind: {role: 'listitem'},
               elementsFound: [
                 document.getElementById('foo')!, document.getElementById('bar')!
@@ -83,7 +81,7 @@ describe('buildFailureMessage', () => {
     expect(buildFailureMessage(
                DUMMY_LOCATOR,
                {
-                 closestFind: [new SemanticNode('list', [])],
+                 closestFind: [new SemanticNode('list')],
                  partialFind: {role: 'listitem'},
                  elementsFound: [document.getElementById('foo')!],
                  notFound: {name: 'OK'}
@@ -100,7 +98,7 @@ describe('buildFailureMessage', () => {
     expect(buildFailureMessage(
                DUMMY_LOCATOR,
                {
-                 closestFind: [new SemanticNode('list', [])],
+                 closestFind: [new SemanticNode('list')],
                  partialFind: {role: 'listitem'},
                  elementsFound: [document.getElementById('foo')!],
                  notFound: {attribute: {name: 'checked', value: 'false'}},
@@ -118,10 +116,10 @@ describe('buildFailureMessage', () => {
     expect(buildFailureMessage(
                DUMMY_LOCATOR,
                {
-                 closestFind: [new SemanticNode('list', [])],
+                 closestFind: [new SemanticNode('list')],
                  partialFind: {
                    role: 'listitem',
-                   attributes: [{name: 'disabled', value: 'false'}],
+                   attributes: {disabled: 'false'},
                    name: 'bar'
                  },
                  elementsFound: [document.getElementById('foo')!],

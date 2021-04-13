@@ -89,6 +89,17 @@ export function isHTMLElement(node: Node): node is HTMLElement {
   return isElement(node) && node.namespaceURI === HTML_NAMESPACE;
 }
 
+/** Polyfil for Object.entries copied from MDN */
+export function entries<K extends string, V>(obj: {[s in K]?: V}):
+    Array<[K, V]> {
+  const ownProps = Object.keys(obj) as K[];
+  let i = ownProps.length;
+  const resArray = new Array(i);  // preallocate the Array
+  while (i--) resArray[i] = [ownProps[i], obj[ownProps[i]]];
+
+  return resArray;
+}
+
 /** Throw an exception if the condition is false. */
 export function assert(condition: boolean, givenMessage?: string): boolean {
   if (debug() && !condition) {

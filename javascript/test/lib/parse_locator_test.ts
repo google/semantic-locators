@@ -10,40 +10,36 @@ import {SemanticLocator, SemanticNode} from '../../src/lib/semantic_locator';
 describe('parser', () => {
   it('should allow a role without a name', () => {
     expect(parse('{button}'))
-        .toEqual(new SemanticLocator([new SemanticNode('button', [])], []));
+        .toEqual(new SemanticLocator([new SemanticNode('button')], []));
   });
   it('should fail to parse if role is invalid', () => {
     expect(() => parse('{foo}')).toThrowError(/Unknown role: foo/);
   });
   it('should allow double quotes', () => {
     expect(parse('{button "OK"}'))
-        .toEqual(
-            new SemanticLocator([new SemanticNode('button', [], 'OK')], []));
+        .toEqual(new SemanticLocator([new SemanticNode('button', 'OK')], []));
   });
   it('should allow single qutoes within a double quoted string', () => {
     expect(parse(`{button "I'm OK"}`))
-        .toEqual(new SemanticLocator(
-            [new SemanticNode('button', [], `I'm OK`)], []));
+        .toEqual(
+            new SemanticLocator([new SemanticNode('button', `I'm OK`)], []));
   });
   it('should allow escaped double quotes within a double quoted string', () => {
     expect(parse('{button "\\"OK\\""}'))
-        .toEqual(
-            new SemanticLocator([new SemanticNode('button', [], '"OK"')], []));
+        .toEqual(new SemanticLocator([new SemanticNode('button', '"OK"')], []));
   });
   it('should allow single quotes', () => {
     expect(parse(`{button 'OK'}`))
-        .toEqual(
-            new SemanticLocator([new SemanticNode('button', [], 'OK')], []));
+        .toEqual(new SemanticLocator([new SemanticNode('button', 'OK')], []));
   });
   it('should allow escaped single qutoes within a single quoted string', () => {
     expect(parse(`{button 'I\\'m OK'}`))
-        .toEqual(new SemanticLocator(
-            [new SemanticNode('button', [], `I'm OK`)], []));
+        .toEqual(
+            new SemanticLocator([new SemanticNode('button', `I'm OK`)], []));
   });
   it('should allow double quotes within a single quoted string', () => {
     expect(parse(`{button '"OK"'}`))
-        .toEqual(
-            new SemanticLocator([new SemanticNode('button', [], '"OK"')], []));
+        .toEqual(new SemanticLocator([new SemanticNode('button', '"OK"')], []));
   });
   it('should fail to parse if quotes are missing', () => {
     expect(() => parse('{button OK}')).toThrow();
@@ -55,21 +51,21 @@ describe('parser', () => {
     expect(parse(`{list 'foo'} {listitem} {button}`))
         .toEqual(new SemanticLocator(
             [
-              new SemanticNode('list', [], 'foo'),
-              new SemanticNode('listitem', []),
-              new SemanticNode('button', []),
+              new SemanticNode('list', 'foo'),
+              new SemanticNode('listitem'),
+              new SemanticNode('button'),
             ],
             []));
   });
   it('should allow outer at the start', () => {
     expect(parse('outer {button}'))
-        .toEqual(new SemanticLocator([], [new SemanticNode('button', [])]));
+        .toEqual(new SemanticLocator([], [new SemanticNode('button')]));
   });
   it('should allow outer in the middle', () => {
     expect(parse('{list} outer {listitem}'))
         .toEqual(new SemanticLocator(
-            [new SemanticNode('list', [])],
-            [new SemanticNode('listitem', [])],
+            [new SemanticNode('list')],
+            [new SemanticNode('listitem')],
             ));
   });
   it('should not allow outer at the end', () => {
@@ -85,18 +81,9 @@ describe('parser', () => {
         .toEqual(new SemanticLocator(
             [
               new SemanticNode(
-                  'list',
-                  [
-                    {name: 'disabled' as const, value: 'true'},
-                    {name: 'selected' as const, value: 'false'},
-                    {name: 'checked' as const, value: 'mixed'},
-                  ],
-                  'name'),
-              new SemanticNode(
-                  'listitem',
-                  [
-                    {name: 'readonly' as const, value: 'true'},
-                  ])
+                  'list', 'name',
+                  {disabled: 'true', selected: 'false', checked: 'mixed'}),
+              new SemanticNode('listitem', undefined, {readonly: 'true'})
             ],
             []));
   });
@@ -116,14 +103,14 @@ describe('parser', () => {
   it('should isolate any Unicode BiDi control chars in the accname', () => {
     expect(parse('{button "\u202bfoo*"}'))
         .toEqual(new SemanticLocator(
-            [new SemanticNode('button', [], '\u202bfoo*')], []));
+            [new SemanticNode('button', '\u202bfoo*')], []));
 
     expect(parse('{button "foo\u202b"}'))
-        .toEqual(new SemanticLocator(
-            [new SemanticNode('button', [], 'foo\u202b')], []));
+        .toEqual(
+            new SemanticLocator([new SemanticNode('button', 'foo\u202b')], []));
 
     expect(parse('{button "\u202efoo*"}'))
         .toEqual(new SemanticLocator(
-            [new SemanticNode('button', [], '\u202efoo*')], []));
+            [new SemanticNode('button', '\u202efoo*')], []));
   });
 });

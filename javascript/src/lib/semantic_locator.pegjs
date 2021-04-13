@@ -13,11 +13,16 @@ Locator = preOuter:Node* postOuter:OuterAndPostOuter? {
 
 OuterAndPostOuter = "outer"? _ postOuter:Node+ {return postOuter;}
 
-Node =  "{" _ role:Word _ name:QuotedString? _ attributes:Attribute* _ "}" _ {
-  if (name) {
-   return new SemanticNode(role, attributes, name);
+Node =  "{" _ role:Word _ name:QuotedString? _ attributes:Attributes _ "}" _ {
+  return new SemanticNode(role, name ?? undefined, attributes);
+}
+
+Attributes = attributes:Attribute* {
+  const map: AttributeMap = {};
+  for (const attribute of attributes) {
+    map[attribute.name] = attribute.value;
   }
-  return new SemanticNode(role, attributes);
+  return map;
 }
 
 Attribute = _ name:Word ":" value:Word _ {return {name, value};}
