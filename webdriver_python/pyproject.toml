@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "semantic-locators"
+version = "0.1.0"
+description = "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements. This package adds semantic locator support to webdriver"
+authors = ["Alex Lloyd <alexlloyd@google.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/google/semantic-locators"
+classifiers = [
+    "Development Status :: 4 - Beta", # TODO(alexlloyd) update to prod with 1.0.0
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing"
+]
+include = [
+    "src/**/*.py",
+    "src/data/wrapper_bin.js"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.6,<3.10" # TODO(alexlloyd) allow python 3.10 once pytype does (https://github.com/google/pytype/blob/master/setup.cfg#L30)
+importlib-resources = "^5.1.2"
+selenium = "^3.141.0"
+
+[tool.poetry.dev-dependencies]
+absl-py = "^0.12.0"
+pylint = "^2.7.4"
+pytype = "^2021.4.15"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

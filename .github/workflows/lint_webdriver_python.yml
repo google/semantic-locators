@@ -1,0 +1,33 @@
+name: Lint webdriver_python
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'webdriver_python/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'webdriver_python/**'
+
+jobs:
+  lint_webdriver_python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Cancel previous
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - uses: abatilo/actions-poetry@v2.0.0
+
+      - name: Lint webdriver_python
+        run: |
+          cd webdriver_python
+          poetry install
+          ./scripts/lint.sh
