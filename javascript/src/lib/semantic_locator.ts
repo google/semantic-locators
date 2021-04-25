@@ -7,12 +7,10 @@
 import {InvalidLocatorError} from './error';
 import {AriaRole, isAriaRole, isChildrenPresentational} from './role_map';
 import {SUPPORTED_ATTRIBUTES, SupportedAttributeType} from './types';
+import {entries} from './util';
 
-/** An attribute-value pair. */
-export interface Attribute {
-  name: SupportedAttributeType;
-  value: string;
-}
+/** Mapping from attributes to values */
+export type AttributeMap = Partial<Record<SupportedAttributeType, string>>;
 
 /** A parsed semantic locator. */
 export class SemanticLocator {
@@ -44,11 +42,11 @@ export class SemanticLocator {
 
       // The TypeScript compiler should check this at compile time, but parsing
       // user-provided locators is not type-safe
-      for (const attribute of node.attributes) {
-        if (!SUPPORTED_ATTRIBUTES.includes(attribute.name)) {
+      for (const attribute of entries(node.attributes)) {
+        if (!SUPPORTED_ATTRIBUTES.includes(attribute[0])) {
           throw new InvalidLocatorError(
               `Invalid locator: ${this}` +
-              ` Unsupported attribute: ${attribute.name}.` +
+              ` Unsupported attribute: ${attribute[0]}.` +
               ` Supported attributes: ${SUPPORTED_ATTRIBUTES}`);
         }
         // TODO(alexlloyd) validate the type of attributes (e.g. true/false)
@@ -77,10 +75,9 @@ export class SemanticLocator {
 export class SemanticNode {
   constructor(
       readonly role: AriaRole,
-      readonly attributes: readonly Attribute[],
       readonly name?: string,
+      readonly attributes: AttributeMap = {},
   ) {}
-
   toString(): string {
     let result: string = '';
     result += '{';
@@ -90,14 +87,23 @@ export class SemanticNode {
       result += escapeAndSurroundWithQuotes(this.name);
     }
 
-    for (const attribute of this.attributes) {
-      result += ` ${attribute.name}:${attribute.value}`;
+    for (const [name, value] of entries(this.attributes)) {
+      result += ` ${name}:${value}`;
     }
-    result += '}';
 
+    result += '}';
     return result;
   }
+
+  copyWith(modified: Partial<SemanticNode>) {
+    return new SemanticNode(
+        modified.role ?? this.role,
+        modified.name ?? this.name,
+        {...this.attributes, ...(modified.attributes ?? {})},
+    );
+  }
 }
+
 
 /**
  * Surrounds the raw string with quotes, escaping any quote characters in the

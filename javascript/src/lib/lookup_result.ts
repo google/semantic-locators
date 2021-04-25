@@ -8,8 +8,9 @@ import {getNameFor} from './accessible_name';
 import {computeARIAAttributeValue} from './attribute';
 import {getRole} from './role';
 import {AriaRole} from './role_map';
-import {Attribute, SemanticLocator, SemanticNode} from './semantic_locator';
-import {compareNodeOrder, removeDuplicates} from './util';
+import {SemanticLocator, SemanticNode} from './semantic_locator';
+import {SupportedAttributeType} from './types';
+import {compareNodeOrder, entries, removeDuplicates} from './util';
 
 /**
  * Either some HTMLElements which have been found, or metadata about why none
@@ -59,7 +60,7 @@ function isRoleField(field: NodeField): field is RoleField {
 }
 
 interface AttributeField {
-  readonly attribute: Attribute;
+  readonly attribute: {name: SupportedAttributeType, value: string};
 }
 
 function isAttributeField(field: NodeField): field is AttributeField {
@@ -147,14 +148,17 @@ function explainNodeField(field: NodeField): string {
 }
 
 function explainPartialNode(node: Partial<SemanticNode>): string {
-  let result: string[] = [];
+  const result: string[] = [];
   if (node.role) {
     result.push(explainNodeField({role: node.role}));
   }
+
   if (node.attributes) {
-    result = result.concat(
-        node.attributes.map(attr => explainNodeField({attribute: attr})));
+    for (const [name, value] of entries(node.attributes)) {
+      result.push(explainNodeField({attribute: {name, value}}));
+    }
   }
+
   if (node.name) {
     result.push(explainNodeField({name: node.name}));
   }
@@ -222,7 +226,7 @@ function partialNodeSpecificity(node: Partial<SemanticNode>): number {
     count++;
   }
   if (node.attributes !== undefined) {
-    count += node.attributes.length;
+    count += Object.keys(node.attributes).length;
   }
   if (node.name !== undefined) {
     count++;

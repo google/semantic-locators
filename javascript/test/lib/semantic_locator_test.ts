@@ -10,51 +10,43 @@ import {SemanticLocator, SemanticNode} from '../../src/lib/semantic_locator';
 
 describe('SemanticNode.toString', () => {
   it('returns a valid locator if only a role is specified', () => {
-    expect(new SemanticNode('button', []).toString()).toEqual('{button}');
+    expect(new SemanticNode('button').toString()).toEqual('{button}');
   });
 
   it('returns a valid locator if name is specified', () => {
-    expect(new SemanticNode('button', [], 'OK').toString())
+    expect(new SemanticNode('button', 'OK').toString())
         .toEqual(`{button 'OK'}`);
   });
 
   it('returns a valid locator if attributes are specified', () => {
-    expect(new SemanticNode(
-               'button',
-               [
-                 {name: 'checked', value: 'false'},
-                 {name: 'disabled', value: 'true'},
-               ])
-               .toString())
+    expect(new SemanticNode('button', undefined, {
+             checked: 'false',
+             disabled: 'true'
+           }).toString())
         .toEqual('{button checked:false disabled:true}');
   });
 
   it('returns a valid locator if name and attributes are specified', () => {
-    expect(new SemanticNode(
-               'button',
-               [
-                 {name: 'checked', value: 'false'},
-                 {name: 'disabled', value: 'true'},
-               ],
-               'OK',
-               )
-               .toString())
+    expect(new SemanticNode('button', 'OK', {
+             checked: 'false',
+             disabled: 'true'
+           }).toString())
         .toEqual(`{button 'OK' checked:false disabled:true}`);
   });
 
   it('returns a double quoted locator if name contains single quotes', () => {
-    expect(new SemanticNode('button', [], `What's new?`).toString())
+    expect(new SemanticNode('button', `What's new?`).toString())
         .toEqual(`{button "What's new?"}`);
   });
 
   it('returns a single quoted locator if name contains double quotes', () => {
-    expect(new SemanticNode('button', [], '"Coming up"').toString())
+    expect(new SemanticNode('button', '"Coming up"').toString())
         .toEqual(`{button '"Coming up"'}`);
   });
 
   it('returns a single quoted locator with escaped quotes if name contains single and double quotes',
      () => {
-       expect(new SemanticNode('button', [], `"What's new?"`).toString())
+       expect(new SemanticNode('button', `"What's new?"`).toString())
            .toEqual(`{button '"What\\'s new?"'}`);
      });
 });
@@ -65,8 +57,8 @@ describe('SemanticLocator', () => {
        () => {
          expect(
              () => new SemanticLocator(
-                 [new SemanticNode('button', [])],
-                 [new SemanticNode('list', [])]))
+                 [new SemanticNode('button')],
+                 [new SemanticNode('list')]))
              .toThrowError(/The role "button" has presentational children./);
        });
   });
@@ -75,13 +67,7 @@ describe('SemanticLocator', () => {
     it('returns a valid locator for a single preOuter SemanticNode', () => {
       expect(new SemanticLocator(
                  [new SemanticNode(
-                     'button',
-                     [
-                       {name: 'checked', value: 'false'},
-                       {name: 'disabled', value: 'true'},
-                     ],
-                     'OK',
-                     )],
+                     'button', 'OK', {checked: 'false', disabled: 'true'})],
                  [])
                  .toString())
           .toEqual(`{button 'OK' checked:false disabled:true}`);
@@ -90,15 +76,9 @@ describe('SemanticLocator', () => {
     it('returns a valid locator for multiple preOuter SemanticNodes', () => {
       expect(new SemanticLocator(
                  [
-                   new SemanticNode('list', [], 'My calendars'),
+                   new SemanticNode('list', 'My calendars'),
                    new SemanticNode(
-                       'button',
-                       [
-                         {name: 'checked', value: 'false'},
-                         {name: 'disabled', value: 'true'},
-                       ],
-                       'OK',
-                       )
+                       'button', 'OK', {checked: 'false', disabled: 'true'})
                  ],
                  [])
                  .toString())
@@ -110,15 +90,9 @@ describe('SemanticLocator', () => {
       expect(new SemanticLocator(
                  [],
                  [
-                   new SemanticNode('list', [], 'My calendars'),
+                   new SemanticNode('list', 'My calendars'),
                    new SemanticNode(
-                       'button',
-                       [
-                         {name: 'checked', value: 'false'},
-                         {name: 'disabled', value: 'true'},
-                       ],
-                       'OK',
-                       )
+                       'button', 'OK', {checked: 'false', disabled: 'true'})
                  ])
                  .toString())
           .toEqual(
@@ -129,17 +103,11 @@ describe('SemanticLocator', () => {
        () => {
          expect(new SemanticLocator(
                     [
-                      new SemanticNode('list', [], 'My calendars'),
+                      new SemanticNode('list', 'My calendars'),
                     ],
                     [
                       new SemanticNode(
-                          'button',
-                          [
-                            {name: 'checked', value: 'false'},
-                            {name: 'disabled', value: 'true'},
-                          ],
-                          'OK',
-                          ),
+                          'button', 'OK', {checked: 'false', disabled: 'true'}),
                     ])
                     .toString())
              .toEqual(
