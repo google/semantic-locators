@@ -12,22 +12,33 @@ import {isChildrenPresentational} from './role_map';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
 import {assert} from './util';
 
+
 /**
- * Build a semantic locator with one node (e.g. {button 'OK'}) for the given
- * element. Returns `null` if no semantic locator exists.
+ * Builds the most precise locator which matches `element`. If `element` does
+ * not have a role, return a semantic locator which matches the closest ancestor
+ * with a role. "Precise" means that it matches the fewest other elements, while
+ * being as short as possible.
+ *
+ * Returns null if no semantic locator exists for any ancestor.
  */
-export function simpleLocatorFor(
+export function closestPreciseLocatorFor(
     element: HTMLElement, rootEl?: HTMLElement): string|null {
   const root = resolveRoot(element, rootEl);
   if (!root) {
     return null;
   }
-  return semanticNodeFor(element)?.toString() ?? null;
+  const full = closestFullLocator(element, root);
+  if (full === null) {
+    return null;
+  }
+  return refine(full.nodes, full.element, root).toString();
 }
 
 /**
  * Builds the most precise locator which matches `element`. "Precise" means that
  * it matches the fewest other elements, while being as short as possible.
+ *
+ * Returns null if no semantic locator exists.
  */
 export function preciseLocatorFor(
     element: HTMLElement, rootEl?: HTMLElement): string|null {
@@ -45,8 +56,12 @@ export function preciseLocatorFor(
 /**
  * Builds a semantic locator which matches `element`. If `element` does not have
  * a role, return a semantic locator which matches the closest ancestor with a
- * role. Returns `null` if no semantic locator exists for any element before
- * `<body>`.
+ * role.  "Simple" means it will only ever specify one node, even if more nodes
+ * would be more precise. i.e. returns `{button 'OK'}`, never
+ * `{listitem} {button 'OK'}`. To generate locators for tests,
+ * `closestPreciseLocatorFor` or `preciseLocatorFor` are usually more suitable.
+ *
+ * Returns null if no semantic locator exists for any ancestor.
  */
 export function closestSimpleLocatorFor(
     element: HTMLElement, rootEl?: HTMLElement): string|null {
@@ -58,22 +73,16 @@ export function closestSimpleLocatorFor(
 }
 
 /**
- * Builds the most precise locator which matches `element`. If `element` does
- * not have a role, return a semantic locator which matches the closest ancestor
- * with a role. "Precise" means that it matches the fewest other elements, while
- * being as short as possible.
+ * Builds a locator with only one part which matches `element`. "Simple" means
+ * it will only ever specify one node, even if more nodes would be more precise.
+ * i.e. returns `{button 'OK'}`, never `{listitem} {button 'OK'}`. To generate
+ * locators for tests, `closestPreciseLocatorFor` or `preciseLocatorFor` are
+ * usually more suitable.
+ *
+ * Returns null if no semantic locator exists.
  */
-export function closestPreciseLocatorFor(
-    element: HTMLElement, rootEl?: HTMLElement): string|null {
-  const root = resolveRoot(element, rootEl);
-  if (!root) {
-    return null;
-  }
-  const full = closestFullLocator(element, root);
-  if (full === null) {
-    return null;
-  }
-  return refine(full.nodes, full.element, root).toString();
+export function simpleLocatorFor(element: HTMLElement): string|null {
+  return semanticNodeFor(element)?.toString() ?? null;
 }
 
 /**

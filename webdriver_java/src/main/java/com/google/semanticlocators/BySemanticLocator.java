@@ -86,16 +86,19 @@ public class BySemanticLocator extends By {
    * Builds the most precise locator which matches `element`. If `element` does not have a role,
    * return a semantic locator which matches the closest ancestor with a role. "Precise" means that
    * it matches the fewest other elements, while being as short as possible.
+   *
+   * <p>Returns null if no semantic locator exists for any ancestor.
    */
   public static String closestPreciseLocatorFor(WebElement element) {
     return (String) callJsFunction(getExecutor(element), "closestPreciseLocatorFor", element);
   }
 
   /**
-   * Builds the most precise locator which matches `element`, using `rootEl` as the root. If
-   * `element` does not have a role, return a semantic locator which matches the closest ancestor
-   * with a role. "Precise" means that it matches the fewest other elements, while being as short as
-   * possible.
+   * Builds the most precise locator which matches `element`. If `element` does not have a role,
+   * return a semantic locator which matches the closest ancestor with a role. "Precise" means that
+   * it matches the fewest other elements, while being as short as possible.
+   *
+   * <p>Returns null if no semantic locator exists for any ancestor.
    */
   public static String closestPreciseLocatorFor(WebElement element, WebElement rootEl) {
     return (String)
@@ -105,17 +108,60 @@ public class BySemanticLocator extends By {
   /**
    * Builds the most precise locator which matches `element`. "Precise" means that it matches the
    * fewest other elements, while being as short as possible.
+   *
+   * <p>Returns null if no semantic locator exists.
    */
   public static String preciseLocatorFor(WebElement element) {
     return (String) callJsFunction(getExecutor(element), "preciseLocatorFor", element);
   }
 
   /**
-   * Builds the most precise locator which matches `element`, using `rootEl` as the root. "Precise"
-   * means that it matches the fewest other elements, while being as short as possible.
+   * Builds the most precise locator which matches `element`. "Precise" means that it matches the
+   * fewest other elements, while being as short as possible.
+   *
+   * <p>Returns null if no semantic locator exists.
    */
   public static String preciseLocatorFor(WebElement element, WebElement rootEl) {
     return (String) callJsFunction(getExecutor(element), "preciseLocatorFor", element, rootEl);
+  }
+
+  /**
+   * Builds a semantic locator which matches `element`. If `element` does not have a role, return a
+   * semantic locator which matches the closest ancestor with a role. "Simple" means it will only
+   * ever specify one node, even if more nodes would be more precise. i.e. returns `{button 'OK'}`,
+   * never `{listitem} {button 'OK'}`. To generate locators for tests, `closestPreciseLocatorFor` or
+   * `preciseLocatorFor` are usually more suitable.
+   *
+   * <p>Returns null if no semantic locator exists for any ancestor.
+   */
+  public static String closestSimpleLocatorFor(WebElement element) {
+    return (String) callJsFunction(getExecutor(element), "closestSimpleLocatorFor", element);
+  }
+
+  /**
+   * Builds a semantic locator which matches `element`. If `element` does not have a role, return a
+   * semantic locator which matches the closest ancestor with a role. "Simple" means it will only
+   * ever specify one node, even if more nodes would be more precise. i.e. returns `{button 'OK'}`,
+   * never `{listitem} {button 'OK'}`. To generate locators for tests, `closestPreciseLocatorFor` or
+   * `preciseLocatorFor` are usually more suitable.
+   *
+   * <p>Returns null if no semantic locator exists for any ancestor.
+   */
+  public static String closestSimpleLocatorFor(WebElement element, WebElement rootEl) {
+    return (String)
+        callJsFunction(getExecutor(element), "closestSimpleLocatorFor", element, rootEl);
+  }
+
+  /**
+   * Builds a locator with only one part which matches `element`. "Simple" means it will only ever
+   * specify one node, even if more nodes would be more precise. i.e. returns `{button 'OK'}`, never
+   * `{listitem} {button 'OK'}`. To generate locators for tests, `closestPreciseLocatorFor` or
+   * `preciseLocatorFor` are usually more suitable.
+   *
+   * <p>Returns null if no semantic locator exists.
+   */
+  public static String simpleLocatorFor(WebElement element) {
+    return (String) callJsFunction(getExecutor(element), "simpleLocatorFor", element);
   }
 
   protected static final Object callJsFunction(

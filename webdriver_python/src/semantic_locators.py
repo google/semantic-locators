@@ -76,11 +76,11 @@ def find_element_by_semantic_locator(
 
 
 def closest_precise_locator_for(element: WebElement, root: WebElement = None):
-  """Builds a precise locator matching `element`'s closest semantic ancestor.
+  """Builds the most precise locator which matches `element`.
 
-  Return a semantic locator which matches the closest ancestor (including
-  `element` itself) with a role. "Precise" means that it matches the fewest
-  other elements, while being as short as possible.
+  If `element` does not have a role, return a semantic locator which matches the
+  closest ancestor with a role. "Precise" means that it matches the fewest other
+  elements, while being as short as possible.
 
   Args:
     element: A WebElement to generate a locator for.
@@ -88,8 +88,8 @@ def closest_precise_locator_for(element: WebElement, root: WebElement = None):
       Defaults to the whole document.
 
   Returns:
-    The locator for `element` or its closest semantic ancestor. If no ancestor
-    has semantics, returns None.
+    The locator for `element` or its closest semantic ancestor. Returns None if
+    no semantic locator exists for any ancestor.
 
   Raises:
     SemanticLocatorException: Failed to generate locator.
@@ -101,9 +101,8 @@ def closest_precise_locator_for(element: WebElement, root: WebElement = None):
 def precise_locator_for(element: WebElement, root: WebElement = None):
   """Builds a precise locator matching `element`.
 
-  Return a semantic locator which matches the closest ancestor (including
-  `element` itself) with a role. "Precise" means that it matches the fewest
-  other elements, while being as short as possible.
+  "Precise" means that it matches the fewest other elements, while being as
+  short as possible.
 
   Args:
     element: A WebElement to generate a locator for.
@@ -111,14 +110,62 @@ def precise_locator_for(element: WebElement, root: WebElement = None):
       Defaults to the whole document.
 
   Returns:
-    The locator for `element` or its closest semantic ancestor. If no ancestor
-    has semantics, returns None.
+    The locator for `element` or its closest semantic ancestor. Returns None if
+    no semantic locator exists.
 
   Raises:
     SemanticLocatorException: Failed to generate locator.
   """
   args = [element] if root is None else [element, root]
   return _call_js_function(element.parent, "preciseLocatorFor", args)
+
+
+def closest_simple_locator_for(element: WebElement, root: WebElement = None):
+  """Builds a semantic locator which matches `element`.
+
+  If `element` does not have a role, return a semantic locator which matches the
+  closest ancestor with a role.  "Simple" means it will only ever specify one
+  node, even if more nodes would be more precise. i.e. returns `{button 'OK'}`,
+  never `{listitem} {button 'OK'}`. To generate locators for tests,
+  `closestPreciseLocatorFor` or `preciseLocatorFor` are usually more suitable.
+
+  Args:
+    element: A WebElement to generate a locator for.
+    root: Optional; The element relative to which the locator will be generated.
+      Defaults to the whole document.
+
+  Returns:
+    The locator for `element` or its closest semantic ancestor. Returns None if
+    no semantic locator exists for any ancestor.
+
+  Raises:
+    SemanticLocatorException: Failed to generate locator.
+  """
+  args = [element] if root is None else [element, root]
+  return _call_js_function(element.parent, "closestSimpleLocatorFor", args)
+
+
+def simple_locator_for(element: WebElement):
+  """Builds a locator with only one part which matches `element`.
+
+  "Simple" means it will only ever specify one node, even if more nodes would be
+  more precise. i.e. returns `{button 'OK'}`, never `{listitem} {button 'OK'}`.
+  To generate locators for tests, `closestPreciseLocatorFor` or
+  `preciseLocatorFor` are usually more suitable.
+
+  Args:
+    element: A WebElement to generate a locator for.
+    root: Optional; The element relative to which the locator will be generated.
+      Defaults to the whole document.
+
+  Returns:
+    The locator for `element` or its closest semantic ancestor. Returns None if
+    no semantic locator exists.
+
+  Raises:
+    SemanticLocatorException: Failed to generate locator.
+  """
+  return _call_js_function(element.parent, "simpleLocatorFor", [element])
 
 
 class SemanticLocatorException(Exception):

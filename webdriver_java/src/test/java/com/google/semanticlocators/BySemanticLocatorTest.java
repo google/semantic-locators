@@ -207,6 +207,75 @@ public final class BySemanticLocatorTest {
                 "<div id='root'><button><div id='target'>OK</div></button></div>")));
   }
 
+  @Test
+  @Parameters(method = "closestSimpleLocatorForWithoutRootTests")
+  public void closestSimpleLocatorFor_generatesSimpleLocators(
+      String expected, String html, String driverName) {
+    WebDriver driver = getDriver(driverName);
+    renderHtml(html, driver);
+
+    WebElement target = driver.findElement(By.id("target"));
+    assertThat(BySemanticLocator.closestSimpleLocatorFor(target)).isEqualTo(expected);
+  }
+
+  private static List<List<String>> closestSimpleLocatorForWithoutRootTests() {
+    return withAllDriverNames(
+        asList(
+            asList(
+                "{button 'OK'}",
+                "<button>OK</button><ul><li><button><div"
+                    + " id='target'>OK</div></button></li></ul>")));
+  }
+
+  @Test
+  @Parameters(method = "closestSimpleLocatorForWithRootTests")
+  public void closestSimpleLocatorFor_acceptsRootEl(
+      String expected, String html, String driverName) {
+    WebDriver driver = getDriver(driverName);
+    renderHtml(html, driver);
+
+    WebElement target = driver.findElement(By.id("target"));
+    WebElement root = driver.findElement(By.id("root"));
+    assertThat(BySemanticLocator.closestSimpleLocatorFor(target, root)).isEqualTo(expected);
+  }
+
+  private static List<List<String>> closestSimpleLocatorForWithRootTests() {
+    return withAllDriverNames(
+        asList(
+            asList(
+                "{button 'OK'}",
+                "<button>OK</button><ul><li id='root'><button><div"
+                    + " id='target'>OK</div></button></li></ul>"),
+            asList(
+                null,
+                "<button>OK</button><ul><li><button id='root'><div"
+                    + " id='target'>OK</div></button></li></ul>")));
+  }
+
+  @Test
+  @Parameters(method = "simpleLocatorForTests")
+  public void simpleLocatorFor_generatesSimpleLocators(
+      String expected, String html, String driverName) {
+    WebDriver driver = getDriver(driverName);
+    renderHtml(html, driver);
+
+    WebElement target = driver.findElement(By.id("target"));
+    assertThat(BySemanticLocator.simpleLocatorFor(target)).isEqualTo(expected);
+  }
+
+  private static List<List<String>> simpleLocatorForTests() {
+    return withAllDriverNames(
+        asList(
+            asList(
+                "{button 'OK'}",
+                "<button>OK</button><ul><li id='root'><button"
+                    + " id='target'><div>OK</div></button></li></ul>"),
+            asList(
+                null,
+                "<button>OK</button><ul><li id='root'><button><div"
+                    + " id='target'>OK</div></button></li></ul>")));
+  }
+
   private static void renderHtml(String html, WebDriver driver) {
     String browserName = ((RemoteWebDriver) driver).getCapabilities().getBrowserName();
     // IE doesn't support data URLs

@@ -30,6 +30,8 @@ from src.semantic_locators import (
     find_elements_by_semantic_locator,
     precise_locator_for,
     closest_precise_locator_for,
+    simple_locator_for,
+    closest_simple_locator_for,
 )
 
 
@@ -242,6 +244,62 @@ class SemanticLocatorsTest(parameterized.TestCase):
     target = driver.find_element(By.ID, "target")
     root = driver.find_element(By.ID, "root")
     self.assertEqual(closest_precise_locator_for(target, root), expected)
+
+  @parameterized.parameters(_ALL_DRIVER_NAMES)
+  def test_closest_simple_locator_for_without_root(self, driver_name):
+    driver = DRIVERS[driver_name]
+    _render_html(
+        driver,
+        "<button>OK</button><ul><li><button><div id='target'>OK</div></button></li></ul>"
+    )
+    self.assertEqual(
+        closest_simple_locator_for(driver.find_element(By.ID, "target")),
+        "{button 'OK'}")
+
+  @parameterized.product(
+      ({
+          "expected":
+              "{button 'OK'}",
+          "html":
+              "<button>OK</button><ul><li id='root'><button><div id='target'>OK</div></button></li></ul>"
+      }, {
+          "expected":
+              None,
+          "html":
+              "<button>OK</button><ul><li><button id='root'><div id='target'>OK</div></button></li></ul>"
+      }),
+      driver_name=_ALL_DRIVER_NAMES,
+  )
+  def test_closest_simple_locator_for_with_root(self, expected, html,
+                                                driver_name):
+    driver = DRIVERS[driver_name]
+    _render_html(driver, html)
+
+    target = driver.find_element(By.ID, "target")
+    root = driver.find_element(By.ID, "root")
+    self.assertEqual(closest_simple_locator_for(target, root), expected)
+
+  @parameterized.product(
+      ({
+          "expected":
+              "{button 'OK'}",
+          "html":
+              "<button>OK</button><ul><li id='root'><button id='target'><div>OK</div></button></li></ul>"
+      }, {
+          "expected":
+              None,
+          "html":
+              "<button>OK</button><ul><li id='root'><button><div id='target'>OK</div></button></li></ul>"
+      }),
+      driver_name=_ALL_DRIVER_NAMES,
+  )
+  def test_simple_locator_for(self, expected, html, driver_name):
+    driver = DRIVERS[driver_name]
+    _render_html(driver, html)
+
+    target = driver.find_element(By.ID, "target")
+    root = driver.find_element(By.ID, "root")
+    self.assertEqual(simple_locator_for(target), expected)
 
   @classmethod
   def tearDownClass(cls):

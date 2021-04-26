@@ -6,7 +6,7 @@
 
 import {SemanticLocatorError} from 'google3/third_party/semantic_locators/javascript/lib/error';
 import {findElementBySemanticLocator, findElementsBySemanticLocator} from 'semantic-locators';
-import {closestPreciseLocatorFor, preciseLocatorFor} from 'semantic-locators/gen';
+import {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from 'semantic-locators/gen';
 
 /**
  * Error class is lost when returning from WebDriver.executeScript, so include
@@ -37,6 +37,8 @@ exportGlobal('findElementsBySemanticLocator', findElementsBySemanticLocator);
 exportGlobal('findElementBySemanticLocator', findElementBySemanticLocator);
 exportGlobal('closestPreciseLocatorFor', closestPreciseLocatorFor);
 exportGlobal('preciseLocatorFor', preciseLocatorFor);
+exportGlobal('closestSimpleLocatorFor', closestSimpleLocatorFor);
+exportGlobal('simpleLocatorFor', simpleLocatorFor);
 
 // Marker for clients to check that semantic locators have been loaded
 exportGlobal('semanticLocatorsReady', true);
