@@ -100,6 +100,17 @@ describe('parser', () => {
             ],
             []));
   });
+  it('should allow heading level attributes', () => {
+    expect(parse('{heading "Foo" level:1}'))
+        .toEqual(new SemanticLocator(
+            [new SemanticNode(
+                'heading',
+                [
+                  {name: 'level' as const, value: '1'},
+                ],
+                'Foo')],
+            []));
+  });
   it('should fail to parse if attribute is unsupported', () => {
     expect(() => parse('{list foo:bar}'))
         .toThrowError(/Unsupported attribute: foo/);

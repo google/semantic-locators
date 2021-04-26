@@ -326,11 +326,11 @@ describe('findElementsBySemanticLocator', () => {
   it('finds by implicit ARIA attributes', () => {
     render(
         html`
-      <button disabled id="foo">xxx</button>
-      <button>yyy</button>`,
+      <h1 id="foo">Foo</h1>
+      <h2>Bar</h2>`,
         container);
 
-    expect(findElementsBySemanticLocator('{button disabled:true}', container))
+    expect(findElementsBySemanticLocator('{heading level:1}', container))
         .toEqual([document.getElementById('foo')!]);
   });
 

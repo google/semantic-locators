@@ -20,10 +20,12 @@ Node =  "{" _ role:Word _ name:QuotedString? _ attributes:Attribute* _ "}" _ {
   return new SemanticNode(role, attributes);
 }
 
-Attribute = _ name:Word ":" value:Word _ {return {name, value};}
+Attribute = _ name:Word ":" value:AlphaNum _ {return {name, value};}
 
 // A string of lower case letters.
 Word = chars:[a-z]+ {return chars.join(''); }
+
+AlphaNum = chars:[a-z0-9_]+ {return chars.join(''); }
 
 /* String matching support with escapes */
 QuotedString
