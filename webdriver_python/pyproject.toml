@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "semantic-locators"
-version = "0.1.0"
+version = "2.0.0"
 description = "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements. This package adds semantic locator support to webdriver"
 authors = ["Alex Lloyd <alexlloyd@google.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/google/semantic-locators"
 classifiers = [
-    "Development Status :: 4 - Beta", # TODO(alexlloyd) update to prod with 1.0.0
+    "Development Status :: 5 - Production/Stable",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Testing"
