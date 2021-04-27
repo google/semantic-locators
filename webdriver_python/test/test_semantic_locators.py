@@ -284,12 +284,12 @@ class SemanticLocatorsTest(parameterized.TestCase):
           "expected":
               "{button 'OK'}",
           "html":
-              "<button>OK</button><ul><li id='root'><button id='target'><div>OK</div></button></li></ul>"
+              "<button>OK</button><ul><li><button id='target'><div>OK</div></button></li></ul>"
       }, {
           "expected":
               None,
           "html":
-              "<button>OK</button><ul><li id='root'><button><div id='target'>OK</div></button></li></ul>"
+              "<button>OK</button><ul><li><button><div id='target'>OK</div></button></li></ul>"
       }),
       driver_name=_ALL_DRIVER_NAMES,
   )
@@ -298,7 +298,6 @@ class SemanticLocatorsTest(parameterized.TestCase):
     _render_html(driver, html)
 
     target = driver.find_element(By.ID, "target")
-    root = driver.find_element(By.ID, "root")
     self.assertEqual(simple_locator_for(target), expected)
 
   @classmethod
