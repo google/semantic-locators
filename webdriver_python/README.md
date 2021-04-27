@@ -1,4 +1,4 @@
-# Semantic Locators in Java WebDriver
+# Semantic Locators in Python WebDriver
 
 Semantic locators can be used with Selenium WebDriver in a similar way to
 `ByXPath` or `ByCssSelector`.
