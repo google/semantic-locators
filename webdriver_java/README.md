@@ -1,7 +1,7 @@
 # Semantic Locators in Java WebDriver
 
 Semantic locators can be used with Selenium WebDriver in a similar way to
-`ByXPath` or `ByCssSelector`.
+`ByXPath` or `ByCssSelector`. Currently only available for Java 8+.
 
 Add the following to your `pom.xml`:
 
