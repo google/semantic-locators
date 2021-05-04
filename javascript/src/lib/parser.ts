@@ -14,7 +14,7 @@
 
 /**
  * @license
- * Copyright 2021 Google LLC
+ * Copyright 2021 The Semantic Locators Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 

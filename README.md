@@ -19,6 +19,7 @@ See the getting started instructions for your environment:
 *   [JavaScript/TypeScript in the browser](javascript/README.md)
 *   [Java WebDriver](webdriver_java/README.md)
 *   [Python WebDriver](webdriver_python/README.md)
+*   [.NET WebDriver](webdriver_dotnet/README.md)
 *   Something else? Adding support for a new platform is simple. See
     [DEVELOPING.md](docs/DEVELOPING.md) for instructions.
 
