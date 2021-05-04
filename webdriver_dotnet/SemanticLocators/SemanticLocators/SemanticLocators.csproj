@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>SemanticLocators Contributors</Authors>
+    <Company>Google</Company>
+    <Product>SemanticLocators</Product>
+    <Description>Semantic Locators let you specify HTML elements in code similar to how you might
+describe them to a human. Semantic Locators are stable, readable, enforce accessibility, and can be
+auto-generated.</Description>
+    <RepositoryUrl>https://github.com/google/semantic-locators</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/google/semantic-locators</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(ProjectDir)..\..\..\javascript\wrapper\wrapper_bin.js" copyToOutput="true">
+      <IncludeInPackage>true</IncludeInPackage>
+      <CopyToOutput>true</CopyToOutput>
+      <BuildAction>Content</BuildAction>
+      <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
