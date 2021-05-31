@@ -1,0 +1,31 @@
+name: Test webdriver_dotnet
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+    - 'webdriver_dotnet/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+    - 'webdriver_dotnet/**'
+
+jobs:
+  test_webdriver_dotnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Cancel previous
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.8.0
+      - name: Test webdriver_dotnet
+        run: |
+          cd webdriver_dotnet/SemanticLocators
+          dotnet test
