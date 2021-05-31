@@ -15,7 +15,7 @@
 
 See https://github.com/google/semantic-locators for docs.
 """
-from typing import Union, Sequence, List
+from typing import List, Optional, Sequence, Union
 
 from selenium.webdriver.remote.webdriver import (WebElement, WebDriver)
 from selenium.common.exceptions import (InvalidSelectorException,
@@ -29,7 +29,7 @@ JS_IMPLEMENTATION = importlib_resources.read_text("src.data", "wrapper_bin.js")
 def find_elements_by_semantic_locator(
     driver: WebDriver,
     locator: str,
-    root: WebElement = None,
+    root: Optional[WebElement] = None,
 ) -> List[WebElement]:
   """Find all elements which match the semantic locator `locator`.
 
@@ -53,7 +53,7 @@ def find_elements_by_semantic_locator(
 def find_element_by_semantic_locator(
     driver: WebDriver,
     locator: str,
-    root: WebElement = None,
+    root: Optional[WebElement] = None,
 ) -> WebElement:
   """Find the first element which matches the semantic locator `locator`.
 
@@ -75,7 +75,8 @@ def find_element_by_semantic_locator(
   return _call_js_function(driver, "findElementBySemanticLocator", args)
 
 
-def closest_precise_locator_for(element: WebElement, root: WebElement = None):
+def closest_precise_locator_for(element: WebElement,
+                                root: Optional[WebElement] = None):
   """Builds the most precise locator which matches `element`.
 
   If `element` does not have a role, return a semantic locator which matches the
@@ -98,7 +99,7 @@ def closest_precise_locator_for(element: WebElement, root: WebElement = None):
   return _call_js_function(element.parent, "closestPreciseLocatorFor", args)
 
 
-def precise_locator_for(element: WebElement, root: WebElement = None):
+def precise_locator_for(element: WebElement, root: Optional[WebElement] = None):
   """Builds a precise locator matching `element`.
 
   "Precise" means that it matches the fewest other elements, while being as
@@ -120,7 +121,8 @@ def precise_locator_for(element: WebElement, root: WebElement = None):
   return _call_js_function(element.parent, "preciseLocatorFor", args)
 
 
-def closest_simple_locator_for(element: WebElement, root: WebElement = None):
+def closest_simple_locator_for(element: WebElement,
+                               root: Optional[WebElement] = None):
   """Builds a semantic locator which matches `element`.
 
   If `element` does not have a role, return a semantic locator which matches the
