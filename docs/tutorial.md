@@ -26,8 +26,11 @@ Install the extension and click the icon next to the URL bar to get started.
 The interactive
 [semantic locator playground](https://google.github.io/semantic-locators/playground)
 auto-generates semantic locators for elements in some HTML you enter. It can be
-useful for: - Writing locators for many elements at once - Sharing HTML snippets
-with their a11y data - Debugging the semantics of an element
+useful for:
+
+*   Writing locators for many elements at once
+*   Sharing HTML snippets with their a11y data
+*   Debugging the semantics of an element
 
 ## Generate locators from code
 
