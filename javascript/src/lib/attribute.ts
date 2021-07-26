@@ -45,6 +45,10 @@ export function computeARIAAttributeValue(
                hasTagName(element, 'textarea')) &&
               element.disabled)
           .toString();
+    case 'pressed':
+      // There's no native equivalent of "aria-pressed" so if it's not
+      // explicitly specified it takes the default of false.
+      return 'false';
     case 'selected':
       if (hasTagName(element, 'option')) {
         return element.selected.toString();

@@ -42,6 +42,7 @@ export const SUPPORTED_ATTRIBUTES = [
   'checked',
   'current',
   'disabled',
+  'pressed',
   'selected',
   // Properties:
   'colindex',

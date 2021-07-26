@@ -24,6 +24,7 @@ describe('computeARIAAttributeValue', () => {
         html`
     <div id="checked" role="checkbox" aria-checked="true"></div>
     <div id="current" role="link" aria-current="page"></div>
+    <div id="pressed" role="button" aria-pressed="true"></div>
     <table>
       <div id="rowindex" role="row" aria-rowindex="3"></div>
     </table>
@@ -36,6 +37,9 @@ describe('computeARIAAttributeValue', () => {
     expect(computeARIAAttributeValue(
                document.getElementById('current')!, 'current'))
         .toEqual('page');
+    expect(computeARIAAttributeValue(
+               document.getElementById('pressed')!, 'pressed'))
+        .toEqual('true');
     expect(computeARIAAttributeValue(
                document.getElementById('rowindex')!, 'rowindex'))
         .toEqual('3');
@@ -118,6 +122,38 @@ describe('computeARIAAttributeValue', () => {
              .toEqual('false');
          expect(computeARIAAttributeValue(
                     document.getElementById('input')!, 'current'))
+             .toEqual('false');
+       });
+  });
+
+  describe('for aria-pressed', () => {
+    it(`returns the default of false when the aria-pressed attribute is missing`,
+       () => {
+         render(
+             html`
+    <button id="button"></button>
+    <ul id="list"><li id="listitem">foo</li></ul>
+    <table>
+      <tr id="row"></tr>
+    </table>
+    <form><input type="button" id="input" value="foo"></form>
+    `,
+             container);
+
+         expect(computeARIAAttributeValue(
+                    document.getElementById('button')!, 'pressed'))
+             .toEqual('false');
+         expect(computeARIAAttributeValue(
+                    document.getElementById('list')!, 'pressed'))
+             .toEqual('false');
+         expect(computeARIAAttributeValue(
+                    document.getElementById('listitem')!, 'pressed'))
+             .toEqual('false');
+         expect(computeARIAAttributeValue(
+                    document.getElementById('row')!, 'pressed'))
+             .toEqual('false');
+         expect(computeARIAAttributeValue(
+                    document.getElementById('input')!, 'pressed'))
              .toEqual('false');
        });
   });
