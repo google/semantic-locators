@@ -17,27 +17,12 @@ import (
 	"errors"
 	"testing"
 
-	// copybara:strip_begin(remove_google3_webtest_import)
-	"google3/testing/web/go/webtest"
-	// copybara:strip_end
-
-	// copybara:strip_begin(replace_selenium_import)
-	"google3/third_party/golang/selenium/selenium"
-	// copybara:strip_end_and_replace_begin
-	// "github.com/tebeka/selenium"
-	// copybara:replace_end
+	"github.com/tebeka/selenium"
 )
 
 func newWebdriver(t *testing.T) selenium.WebDriver {
-	// copybara:strip_begin(webdriver_initialization)
-	wd, err := webtest.NewWebDriverSession(t, nil)
-	if err != nil {
-		t.Fatalf("webtest.NewWebDriverSession: %v", err)
-	}
-	// copybara:strip_end_and_replace_begin
-	// t.Fatalf("not yet implemented") // TODO: implement
-	// copybara:replace_end
-	return wd
+	t.Fatalf("not yet implemented") // TODO: implement
+	return nil
 }
 
 func setup(t *testing.T) selenium.WebDriver {

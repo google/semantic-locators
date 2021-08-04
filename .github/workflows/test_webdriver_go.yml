@@ -1,0 +1,35 @@
+name: Test webdriver_go
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+    - 'webdriver_go/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'javascript/**'
+    - 'webdriver_go/**'
+
+jobs:
+  test_webdriver_go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Cancel previous
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.5
+      - uses: abatilo/actions-poetry@v2.0.0
+      - name: Go Build
+        run: cd webdriver_go && go build
+      # TODO - Uncomment when newWebdriver in semloc_test.go is implemented
+      # - name: Go Test
+      #   run: cd webdriver_go && go test

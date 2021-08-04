@@ -24,11 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	// copybara:strip_begin(replace_selenium_import)
-	"google3/third_party/golang/selenium/selenium"
-	// copybara:strip_end_and_replace_begin
-	// "github.com/tebeka/selenium"
-	// copybara:replace_end
+	"github.com/tebeka/selenium"
 )
 
 //go:embed wrapper_bin.js
