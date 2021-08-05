@@ -1,4 +1,4 @@
-module github.com/google/semantic-locators
+module github.com/google/semantic-locators/webdriver_go
 
 go 1.16
 
