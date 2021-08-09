@@ -1335,6 +1335,7 @@
       if (span.marker == marker) { return span }
     } }
   }
+
   // Remove a span from an array, returning undefined if no spans are
   // left (we don't store arrays for lines without spans).
   function removeMarkedSpan(spans, span) {
@@ -1343,9 +1344,16 @@
       { if (spans[i] != span) { (r || (r = [])).push(spans[i]); } }
     return r
   }
+
   // Add a span to a line.
-  function addMarkedSpan(line, span) {
-    line.markedSpans = line.markedSpans ? line.markedSpans.concat([span]) : [span];
+  function addMarkedSpan(line, span, op) {
+    var inThisOp = op && window.WeakSet && (op.markedSpans || (op.markedSpans = new WeakSet));
+    if (inThisOp && inThisOp.has(line.markedSpans)) {
+      line.markedSpans.push(span);
+    } else {
+      line.markedSpans = line.markedSpans ? line.markedSpans.concat([span]) : [span];
+      if (inThisOp) { inThisOp.add(line.markedSpans); }
+    }
     span.marker.attachLine(line);
   }
 
@@ -3455,8 +3463,8 @@
       // Set pos and end to the cursor positions around the character pos sticks to
       // If pos.sticky == "before", that is around pos.ch - 1, otherwise around pos.ch
       // If pos == Pos(_, 0, "before"), pos and end are unchanged
-      pos = pos.ch ? Pos(pos.line, pos.sticky == "before" ? pos.ch - 1 : pos.ch, "after") : pos;
       end = pos.sticky == "before" ? Pos(pos.line, pos.ch + 1, "before") : pos;
+      pos = pos.ch ? Pos(pos.line, pos.sticky == "before" ? pos.ch - 1 : pos.ch, "after") : pos;
     }
     for (var limit = 0; limit < 5; limit++) {
       var changed = false;
@@ -3807,7 +3815,8 @@
       scrollLeft: null, scrollTop: null, // Intermediate scroll position, not pushed to DOM yet
       scrollToPos: null,       // Used to scroll to a specific position
       focus: false,
-      id: ++nextOpId           // Unique ID
+      id: ++nextOpId,          // Unique ID
+      markArrays: null         // Used by addMarkedSpan
     };
     pushOperation(cm.curOp);
   }
@@ -5986,7 +5995,7 @@
       if (marker.collapsed && curLine != from.line) { updateLineHeight(line, 0); }
       addMarkedSpan(line, new MarkedSpan(marker,
                                          curLine == from.line ? from.ch : null,
-                                         curLine == to.line ? to.ch : null));
+                                         curLine == to.line ? to.ch : null), doc.cm && doc.cm.curOp);
       ++curLine;
     });
     // lineIsHidden depends on the presence of the spans, so needs a second pass
@@ -6158,6 +6167,7 @@
     getRange: function(from, to, lineSep) {
       var lines = getBetween(this, clipPos(this, from), clipPos(this, to));
       if (lineSep === false) { return lines }
+      if (lineSep === '') { return lines.join('') }
       return lines.join(lineSep || this.lineSeparator())
     },
 
@@ -9821,7 +9831,7 @@
 
   addLegacyProps(CodeMirror);
 
-  CodeMirror.version = "5.61.0";
+  CodeMirror.version = "5.62.0";
 
   return CodeMirror;
 
@@ -11224,7 +11234,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
   function quasi(type, value) {
     if (type != "quasi") return pass();
     if (value.slice(value.length - 2) != "${") return cont(quasi);
-    return cont(expression, continueQuasi);
+    return cont(maybeexpression, continueQuasi);
   }
   function continueQuasi(type) {
     if (type == "}") {
@@ -11364,6 +11374,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (type == "{") return cont(pushlex("}"), typeprops, poplex, afterType)
     if (type == "(") return cont(commasep(typearg, ")"), maybeReturnType, afterType)
     if (type == "<") return cont(commasep(typeexpr, ">"), typeexpr)
+    if (type == "quasi") { return pass(quasiType, afterType); }
   }
   function maybeReturnType(type) {
     if (type == "=>") return cont(typeexpr)
@@ -11387,6 +11398,18 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
       return pass(functiondecl, typeprop)
     } else if (!type.match(/[;\}\)\],]/)) {
       return cont()
+    }
+  }
+  function quasiType(type, value) {
+    if (type != "quasi") return pass();
+    if (value.slice(value.length - 2) != "${") return cont(quasiType);
+    return cont(typeexpr, continueQuasiType);
+  }
+  function continueQuasiType(type) {
+    if (type == "}") {
+      cx.marked = "string-2";
+      cx.state.tokenize = tokenQuasi;
+      return cont(quasiType);
     }
   }
   function typearg(type, value) {
@@ -11528,6 +11551,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     if (value == "@") return cont(expression, classBody)
   }
   function classfield(type, value) {
+    if (value == "!") return cont(classfield)
     if (value == "?") return cont(classfield)
     if (type == ":") return cont(typeexpr, maybeAssign)
     if (value == "=") return cont(expressionNoComma)
