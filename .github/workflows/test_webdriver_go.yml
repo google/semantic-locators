@@ -29,7 +29,7 @@ jobs:
           go-version: 1.16.5
       - uses: abatilo/actions-poetry@v2.0.0
       - name: Go Build
-        run: cd webdriver_go && go build
+        run: cd webdriver_go && go build ./...
       # TODO - Uncomment when newWebdriver in semloc_test.go is implemented
       # - name: Go Test
-      #   run: cd webdriver_go && go test
+      #   run: cd webdriver_go && go test ./...
