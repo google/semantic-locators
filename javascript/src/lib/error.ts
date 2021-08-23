@@ -17,15 +17,15 @@ export class SemanticLocatorError extends Error {
 
 /** No element found for the given locator. */
 export class NoSuchElementError extends SemanticLocatorError {
-  errorName = 'NoSuchElementError';
+  override errorName = 'NoSuchElementError';
 }
 
 /** Invalid value passed to a function. */
 export class ValueError extends SemanticLocatorError {
-  errorName = 'ValueError';
+  override errorName = 'ValueError';
 }
 
 /** A locator is invalid. */
 export class InvalidLocatorError extends SemanticLocatorError {
-  errorName = 'InvalidLocatorError';
+  override errorName = 'InvalidLocatorError';
 }
