@@ -155,11 +155,11 @@ export class SyntaxError extends Error {
     return "Expected " + describeExpected(expected) + " but " + describeFound(found) + " found.";
   }
 
-  public message: string;
+  public override message: string;
   public expected: Expectation[];
   public found: string | null;
   public location: IFileRange;
-  public name: string;
+  public override name: string;
 
   constructor(message: string, expected: Expectation[], found: string | null, location: IFileRange) {
     super();
