@@ -95,11 +95,21 @@ describe('preciseLocatorFor', () => {
     render(
         html`
             <ul><li><button id="foo">OK</button></li></ul>
+            <div role="list" id="list">
+              <div role="listitem" id="listitem">
+                <div role="button" id="button-in-list">One button</div>
+              </div>
+            </div>
+            <div role="button">One button</div>
           `,
         container);
 
     expect(preciseLocatorFor(document.getElementById('foo')!))
         .toEqual(`{button 'OK'}`);
+    expect(preciseLocatorFor(document.getElementById('listitem')!))
+        .toEqual(`{listitem}`);
+    expect(preciseLocatorFor(document.getElementById('button-in-list')!))
+        .toEqual(`{listitem} {button 'One button'}`);
   });
 
   it('adds more nodes if a single node is ambiguous', () => {
@@ -137,6 +147,21 @@ describe('preciseLocatorFor', () => {
 
     expect(preciseLocatorFor(document.getElementById('foo')!)).toBeNull();
   });
+
+  it(`produces a precise locator when intermediate nodes add no precision`,
+     () => {
+       render(
+           html`
+            <button>OK</button>
+            <ul><div role="region"><li><button id="foo">OK</button></li></div></ul>
+            <ul><li><button>OK</button></li></ul>
+          `,
+           container);
+
+       // Testing we don't return {region} {listitem} {button 'OK'}
+       expect(preciseLocatorFor(document.getElementById('foo')!))
+           .toEqual(`{region} {button 'OK'}`);
+     });
 });
 
 describe('closestPreciseLocatorFor', () => {

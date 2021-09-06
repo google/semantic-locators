@@ -217,27 +217,35 @@ function matchesImplicitRole(
  * https://www.w3.org/TR/wai-aria-practices/#children_presentational
  */
 function isPresentationalChild(element: HTMLElement): boolean {
-  for (const role of CHILDREN_PRESENTATIONAL) {
-    const presentationalChild =
-        closestWithRole(element.parentElement!, role) !== null;
-    if (presentationalChild) {
-      return true;
-    }
+  return closestChildrenPresentationalAncestor(element) !== null;
+}
+
+const CHILDREN_PRESENTATIONAL_SELECTOR =
+    CHILDREN_PRESENTATIONAL.map(selectorForAncestorRole).join(',');
+
+/**  Returns the closest element which has presentational children. */
+export function closestChildrenPresentationalAncestor(element: HTMLElement):
+    HTMLElement|null {
+  if (element.parentElement) {
+    return closest(element.parentElement, CHILDREN_PRESENTATIONAL_SELECTOR);
   }
-  return false;
+  return null;
+}
+
+function closestWithRole(element: HTMLElement, role: AriaRole): HTMLElement|
+    null {
+  return closest(element, selectorForAncestorRole(role));
 }
 
 /**
- * Returns an ancestor of `element` (or `element` itself) with role `role`. If
- * `returnClosest` is true, returns the closest element to `element` (like
- * `Node.closest`), otherwise just return any ancestor.
+ * Returns a selector matching any *ancestor* element with a role of `role`.
  *
- * Note that this is not implemented for all roles - it throws an error if a
- * conditionalSelector has conditions which must be checked.
+ * This is not implemented for all roles - it throws an error if a
+ * conditionalSelector has conditions which must be checked. With the roles for
+ * which it is implemented, it is only suitable for using to find closest
+ * ancestors, and won't return complete results if used in another way
  */
-function closestWithRole(element: HTMLElement, role: AriaRole): HTMLElement|
-    null {
-  // Build a selector equivalent to the role
+function selectorForAncestorRole(role: AriaRole) {
   let selector = `[role="${role}"]`;
 
   if (isImplicitRole(role)) {
@@ -248,10 +256,11 @@ function closestWithRole(element: HTMLElement, role: AriaRole): HTMLElement|
 
     for (const conditionalSelector of implicitDefinition.conditionalSelectors ??
          []) {
-      // Check if an element which matches this selector can have children. If
-      // it cannot then we don't need to check for that element as an ancestor.
-      // The condition is very crude, but is the only way we can hit this code
-      // path. A test in role_map_test.ts verifies this.
+      // Check if an element which matches this selector can have
+      // children. If it cannot then we don't need to check for that
+      // element as an ancestor. The condition is very crude, but is the
+      // only way we can hit this code path. A test in role_map_test.ts
+      // verifies this.
       if (canHaveChildren(conditionalSelector.greedySelector)) {
         throw new Error(
             `Not implemented: closestWithRole called with a role which requires a condition to be checked. Role: ${
@@ -259,8 +268,7 @@ function closestWithRole(element: HTMLElement, role: AriaRole): HTMLElement|
       }
     }
   }
-
-  return closest(element, selector);
+  return selector;
 }
 
 /**

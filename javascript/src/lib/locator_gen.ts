@@ -7,8 +7,7 @@
 import {getNameFor} from './accessible_name';
 import {findBySemanticLocator} from './find_by_semantic_locator';
 import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
-import {getRole, isHidden} from './role';
-import {isChildrenPresentational} from './role_map';
+import {closestChildrenPresentationalAncestor, getRole, isHidden} from './role';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
 import {assert} from './util';
 
@@ -27,11 +26,12 @@ export function closestPreciseLocatorFor(
   if (!root) {
     return null;
   }
-  const full = closestFullLocator(element, root);
+  const full = closestLocator(element, root);
   if (full === null) {
     return null;
   }
-  return refine(full.nodes, full.element, root).toString();
+  return refine(full.nodes, full.element, root, /* firstNodeRequired= */ true)
+      .toString();
 }
 
 /**
@@ -46,11 +46,12 @@ export function preciseLocatorFor(
   if (!root) {
     return null;
   }
-  const full = closestFullLocator(element, root);
+  const full = closestLocator(element, root);
   if (full === null || full.element !== element) {
     return null;
   }
-  return refine(full.nodes, full.element, root).toString();
+  return refine(full.nodes, full.element, root, /* firstNodeRequired= */ true)
+      .toString();
 }
 
 /**
@@ -112,40 +113,48 @@ function resolveRoot(element: HTMLElement, root?: HTMLElement): HTMLElement|
 }
 
 /**
- * Returns a list of one SemanticNode for each semantic ancestor of `element`,
- * and the closest semantic element to `element` (the element matched by the
- * semantic nodes).
+ * Returns a list of one SemanticNode for each semantic ancestor of `element`
+ * (as long as it adds precision to the locator), and the closest semantic
+ * element to `element` (the element matched by the semantic nodes).
  */
-function closestFullLocator(element: HTMLElement, root: HTMLElement):
+function closestLocator(element: HTMLElement, root: HTMLElement):
     {nodes: SemanticNode[]; element: HTMLElement}|null {
-  let first = closestSemanticNode(element, root);
+  const presentationalAncestor = closestChildrenPresentationalAncestor(element);
+  if (presentationalAncestor !== null) {
+    console.warn(
+        `Element ${presentationalAncestor} has a role of` +
+        ` ${getRole(presentationalAncestor)}, so it has presentational` +
+        ` children (https://www.w3.org/TR/wai-aria-practices/#children_presentational).` +
+        ` These presentational elements will be ignored while generating this semantic locator`);
+    return closestLocator(presentationalAncestor, root);
+  }
+
+  const first = closestSemanticNode(element, root);
   if (first === null) {
     return null;
   }
-  let nodes = [first.node];
-  let target = first.element.parentElement;
+  const nodes = [first.node];
+  let targetEl = first.element.parentElement;
+  let foundByPreviousNodes = findByNodes(nodes, root);
 
-  while (target !== null) {
-    const nextTreeNode = closestSemanticNode(target, root);
+  while (targetEl !== null &&
+         // If every found node contains the target then adding more nodes will
+         // not add precision
+         !foundByPreviousNodes.every(el => targetEl!.contains(el))) {
+    const nextTreeNode = closestSemanticNode(targetEl, root);
     if (nextTreeNode !== null) {
-      if (isChildrenPresentational(nextTreeNode.node.role)) {
-        console.warn(
-            `Element ${nextTreeNode.element} has a role of` +
-            ` ${nextTreeNode.node.role}, so it has presentational children` +
-            ` (https://www.w3.org/TR/wai-aria-practices/#children_presentational).` +
-            ` However it also has descendant elements which would otherwise` +
-            ` have semantics - matched by semantic locator` +
-            ` ${new SemanticLocator(nodes, [])}. These presentational` +
-            ` elements will be ignored while generating this semantic locator`);
-        nodes = [];
-        first = nextTreeNode;
+      const trial = [...nodes];
+      trial.unshift(nextTreeNode.node);
+      const foundByNodes = findByNodes(trial, root);
+      if (foundByNodes.length < foundByPreviousNodes.length) {
+        nodes.unshift(nextTreeNode.node);
       }
-      nodes.unshift(nextTreeNode.node);
+      foundByPreviousNodes = foundByNodes;
     }
-    target = nextTreeNode?.element.parentElement ?? null;
+    targetEl = nextTreeNode?.element.parentElement ?? null;
   }
   assert(
-      findByNodes(nodes, root).includes(first.element),
+      foundByPreviousNodes.includes(first.element),
       `Cannot find element again with locator we just generated:\n` +
           `Nodes: ${nodes}\n` +
           `Element: ${first.element.outerHTML}\n`);
@@ -159,10 +168,10 @@ function closestFullLocator(element: HTMLElement, root: HTMLElement):
  * Assumes that `element` is matched by `new SemanticLocator(nodes, [])`.
  */
 export function refine(
-    nodes: SemanticNode[], element: HTMLElement,
-    root: HTMLElement): SemanticLocator {
+    nodes: SemanticNode[], element: HTMLElement, root: HTMLElement,
+    firstNodeRequired: boolean) {
   assert(nodes.length !== 0, 'Trying to refine empty array of nodes');
-  const requiredNodes = removeRedundantNodes(nodes, root);
+  const requiredNodes = removeRedundantNodes(nodes, root, firstNodeRequired);
   assert(
       findByNodes(requiredNodes, root).includes(element),
       `Removing redundant nodes does not resolve element anymore:\n` +
@@ -170,6 +179,7 @@ export function refine(
           `After refinement: ${requiredNodes}\n`);
   return possiblyAddOuter(requiredNodes, element, root);
 }
+
 
 /**
  * Returns the closest ancestor (or `element` itself) with semantics along
@@ -256,27 +266,31 @@ function findByNodes(
 
 /**
  * Removes nodes from `nodes` which don't effect which elements are found. The
- * last node is always important and won't be removed.
+ * last node is always necessary and the first node is necessary if
+ * `firstNodeRequired === true`.
  *
- * This function prefers locators with semantic nodes closer to the target. e.g.
- * for `<ul><li><button id="foo">OK</button></li></ul>`, `{listitem} {button
- * 'OK'}` will be chosen over `{list} {button 'OK'}`. This is because:
+ * This function prefers locators with semantic nodes closer to the targetEl.
+ * e.g. for `<ul><li><button id="foo">OK</button></li></ul>`,
+ * `{listitem} {button 'OK'}` will be chosen over `{list} {button 'OK'}`. This
+ * is because:
  *   * Closer elements in the tree are more likely to change together so
  *     locators should be less brittle
  *   * The semantics of closer elements should contain more relevant info for
- *     about the target element so locators should be more human readable
+ *     about the targetEl element so locators should be more human readable
  */
 function removeRedundantNodes(
-    nodes: readonly SemanticNode[],
-    root: HTMLElement): readonly SemanticNode[] {
-  if (nodes.length <= 1) {
+    nodes: readonly SemanticNode[], root: HTMLElement,
+    firstNodeRequired: boolean): readonly SemanticNode[] {
+  const leadingRequiredNodeCount = firstNodeRequired ? 1 : 0;
+  if (nodes.length <= leadingRequiredNodeCount + 1) {
     return nodes;
   }
   const targets = findByNodes(nodes, root);
-  const requiredNodes: SemanticNode[] = [];
+  const requiredNodes: SemanticNode[] =
+      nodes.slice(0, leadingRequiredNodeCount);
   // Try removing nodes one at a time (left to right), adding those which are
-  // truly required to `requiredNodes`
-  for (let i = 0; i < nodes.length - 1; i++) {
+  // truly required to `requiredNodes`.
+  for (let i = leadingRequiredNodeCount; i < nodes.length - 1; i++) {
     const trial = requiredNodes.concat(nodes.slice(i + 1));
     if (findByNodes(trial, root).length > targets.length) {
       requiredNodes.push(nodes[i]);
