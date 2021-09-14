@@ -249,7 +249,7 @@ describe('batch', () => {
         `,
         container);
 
-    const batchWait1s = batch((element: HTMLElement, rootEl?: HTMLElement) => {
+    const batchWait1s = batch(() => {
       const t0 = Date.now();
       while (Date.now() - t0 < 1000) {
       }
