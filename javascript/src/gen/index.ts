@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from '../lib/locator_gen';
+export {batchClosestPreciseLocatorFor, batchClosestSimpleLocatorFor, batchPreciseLocatorFor, closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from '../lib/locator_gen';

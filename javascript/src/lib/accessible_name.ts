@@ -6,6 +6,7 @@
 
 import {getAccessibleName} from 'accname';
 
+import {cachedDuringBatch} from './batch_cache';
 import {ValueError} from './error';
 
 
@@ -45,6 +46,5 @@ export function nameMatches(expected: string, actual: string): boolean {
  * Return the accessible name for the given element according to
  * https://www.w3.org/TR/accname-1.1/
  */
-export function getNameFor(element: HTMLElement): string {
-  return getAccessibleName(element);
-}
+export const getNameFor =
+    cachedDuringBatch((el: HTMLElement) => getAccessibleName(el));

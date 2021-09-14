@@ -5,12 +5,12 @@
  */
 
 import {getNameFor} from './accessible_name';
+import {runBatchOp} from './batch_cache';
 import {findBySemanticLocator} from './find_by_semantic_locator';
 import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
 import {closestChildrenPresentationalAncestor, getRole, isHidden} from './role';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
 import {assert} from './util';
-
 
 /**
  * Builds the most precise locator which matches `element`. If `element` does
@@ -35,6 +35,14 @@ export function closestPreciseLocatorFor(
 }
 
 /**
+ * Batch version of `closestPreciseLocatorFor`.
+ *
+ * If `timeoutSeconds` is exceeded the returned map will only contain locators
+ * for elements computed until that point.
+ */
+export const batchClosestPreciseLocatorFor = batch(closestPreciseLocatorFor);
+
+/**
  * Builds the most precise locator which matches `element`. "Precise" means that
  * it matches the fewest other elements, while being as short as possible.
  *
@@ -55,6 +63,14 @@ export function preciseLocatorFor(
 }
 
 /**
+ * Batch version of `preciseLocatorFor`.
+ *
+ * If `timeoutSeconds` is exceeded the returned map will only contain locators
+ * for elements computed until that point.
+ */
+export const batchPreciseLocatorFor = batch(preciseLocatorFor);
+
+/**
  * Builds a semantic locator which matches `element`. If `element` does not have
  * a role, return a semantic locator which matches the closest ancestor with a
  * role.  "Simple" means it will only ever specify one node, even if more nodes
@@ -72,6 +88,14 @@ export function closestSimpleLocatorFor(
   }
   return closestSemanticNode(element, root)?.node?.toString() ?? null;
 }
+
+/**
+ * Batch version of `closestSimpleLocatorFor`.
+ *
+ * If `timeoutSeconds` is exceeded the returned map will only contain locators
+ * for elements computed until that point.
+ */
+export const batchClosestSimpleLocatorFor = batch(closestSimpleLocatorFor);
 
 /**
  * Builds a locator with only one part which matches `element`. "Simple" means
@@ -244,10 +268,10 @@ function possiblyAddOuter(
 }
 
 /**
- * This function wraps the `findBySemanticLocator` function, but asserts that
- * something is always found. This is useful as the generation code needs to
- * assume that the nodes it is generating selectors for can be found again with
- * said selectors.
+ * This function wraps the `findBySemanticLocator` function, but asserts
+ * that something is always found. This is useful as the generation code needs
+ * to assume that the nodes it is generating selectors for can be found again
+ * with said selectors.
  */
 function assuredFindByLocator(
     locator: SemanticLocator, root: HTMLElement): readonly HTMLElement[] {
@@ -299,3 +323,38 @@ function removeRedundantNodes(
   requiredNodes.push(nodes[nodes.length - 1]);
   return requiredNodes;
 }
+
+type LocatorGenFunction = (element: HTMLElement, rootEl?: HTMLElement) =>
+    string|null;
+
+type BatchLocatorGenFunction =
+    (elements: Set<HTMLElement>, rootEl?: HTMLElement,
+     timeoutSeconds?: number) => WeakMap<HTMLElement, string|null>;
+
+function batch(individualFunction: LocatorGenFunction):
+    BatchLocatorGenFunction {
+  return (elements: Set<HTMLElement>, rootEl?: HTMLElement,
+          timeoutSeconds?: number) => {
+            let timeoutMillis: number|null = null;
+    if (timeoutSeconds) {
+       timeoutMillis = Date.now() + timeoutSeconds * 1000;
+    }
+    const results = new WeakMap<HTMLElement, string|null>();
+    runBatchOp(() => {
+      let done = 0;
+      for (const element of elements) {
+        if (timeoutMillis !== null && Date.now() > timeoutMillis) {
+          console.warn(`Timed out computing batch locators after ${
+              timeoutSeconds}s. Computed ${done}/${
+              elements.size} locators before timing out.`);
+          return;
+        }
+        results.set(element, individualFunction(element, rootEl));
+        done += 1;
+      }
+    });
+    return results;
+  };
+}
+
+export const TEST_ONLY = {batch};

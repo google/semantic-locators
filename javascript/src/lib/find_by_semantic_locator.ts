@@ -6,6 +6,7 @@
 
 import {getNameFor, nameMatches} from './accessible_name';
 import {computeARIAAttributeValue} from './attribute';
+import {cachedDuringBatch} from './batch_cache';
 import {NoSuchElementError} from './error';
 import {buildFailureMessage, combineMostSpecific, EmptyResultsMetadata, isEmptyResultsMetadata, isNonEmptyResult, Result} from './lookup_result';
 import {outerNodesOnly} from './outer';
@@ -13,7 +14,6 @@ import {parse} from './parse_locator';
 import {findByRole} from './role';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
 import {assertInDocumentOrder, compareNodeOrder, removeDuplicates} from './util';
-
 
 /**
  * Find all elements in the DOM by the given semantic locator and returns them
@@ -65,6 +65,19 @@ export function findBySemanticLocator(
     root: HTMLElement = document.body,
     includeHidden: boolean = false,
     includePresentational: boolean = false,
+    ): Result {
+  return findBySemanticLocatorCached(
+      locator, root, includeHidden, includePresentational);
+}
+
+const findBySemanticLocatorCached =
+    cachedDuringBatch(findBySemanticLocatorInternal);
+
+function findBySemanticLocatorInternal(
+    locator: SemanticLocator,
+    root: HTMLElement,
+    includeHidden: boolean,
+    includePresentational: boolean,
     ): Result {
   const searchBase = findBySemanticNodes(
       locator.preOuter, [root], includeHidden, includePresentational);

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {CacheableObject} from './batch_cache';
 import {InvalidLocatorError} from './error';
 import {AriaRole, isAriaRole, isChildrenPresentational} from './role_map';
 import {SUPPORTED_ATTRIBUTES, SupportedAttributeType} from './types';
@@ -15,7 +16,7 @@ export interface Attribute {
 }
 
 /** A parsed semantic locator. */
-export class SemanticLocator {
+export class SemanticLocator implements CacheableObject {
   constructor(
       readonly preOuter: readonly SemanticNode[],
       readonly postOuter: readonly SemanticNode[]) {
@@ -70,6 +71,10 @@ export class SemanticLocator {
     }
 
     return resultBuilder.join(' ');
+  }
+
+  hashCode() {
+    return this.toString();
   }
 }
 

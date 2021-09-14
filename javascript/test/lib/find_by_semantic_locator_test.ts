@@ -5,6 +5,8 @@
  */
 
 import {html, render} from 'lit-html';
+
+import {runBatchOp} from '../../src/lib/batch_cache';
 import {findElementBySemanticLocator, findElementsBySemanticLocator} from '../../src/lib/find_by_semantic_locator';
 
 let container: HTMLElement;
@@ -447,6 +449,52 @@ describe('findElementsBySemanticLocator', () => {
     expect(findElementsBySemanticLocator('{listitem}', container)).toEqual([
       document.getElementById('bar')!
     ]);
+  });
+
+  it('caches values if cache is enabled', () => {
+    render(
+        html`
+      <div role="button" id="first">first button</div>
+      <div id="second">second button</div>
+      `,
+        container);
+    runBatchOp(() => {
+      // Seed cache
+      findElementsBySemanticLocator('{button}', container);
+      document.getElementById('second')?.setAttribute('role', 'button');
+
+      expect(findElementsBySemanticLocator('{button}', container)).toEqual([
+        document.getElementById('first')!
+      ]);
+    });
+    expect(findElementsBySemanticLocator('{button}', container)).toEqual([
+      document.getElementById('first')!,
+      document.getElementById('second')!,
+    ]);
+  });
+
+  it('clears cache between runBatchOp calls', () => {
+    render(
+        html`
+      <div role="button" id="first">first button</div>
+      <div id="second">second button</div>
+      `,
+        container);
+    runBatchOp(() => {
+      // Seed cache
+      findElementsBySemanticLocator('{button}', container);
+      document.getElementById('second')?.setAttribute('role', 'button');
+
+      expect(findElementsBySemanticLocator('{button}', container)).toEqual([
+        document.getElementById('first')!
+      ]);
+    });
+    runBatchOp(() => {
+      expect(findElementsBySemanticLocator('{button}', container)).toEqual([
+        document.getElementById('first')!,
+        document.getElementById('second')!,
+      ]);
+    });
   });
 });
 

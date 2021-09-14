@@ -4,9 +4,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {nameMatches} from '../../src/lib/accessible_name';
+import {html, render} from 'lit-html';
+
+import {getNameFor, nameMatches} from '../../src/lib/accessible_name';
+import {runBatchOp} from '../../src/lib/batch_cache';
 
 describe('nameMatches', () => {
+  let container: HTMLElement;
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+  });
+
   it('mathes the same string without wildcards', () => {
     expect(nameMatches('foo', 'foo')).toBeTrue();
     expect(nameMatches('', '')).toBeTrue();
@@ -57,5 +70,32 @@ describe('nameMatches', () => {
 
   it('throws for a name of *', () => {
     expect(() => nameMatches('*', '')).toThrow();
+  });
+
+  it('caches values if cache is enabled', () => {
+    render(html`<div role="button" id="button">original name</div>`, container);
+    const button = document.getElementById('button')!;
+    runBatchOp(() => {
+      // Seed cache
+      getNameFor(button);
+      button.innerText = 'new name';
+
+      expect(getNameFor(button)).toBe('original name');
+    });
+    expect(getNameFor(button)).toBe('new name');
+  });
+
+  it('clears cache between runBatchOp calls', () => {
+    render(html`<div role="button" id="button">original name</div>`, container);
+    const button = document.getElementById('button')!;
+    runBatchOp(() => {
+      getNameFor(button);
+      button.innerText = 'new name';
+
+      expect(getNameFor(button)).toBe('original name');
+    });
+    runBatchOp(() => {
+      expect(getNameFor(button)).toBe('new name');
+    });
   });
 });

@@ -6,8 +6,9 @@
 
 import {html, render} from 'lit-html';
 
-import {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from '../../src/lib/locator_gen';
+import {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor, TEST_ONLY} from '../../src/lib/locator_gen';
 
+const {batch} = TEST_ONLY;
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -232,6 +233,39 @@ describe('closestPreciseLocatorFor', () => {
                document.getElementById('tab')!, document.getElementById('root')!
                ))
         .toEqual(`{tab 'foo'}`);
+  });
+});
+
+describe('batch', () => {
+  it('times out after configured time', () => {
+    render(
+        html`
+        <div id="one"></div>
+        <div id="two"></div>
+        <div id="three"></div>
+        <div id="four"></div>
+        <div id="five"></div>
+        <div id="six"></div>
+        `,
+        container);
+
+    const batchWait1s = batch((element: HTMLElement, rootEl?: HTMLElement) => {
+      const t0 = Date.now();
+      while (Date.now() - t0 < 1000) {
+      }
+      return '';
+    });
+
+    // 1.5s is enough time to start 2 computations
+    const result = batchWait1s(
+        new Set(container.getElementsByTagName('div')), undefined, 1.5);
+
+    for (const expectedKey of ['one', 'two']) {
+      expect(result.has(document.getElementById(expectedKey)!)).toBeTrue();
+    }
+    for (const unexpectedKey of ['three', 'four', 'five', 'six']) {
+      expect(result.has(document.getElementById(unexpectedKey)!)).toBeFalse();
+    }
   });
 });
 
