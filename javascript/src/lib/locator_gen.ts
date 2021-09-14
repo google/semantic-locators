@@ -335,9 +335,9 @@ function batch(individualFunction: LocatorGenFunction):
     BatchLocatorGenFunction {
   return (elements: Set<HTMLElement>, rootEl?: HTMLElement,
           timeoutSeconds?: number) => {
-            let timeoutMillis: number|null = null;
+    let timeoutMillis: number|null = null;
     if (timeoutSeconds) {
-       timeoutMillis = Date.now() + timeoutSeconds * 1000;
+      timeoutMillis = Date.now() + timeoutSeconds * 1000;
     }
     const results = new WeakMap<HTMLElement, string|null>();
     runBatchOp(() => {
