@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {html, render} from 'lit-html';
+import {html, render} from 'lit';
 
 import {getNameFor, nameMatches} from '../../src/lib/accessible_name';
 import {runBatchOp} from '../../src/lib/batch_cache';

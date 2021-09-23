@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {html, render} from 'lit-html';
+import {html, render} from 'lit';
 
 import {buildFailureMessage} from '../../src/lib/lookup_result';
 import {SemanticLocator, SemanticNode} from '../../src/lib/semantic_locator';

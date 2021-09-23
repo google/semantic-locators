@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {html, render} from 'lit-html';
+import {html, render} from 'lit';
 
 import {hasDataInColumn, hasDataInRow, TEST_ONLY} from '../../src/lib/table';
 

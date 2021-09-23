@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {html, render} from 'lit-html';
+import {html, render} from 'lit';
 
 import {runBatchOp} from '../../src/lib/batch_cache';
 import {findElementBySemanticLocator, findElementsBySemanticLocator} from '../../src/lib/find_by_semantic_locator';
