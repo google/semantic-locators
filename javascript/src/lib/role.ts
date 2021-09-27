@@ -52,7 +52,7 @@ export function findByRole(
 
   // TODO(alexlloyd) this could be optimised with a k-way merge removing
   // duplicates rather than concat + sort in separate steps.
-  return Array.from(elements)
+  return arrayFrom(elements)
       .filter(el => includeHidden || !isHidden(el))
       .filter(el => includePresentational || !isPresentationalChild(el))
       .sort(compareNodeOrder);
@@ -332,4 +332,16 @@ function closest(element: Element, selector: string): Element|null {
   return element;
 }
 
-export const TEST_ONLY = {evaluateCondition};
+/** Polyfill of `Array.from` for `Set`s in IE11. */
+function arrayFrom<T>(set: Set<T>): T[] {
+  const result: T[] = new Array();
+  for (const value of set) {
+    result.push(value);
+  }
+  return result;
+}
+
+export const TEST_ONLY = {
+  evaluateCondition,
+  arrayFrom
+};

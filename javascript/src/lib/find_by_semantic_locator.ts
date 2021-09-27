@@ -41,19 +41,28 @@ export function findElementBySemanticLocator(
   const parsed = parse(locator);
   const result = findBySemanticLocator(parsed, root);
   if (isEmptyResultsMetadata(result)) {
-    let hiddenMatches: readonly HTMLElement[] = [];
-    const hiddenResult = findBySemanticLocator(parsed, root, true);
-    hiddenMatches =
-        isEmptyResultsMetadata(hiddenResult) ? [] : hiddenResult.found;
-    const presentationalResult =
-        findBySemanticLocator(parsed, root, false, true);
-    const presentationalMatches = isEmptyResultsMetadata(presentationalResult) ?
-        [] :
-        presentationalResult.found;
-    throw new NoSuchElementError(buildFailureMessage(
-        parsed, result, hiddenMatches, presentationalMatches));
+    throw new NoSuchElementError(getFailureMessage(parsed, root, result));
   }
   return result.found[0];
+}
+
+/**
+ * Build a string explaining the failure in `result`.
+ *
+ * This function performs locator resolution while investigating the failure.
+ */
+export function getFailureMessage(
+    locator: SemanticLocator, root: HTMLElement, result: EmptyResultsMetadata) {
+  const hiddenResult = findBySemanticLocator(locator, root, true);
+  const hiddenMatches =
+      isEmptyResultsMetadata(hiddenResult) ? [] : hiddenResult.found;
+  const presentationalResult =
+      findBySemanticLocator(locator, root, false, true);
+  const presentationalMatches = isEmptyResultsMetadata(presentationalResult) ?
+      [] :
+      presentationalResult.found;
+  return buildFailureMessage(
+      locator, result, hiddenMatches, presentationalMatches);
 }
 
 /**

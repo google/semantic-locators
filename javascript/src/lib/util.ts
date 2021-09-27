@@ -101,6 +101,18 @@ export function assert(condition: boolean, givenMessage?: string): boolean {
   return condition;
 }
 
+/**
+ * Throw an exception if the condition is false, evaluating `messageSupplier`
+ * as the error message
+ */
+export function lazyAssert(
+    condition: boolean, messageSupplier: () => string): boolean {
+  if (debug() && !condition) {
+    throw new Error(`Assertion failed: ${messageSupplier()}`);
+  }
+  return condition;
+}
+
 /** Are we in debug mode? */
 export function debug(): boolean {
   return (window as unknown as {goog?: {DEBUG?: boolean}})?.goog?.DEBUG ||

@@ -9,7 +9,7 @@ import {html, render} from 'lit';
 import {findByRole, getRole, positionWithinAncestorRole, TEST_ONLY} from '../../src/lib/role';
 import {ConditionType, PropertyTakesBoolValue} from '../../src/lib/types';
 
-const {evaluateCondition} = TEST_ONLY;
+const {arrayFrom, evaluateCondition} = TEST_ONLY;
 
 let container: HTMLElement;
 
@@ -568,5 +568,17 @@ describe('positionWithinAncestorRole', () => {
     expect(positionWithinAncestorRole(
                document.getElementById('second')!, 'row', ['cell']))
         .toEqual(2);
+  });
+});
+
+describe('arrayFrom is the inverse of `new Set()`', () => {
+  it('for the empty set', () => {
+    const input = new Set();
+    expect(new Set(arrayFrom(input))).toEqual(input);
+  });
+
+  it('for a non-empty set', () => {
+    const input = new Set(['a', 'b', 'c', 'd']);
+    expect(new Set(arrayFrom(input))).toEqual(input);
   });
 });

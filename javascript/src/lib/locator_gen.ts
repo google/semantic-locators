@@ -6,11 +6,11 @@
 
 import {getNameFor} from './accessible_name';
 import {runBatchOp} from './batch_cache';
-import {findBySemanticLocator} from './find_by_semantic_locator';
-import {isNonEmptyResult, NonEmptyResult} from './lookup_result';
+import {findBySemanticLocator, getFailureMessage} from './find_by_semantic_locator';
+import {EmptyResultsMetadata, isNonEmptyResult, NonEmptyResult} from './lookup_result';
 import {closestChildrenPresentationalAncestor, getRole, isHidden} from './role';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
-import {assert} from './util';
+import {assert, lazyAssert} from './util';
 
 /**
  * Builds the most precise locator which matches `element`. If `element` does
@@ -276,8 +276,10 @@ function possiblyAddOuter(
 function assuredFindByLocator(
     locator: SemanticLocator, root: HTMLElement): readonly HTMLElement[] {
   const result = findBySemanticLocator(locator, root);
-  assert(
-      isNonEmptyResult(result), `Locator ${locator} didn't find any elements`);
+  lazyAssert(
+      isNonEmptyResult(result),
+      () => `assuredFindByLocator found no elements: ${
+          getFailureMessage(locator, root, result as EmptyResultsMetadata)};`);
   return (result as NonEmptyResult).found;
 }
 
