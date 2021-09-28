@@ -30,7 +30,6 @@ export function findByRole(
 
   const elements = new Set(matchExplicitSelector);
 
-
   const implicitDefinition = ROLE_MAP[role];
 
   const exactSelector = implicitDefinition.exactSelector;
@@ -59,17 +58,17 @@ export function findByRole(
 }
 
 /** Calculate the role for the given element based on the rules in roleMap. */
-export function getRole(
-    element: HTMLElement,
-    ): AriaRole|null {
+export function getRole(element: HTMLElement): AriaRole|null {
   const explicitRole = element.getAttribute('role');
-  if (explicitRole) {
+  if (explicitRole !== null) {
     if (IGNORED_ROLES.includes(explicitRole)) {
       return null;
     }
-    if (isAriaRole(explicitRole)) {
-      return explicitRole;
+    if (!isAriaRole(explicitRole)) {
+      // TODO(b/201268511) assert or throw for invalid role attribute
+      return null;
     }
+    return explicitRole;
   }
 
   const tagName = element.tagName.toLowerCase();

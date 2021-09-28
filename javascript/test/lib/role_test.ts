@@ -209,6 +209,27 @@ describe('getRole', () => {
     expect(getRole(document.getElementById('bar')!)).toBeNull();
   });
 
+  it('returns null for invalid roles', () => {
+    render(
+        html`
+    <div id="foo">foo</div>
+    <button id="bar">bar</button>
+    <button id="baz">baz</button>
+    `,
+        container);
+    const fooElement = document.getElementById('foo')!;
+    const barElement = document.getElementById('bar')!;
+    const bazElement = document.getElementById('baz')!;
+    // setAttribute as lit-plugin doesn't allow invalid roles in html strings
+    fooElement.setAttribute('role', 'buton');
+    barElement.setAttribute('role', 'buton');
+    bazElement.setAttribute('role', '');
+
+    expect(getRole(fooElement)).toBeNull();
+    expect(getRole(barElement)).toBeNull();
+    expect(getRole(bazElement)).toBeNull();
+  });
+
   it('gets explicit roles', () => {
     render(
         html`
