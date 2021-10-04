@@ -9,16 +9,21 @@ import {assert} from './util';
 const caches: Array<Map<unknown, unknown>> = [];
 let isBatchOp = false;
 
+/** Whether we're currently in a batch operation. */
+export function inBatchOp() {
+  return isBatchOp;
+}
+
 /**
  * Run a function during which all relevant functions get their results cached
  */
 export function runBatchOp(fn: () => void): void {
-  assert(!isBatchOp, 'Already in a batch operation');
+  assert(!inBatchOp(), 'Already in a batch operation');
   isBatchOp = true;
   try {
     fn();
   } finally {
-    assert(isBatchOp, 'Not in a batch operation');
+    assert(inBatchOp(), 'Not in a batch operation');
     isBatchOp = false;
     for (const cache of caches) {
       cache.clear();

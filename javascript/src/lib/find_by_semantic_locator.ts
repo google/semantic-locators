@@ -6,7 +6,7 @@
 
 import {getNameFor, nameMatches} from './accessible_name';
 import {computeARIAAttributeValue} from './attribute';
-import {cachedDuringBatch} from './batch_cache';
+import {cachedDuringBatch, inBatchOp, runBatchOp} from './batch_cache';
 import {NoSuchElementError} from './error';
 import {buildFailureMessage, combineMostSpecific, EmptyResultsMetadata, isEmptyResultsMetadata, isNonEmptyResult, Result} from './lookup_result';
 import {outerNodesOnly} from './outer';
@@ -75,8 +75,17 @@ export function findBySemanticLocator(
     includeHidden: boolean = false,
     includePresentational: boolean = false,
     ): Result {
-  return findBySemanticLocatorCached(
-      locator, root, includeHidden, includePresentational);
+  let result: Result|null = null;
+  if (inBatchOp()) {
+    result = findBySemanticLocatorCached(
+        locator, root, includeHidden, includePresentational);
+  } else {
+    runBatchOp(() => {
+      result = findBySemanticLocatorCached(
+          locator, root, includeHidden, includePresentational);
+    });
+  }
+  return result!;
 }
 
 const findBySemanticLocatorCached =
