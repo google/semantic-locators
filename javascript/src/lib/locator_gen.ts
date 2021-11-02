@@ -10,7 +10,16 @@ import {findBySemanticLocator, getFailureMessage} from './find_by_semantic_locat
 import {EmptyResultsMetadata, isNonEmptyResult, NonEmptyResult} from './lookup_result';
 import {closestChildrenPresentationalAncestor, getRole, isHidden} from './role';
 import {SemanticLocator, SemanticNode} from './semantic_locator';
+import {QuoteChar} from './types';
 import {assert, lazyAssert} from './util';
+
+declare interface GenerationParams {
+  rootEl?: HTMLElement;
+  quoteChar?: QuoteChar;
+}
+
+declare type BatchGenerationParams =
+    GenerationParams & {timeoutSeconds?: number};
 
 /**
  * Builds the most precise locator which matches `element`. If `element` does
@@ -21,7 +30,9 @@ import {assert, lazyAssert} from './util';
  * Returns null if no semantic locator exists for any ancestor.
  */
 export function closestPreciseLocatorFor(
-    element: HTMLElement, rootEl?: HTMLElement): string|null {
+    element: HTMLElement, generationParams: GenerationParams = {}): string|
+    null {
+  const {rootEl, quoteChar} = generationParams;
   const root = resolveRoot(element, rootEl);
   if (!root) {
     return null;
@@ -31,7 +42,7 @@ export function closestPreciseLocatorFor(
     return null;
   }
   return refine(full.nodes, full.element, root, /* firstNodeRequired= */ true)
-      .toString();
+      .toString(quoteChar);
 }
 
 /**
@@ -49,7 +60,9 @@ export const batchClosestPreciseLocatorFor = batch(closestPreciseLocatorFor);
  * Returns null if no semantic locator exists.
  */
 export function preciseLocatorFor(
-    element: HTMLElement, rootEl?: HTMLElement): string|null {
+    element: HTMLElement, generationParams: GenerationParams = {}): string|
+    null {
+  const {rootEl, quoteChar} = generationParams;
   const root = resolveRoot(element, rootEl);
   if (!root) {
     return null;
@@ -59,7 +72,7 @@ export function preciseLocatorFor(
     return null;
   }
   return refine(full.nodes, full.element, root, /* firstNodeRequired= */ true)
-      .toString();
+      .toString(quoteChar);
 }
 
 /**
@@ -81,12 +94,14 @@ export const batchPreciseLocatorFor = batch(preciseLocatorFor);
  * Returns null if no semantic locator exists for any ancestor.
  */
 export function closestSimpleLocatorFor(
-    element: HTMLElement, rootEl?: HTMLElement): string|null {
+    element: HTMLElement, generationParams: GenerationParams = {}): string|
+    null {
+  const {rootEl, quoteChar} = generationParams;
   const root = resolveRoot(element, rootEl);
   if (!root) {
     return null;
   }
-  return closestSemanticNode(element, root)?.node?.toString() ?? null;
+  return closestSemanticNode(element, root)?.node?.toString(quoteChar) ?? null;
 }
 
 /**
@@ -106,8 +121,9 @@ export const batchClosestSimpleLocatorFor = batch(closestSimpleLocatorFor);
  *
  * Returns null if no semantic locator exists.
  */
-export function simpleLocatorFor(element: HTMLElement): string|null {
-  return semanticNodeFor(element)?.toString() ?? null;
+export function simpleLocatorFor(
+    element: HTMLElement, quoteChar?: QuoteChar): string|null {
+  return semanticNodeFor(element)?.toString(quoteChar) ?? null;
 }
 
 /**
@@ -326,17 +342,18 @@ function removeRedundantNodes(
   return requiredNodes;
 }
 
-type LocatorGenFunction = (element: HTMLElement, rootEl?: HTMLElement) =>
-    string|null;
+type LocatorGenFunction =
+    (element: HTMLElement, generationParams: GenerationParams) => string|null;
 
 type BatchLocatorGenFunction =
-    (elements: Set<HTMLElement>, rootEl?: HTMLElement,
-     timeoutSeconds?: number) => WeakMap<HTMLElement, string|null>;
+    (elements: Set<HTMLElement>, generationParams: BatchGenerationParams) =>
+        WeakMap<HTMLElement, string|null>;
 
 function batch(individualFunction: LocatorGenFunction):
     BatchLocatorGenFunction {
-  return (elements: Set<HTMLElement>, rootEl?: HTMLElement,
-          timeoutSeconds?: number) => {
+  return (elements: Set<HTMLElement>,
+          generationParams: BatchGenerationParams = {}) => {
+    const {rootEl, quoteChar, timeoutSeconds} = generationParams;
     let timeoutMillis: number|null = null;
     if (timeoutSeconds) {
       timeoutMillis = Date.now() + timeoutSeconds * 1000;
@@ -351,7 +368,7 @@ function batch(individualFunction: LocatorGenFunction):
               elements.size} locators before timing out.`);
           return;
         }
-        results.set(element, individualFunction(element, rootEl));
+        results.set(element, individualFunction(element, {rootEl, quoteChar}));
         done += 1;
       }
     });

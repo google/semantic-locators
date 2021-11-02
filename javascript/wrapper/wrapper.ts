@@ -5,6 +5,7 @@
  */
 
 import {SemanticLocatorError} from 'google3/third_party/semantic_locators/javascript/lib/error';
+import {QuoteChar} from 'google3/third_party/semantic_locators/javascript/lib/types';
 import {findElementBySemanticLocator, findElementsBySemanticLocator} from 'semantic-locators';
 import {closestPreciseLocatorFor, closestSimpleLocatorFor, preciseLocatorFor, simpleLocatorFor} from 'semantic-locators/gen';
 
@@ -35,9 +36,18 @@ function exportGlobal(name: string, value: unknown) {
 
 exportGlobal('findElementsBySemanticLocator', findElementsBySemanticLocator);
 exportGlobal('findElementBySemanticLocator', findElementBySemanticLocator);
-exportGlobal('closestPreciseLocatorFor', closestPreciseLocatorFor);
-exportGlobal('preciseLocatorFor', preciseLocatorFor);
-exportGlobal('closestSimpleLocatorFor', closestSimpleLocatorFor);
+exportGlobal(
+    'closestPreciseLocatorFor',
+    (element: HTMLElement, rootEl?: HTMLElement, quoteChar?: QuoteChar) =>
+        closestPreciseLocatorFor(element, {rootEl, quoteChar}));
+exportGlobal(
+    'preciseLocatorFor',
+    (element: HTMLElement, rootEl?: HTMLElement, quoteChar?: QuoteChar) =>
+        preciseLocatorFor(element, {rootEl, quoteChar}));
+exportGlobal(
+    'closestSimpleLocatorFor',
+    (element: HTMLElement, rootEl?: HTMLElement, quoteChar?: QuoteChar) =>
+        closestSimpleLocatorFor(element, {rootEl, quoteChar}));
 exportGlobal('simpleLocatorFor', simpleLocatorFor);
 
 // Marker for clients to check that semantic locators have been loaded

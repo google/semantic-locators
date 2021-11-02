@@ -143,3 +143,6 @@ export interface DataInColumn {
   readonly type: ConditionType.DATA_IN_COLUMN;
   readonly dataInColumn: boolean;
 }
+
+/** A quote character. */
+export type QuoteChar = `'`|'"';

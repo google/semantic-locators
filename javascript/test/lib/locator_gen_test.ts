@@ -35,6 +35,19 @@ describe('simpleLocatorFor', () => {
         .toEqual(`{button 'OK'}`);
   });
 
+  it('uses the specified quoteChar', () => {
+    render(
+        html`
+        <div role="button" id="foo" aria-label="OK"></div>
+        <div role="button" id="bar" aria-label="O'K"></div>`,
+        container);
+
+    expect(simpleLocatorFor(document.getElementById('foo')!, '"'))
+        .toEqual(`{button "OK"}`);
+    expect(simpleLocatorFor(document.getElementById('bar')!, `'`))
+        .toEqual(`{button 'O\\'K'}`);
+  });
+
   it('returns null if no semantic locator exists', () => {
     render(
         html`<button><div id="foo" aria-label="OK"></div></button>`, container);
@@ -229,10 +242,9 @@ describe('closestPreciseLocatorFor', () => {
 
     expect(closestPreciseLocatorFor(document.getElementById('tab')!))
         .toEqual(`{region} {tab 'foo'}`);
-    expect(closestPreciseLocatorFor(
-               document.getElementById('tab')!, document.getElementById('root')!
-               ))
-        .toEqual(`{tab 'foo'}`);
+    expect(closestPreciseLocatorFor(document.getElementById('tab')!, {
+      rootEl: document.getElementById('root')!
+    })).toEqual(`{tab 'foo'}`);
   });
 });
 
@@ -258,7 +270,7 @@ describe('batch', () => {
 
     // 1.5s is enough time to start 2 computations
     const result = batchWait1s(
-        new Set(container.getElementsByTagName('div')), undefined, 1.5);
+        new Set(container.getElementsByTagName('div')), {timeoutSeconds: 1.5});
 
     for (const expectedKey of ['one', 'two']) {
       expect(result.has(document.getElementById(expectedKey)!)).toBeTrue();

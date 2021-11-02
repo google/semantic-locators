@@ -57,6 +57,15 @@ describe('SemanticNode.toString', () => {
        expect(new SemanticNode('button', [], `"What's new?"`).toString())
            .toEqual(`{button '"What\\'s new?"'}`);
      });
+
+  it('returns a locator using the specified quoteChar', () => {
+    expect(new SemanticNode('button', [], `What's new?`).toString(`'`))
+        .toEqual(`{button 'What\\'s new?'}`);
+    expect(new SemanticNode('button', [], '"Coming up"').toString('"'))
+        .toEqual(`{button "\\"Coming up\\""}`);
+    expect(new SemanticNode('button', [], `"What's new?"`).toString('"'))
+        .toEqual(`{button "\\"What's new?\\""}`);
+  });
 });
 
 describe('SemanticLocator', () => {

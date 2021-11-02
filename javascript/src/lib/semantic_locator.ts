@@ -7,7 +7,7 @@
 import {CacheableObject} from './batch_cache';
 import {InvalidLocatorError} from './error';
 import {AriaRole, isAriaRole, isChildrenPresentational} from './role_map';
-import {SUPPORTED_ATTRIBUTES, SupportedAttributeType} from './types';
+import {QuoteChar, SUPPORTED_ATTRIBUTES, SupportedAttributeType} from './types';
 
 /** An attribute-value pair. */
 export interface Attribute {
@@ -57,16 +57,16 @@ export class SemanticLocator implements CacheableObject {
     }
   }
 
-  toString(): string {
+  toString(quoteChar?: QuoteChar): string {
     const resultBuilder: string[] = [];
     for (const node of this.preOuter) {
-      resultBuilder.push(node.toString());
+      resultBuilder.push(node.toString(quoteChar));
     }
 
     if (this.postOuter.length > 0) {
       resultBuilder.push('outer');
       for (const node of this.postOuter) {
-        resultBuilder.push(node.toString());
+        resultBuilder.push(node.toString(quoteChar));
       }
     }
 
@@ -86,13 +86,13 @@ export class SemanticNode {
       readonly name?: string,
   ) {}
 
-  toString(): string {
+  toString(quoteChar?: QuoteChar): string {
     let result: string = '';
     result += '{';
     result += this.role;
     if (this.name) {
       result += ' ';
-      result += escapeAndSurroundWithQuotes(this.name);
+      result += escapeAndSurroundWithQuotes(this.name, quoteChar);
     }
 
     for (const attribute of this.attributes) {
@@ -113,9 +113,16 @@ export class SemanticNode {
  *
  * `"Quote" - Author` -> `'"Quote" - Author'`.
  */
-function escapeAndSurroundWithQuotes(raw: string): string {
-  if (raw.includes('\'') && !raw.includes('"')) {
-    return JSON.stringify(raw);
+function escapeAndSurroundWithQuotes(
+    raw: string, quoteChar?: QuoteChar): string {
+  if (quoteChar === undefined) {
+    if (raw.includes('\'') && !raw.includes('"')) {
+      quoteChar = '"';
+    } else {
+      quoteChar = `'`;
+    }
   }
-  return `'${raw.replace(/'/g, '\\\'')}'`;
+
+  const escaped = raw.replace(new RegExp(quoteChar, 'g'), `\\${quoteChar}`);
+  return `${quoteChar}${escaped}${quoteChar}`;
 }
