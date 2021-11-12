@@ -68,9 +68,10 @@ public final class BySemanticLocatorTest {
                 "{region} outer {list}",
                 "<div role='region'><ul id='target'><li><ul><li>foo</li></ul></li></ul></div>"),
             asList(
-                "{button 'блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!\"_+'}",
+                "{button"
+                    + " 'блČλñéç\u202aहिन्दी\u202c日本語\u202c\u202a한국어\u202cй\u202aไ🤖-—–;|<>!\"_+'}",
                 "<button id='target'"
-                    + " aria-label='блČλñéç‪हिन्दी‬日本語‬‪한국어‬й‪ไ🤖-—–;|<>!&quot;_+'>OK</button>"),
+                    + " aria-label='блČλñéç\u202aहिन्दी\u202c日本語\u202c\u202a한국어\u202cй\u202aไ🤖-—–;|<>!&quot;_+'>OK</button>"),
             asList(
                 "{ button '\\'escaped quotes\\\\\\' and unescaped\\\\\\\\'}",
                 "<button id='target'>'escaped quotes\\' and unescaped\\\\</button>")));
