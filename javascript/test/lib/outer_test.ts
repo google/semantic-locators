@@ -5,6 +5,7 @@
  */
 
 import {html, render} from 'lit';
+
 import {outerNodesOnly} from '../../src/lib/outer';
 
 describe('outerNodesOnly', () => {

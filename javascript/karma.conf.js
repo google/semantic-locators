@@ -18,8 +18,13 @@ module.exports = (config) => {
 
     karmaTypescriptConfig: {
       tsconfig: './tsconfig.json',
-      bundlerOptions:
-          {transforms: [require('karma-typescript-es6-transform')()]}
+      bundlerOptions: {
+        transforms: [
+          require('karma-typescript-es6-transform')({
+            plugins: ["@babel/transform-runtime"]
+          }),
+        ],
+      },
     },
 
     files: [
