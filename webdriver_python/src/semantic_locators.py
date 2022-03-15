@@ -15,15 +15,20 @@
 
 See https://github.com/google/semantic-locators for docs.
 """
+
 from typing import List, Optional, Sequence, Union
 
-from selenium.webdriver.remote.webdriver import (WebElement, WebDriver)
-from selenium.common.exceptions import (InvalidSelectorException,
-                                        JavascriptException,
-                                        NoSuchElementException)
 import importlib_resources
+from selenium.common.exceptions import InvalidSelectorException
+from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebElement
 
-JS_IMPLEMENTATION = importlib_resources.read_text("src.data", "wrapper_bin.js")
+
+JS_IMPLEMENTATION = importlib_resources.read_text(
+    "src.data",
+    "wrapper_bin.js")
 
 
 def find_elements_by_semantic_locator(
@@ -157,8 +162,6 @@ def simple_locator_for(element: WebElement):
 
   Args:
     element: A WebElement to generate a locator for.
-    root: Optional; The element relative to which the locator will be generated.
-      Defaults to the whole document.
 
   Returns:
     The locator for `element` or its closest semantic ancestor. Returns None if
