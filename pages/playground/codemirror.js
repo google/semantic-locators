@@ -50,7 +50,8 @@
   var ie_version = ie && (ie_upto10 ? document.documentMode || 6 : +(edge || ie_11up)[1]);
   var webkit = !edge && /WebKit\//.test(userAgent);
   var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(userAgent);
-  var chrome = !edge && /Chrome\//.test(userAgent);
+  var chrome = !edge && /Chrome\/(\d+)/.exec(userAgent);
+  var chrome_version = chrome && +chrome[1];
   var presto = /Opera\//.test(userAgent);
   var safari = /Apple Computer/.test(navigator.vendor);
   var mac_geMountainLion = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(userAgent);
@@ -1348,7 +1349,7 @@
   // Add a span to a line.
   function addMarkedSpan(line, span, op) {
     var inThisOp = op && window.WeakSet && (op.markedSpans || (op.markedSpans = new WeakSet));
-    if (inThisOp && inThisOp.has(line.markedSpans)) {
+    if (inThisOp && line.markedSpans && inThisOp.has(line.markedSpans)) {
       line.markedSpans.push(span);
     } else {
       line.markedSpans = line.markedSpans ? line.markedSpans.concat([span]) : [span];
@@ -2609,9 +2610,11 @@
   }
 
   function widgetTopHeight(lineObj) {
+    var ref = visualLine(lineObj);
+    var widgets = ref.widgets;
     var height = 0;
-    if (lineObj.widgets) { for (var i = 0; i < lineObj.widgets.length; ++i) { if (lineObj.widgets[i].above)
-      { height += widgetHeight(lineObj.widgets[i]); } } }
+    if (widgets) { for (var i = 0; i < widgets.length; ++i) { if (widgets[i].above)
+      { height += widgetHeight(widgets[i]); } } }
     return height
   }
 
@@ -4531,6 +4534,17 @@
   }
 
   function onScrollWheel(cm, e) {
+    // On Chrome 102, viewport updates somehow stop wheel-based
+    // scrolling. Turning off pointer events during the scroll seems
+    // to avoid the issue.
+    if (chrome && chrome_version >= 102) {
+      if (cm.display.chromeScrollHack == null) { cm.display.sizer.style.pointerEvents = "none"; }
+      else { clearTimeout(cm.display.chromeScrollHack); }
+      cm.display.chromeScrollHack = setTimeout(function () {
+        cm.display.chromeScrollHack = null;
+        cm.display.sizer.style.pointerEvents = "";
+      }, 100);
+    }
     var delta = wheelEventDelta(e), dx = delta.x, dy = delta.y;
     var pixelsPerUnit = wheelPixelsPerUnit;
     if (e.deltaMode === 0) {
@@ -8219,7 +8233,7 @@
     var pasted = e.clipboardData && e.clipboardData.getData("Text");
     if (pasted) {
       e.preventDefault();
-      if (!cm.isReadOnly() && !cm.options.disableInput)
+      if (!cm.isReadOnly() && !cm.options.disableInput && cm.hasFocus())
         { runInOp(cm, function () { return applyTextInput(cm, pasted, 0, null, "paste"); }); }
       return true
     }
@@ -9864,7 +9878,7 @@
 
   addLegacyProps(CodeMirror);
 
-  CodeMirror.version = "5.63.3";
+  CodeMirror.version = "5.65.5";
 
   return CodeMirror;
 
@@ -10527,13 +10541,13 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "arabic-indic", "armenian", "asterisks", "attr", "auto", "auto-flow", "avoid", "avoid-column", "avoid-page",
     "avoid-region", "axis-pan", "background", "backwards", "baseline", "below", "bidi-override", "binary",
     "bengali", "blink", "block", "block-axis", "blur", "bold", "bolder", "border", "border-box",
-    "both", "bottom", "break", "break-all", "break-word", "brightness", "bullets", "button", "button-bevel",
+    "both", "bottom", "break", "break-all", "break-word", "brightness", "bullets", "button",
     "buttonface", "buttonhighlight", "buttonshadow", "buttontext", "calc", "cambodian",
     "capitalize", "caps-lock-indicator", "caption", "captiontext", "caret",
     "cell", "center", "checkbox", "circle", "cjk-decimal", "cjk-earthly-branch",
     "cjk-heavenly-stem", "cjk-ideographic", "clear", "clip", "close-quote",
     "col-resize", "collapse", "color", "color-burn", "color-dodge", "column", "column-reverse",
-    "compact", "condensed", "contain", "content", "contents",
+    "compact", "condensed", "conic-gradient", "contain", "content", "contents",
     "content-box", "context-menu", "continuous", "contrast", "copy", "counter", "counters", "cover", "crop",
     "cross", "crosshair", "cubic-bezier", "currentcolor", "cursive", "cyclic", "darken", "dashed", "decimal",
     "decimal-leading-zero", "default", "default-button", "dense", "destination-atop",
@@ -10565,14 +10579,10 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "local", "logical", "loud", "lower", "lower-alpha", "lower-armenian",
     "lower-greek", "lower-hexadecimal", "lower-latin", "lower-norwegian",
     "lower-roman", "lowercase", "ltr", "luminosity", "malayalam", "manipulation", "match", "matrix", "matrix3d",
-    "media-controls-background", "media-current-time-display",
-    "media-fullscreen-button", "media-mute-button", "media-play-button",
-    "media-return-to-realtime-button", "media-rewind-button",
-    "media-seek-back-button", "media-seek-forward-button", "media-slider",
-    "media-sliderthumb", "media-time-remaining-display", "media-volume-slider",
-    "media-volume-slider-container", "media-volume-sliderthumb", "medium",
-    "menu", "menulist", "menulist-button", "menulist-text",
-    "menulist-textfield", "menutext", "message-box", "middle", "min-intrinsic",
+    "media-play-button", "media-slider", "media-sliderthumb",
+    "media-volume-slider", "media-volume-sliderthumb", "medium",
+    "menu", "menulist", "menulist-button",
+    "menutext", "message-box", "middle", "min-intrinsic",
     "mix", "mongolian", "monospace", "move", "multiple", "multiple_mask_images", "multiply", "myanmar", "n-resize",
     "narrower", "ne-resize", "nesw-resize", "no-close-quote", "no-drop",
     "no-open-quote", "no-repeat", "none", "normal", "not-allowed", "nowrap",
@@ -10583,8 +10593,8 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     "pointer", "polygon", "portrait", "pre", "pre-line", "pre-wrap", "preserve-3d",
     "progress", "push-button", "radial-gradient", "radio", "read-only",
     "read-write", "read-write-plaintext-only", "rectangle", "region",
-    "relative", "repeat", "repeating-linear-gradient",
-    "repeating-radial-gradient", "repeat-x", "repeat-y", "reset", "reverse",
+    "relative", "repeat", "repeating-linear-gradient", "repeating-radial-gradient",
+    "repeating-conic-gradient", "repeat-x", "repeat-y", "reset", "reverse",
     "rgb", "rgba", "ridge", "right", "rotate", "rotate3d", "rotateX", "rotateY",
     "rotateZ", "round", "row", "row-resize", "row-reverse", "rtl", "run-in", "running",
     "s-resize", "sans-serif", "saturate", "saturation", "scale", "scale3d", "scaleX", "scaleY", "scaleZ", "screen",
@@ -11117,6 +11127,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     cx.state.context = new Context(cx.state.context, cx.state.localVars, true)
     cx.state.localVars = null
   }
+  pushcontext.lex = pushblockcontext.lex = true
   function popcontext() {
     cx.state.localVars = cx.state.context.vars
     cx.state.context = cx.state.context.prev
@@ -12263,7 +12274,7 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
   }
 
   function getTagRegexp(tagName, anchored) {
-    return new RegExp((anchored ? "^" : "") + "<\/\s*" + tagName + "\s*>", "i");
+    return new RegExp((anchored ? "^" : "") + "<\/\\s*" + tagName + "\\s*>", "i");
   }
 
   function addTags(from, to) {
