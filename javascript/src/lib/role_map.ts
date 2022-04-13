@@ -112,396 +112,396 @@ export function isChildrenPresentational(role: AriaRole):
 // clang-format off
 const CONST_ROLE_MAP = {
  'article': {
-  exactSelector: "article"
+  exactSelector: 'article',
  },
  'banner': {
   conditionalSelectors: [
    {
-    greedySelector: "header",
+    greedySelector: 'header',
     conditions: [
      {
       type: ConditionType.FORBIDDEN_ANCESTORS,
-      forbiddenAncestorSelector: "article,aside,main,nav,section,[role=\"article\"],[role=\"complementary\"],[role=\"main\"],[role=\"navigation\"],[role=\"region\"]"
-     }
-    ]
-   }
-  ]
+      forbiddenAncestorSelector: 'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
+     },
+    ],
+   },
+  ],
  },
  'button': {
-  exactSelector: "button,summary",
+  exactSelector: 'button,summary',
   conditionalSelectors: [
    {
-    greedySelector: "input",
+    greedySelector: 'input',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "button",
-       "image",
-       "reset",
-       "submit"
-      ]
-     }
-    ]
-   }
-  ]
+       'button',
+       'image',
+       'reset',
+       'submit',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'cell': {
   conditionalSelectors: [
    {
-    greedySelector: "td",
+    greedySelector: 'td',
     conditions: [
      {
       type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: "table",
-      role: "table"
-     }
-    ]
+      tag: 'table',
+      role: 'table',
+     },
+    ],
    },
    {
-    greedySelector: "th:not([scope=\"col\"]):not([scope=\"colgroup\"]):not([scope=\"row\"]):not([scope=\"rowgroup\"])",
+    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
     conditions: [
      {
       type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: "table",
-      role: "table"
+      tag: 'table',
+      role: 'table',
      },
      {
       type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: true
+      dataInColumn: true,
      },
      {
       type: ConditionType.DATA_IN_ROW,
-      dataInRow: true
-     }
-    ]
-   }
-  ]
+      dataInRow: true,
+     },
+    ],
+   },
+  ],
  },
  'checkbox': {
   conditionalSelectors: [
    {
-    greedySelector: "input",
+    greedySelector: 'input',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "checkbox"
-      ]
-     }
-    ]
-   }
-  ]
+       'checkbox',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'columnheader': {
-  exactSelector: "th[scope=\"col\"],th[scope=\"colgroup\"]",
+  exactSelector: 'th[scope="col"],th[scope="colgroup"]',
   conditionalSelectors: [
    {
-    greedySelector: "th:not([scope=\"col\"]):not([scope=\"colgroup\"]):not([scope=\"row\"]):not([scope=\"rowgroup\"])",
+    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
     conditions: [
      {
       type: ConditionType.DATA_IN_ROW,
-      dataInRow: false
-     }
-    ]
-   }
-  ]
+      dataInRow: false,
+     },
+    ],
+   },
+  ],
  },
  'combobox': {
-  exactSelector: "select:not([multiple]):not([size])",
+  exactSelector: 'select:not([multiple]):not([size])',
   conditionalSelectors: [
    {
-    greedySelector: "select:not([multiple])",
+    greedySelector: 'select:not([multiple])',
     conditions: [
      {
       type: ConditionType.ATTRIBUTE_VALUE_LESS_THAN,
-      attribute: "size",
-      value: 2
-     }
-    ]
+      attribute: 'size',
+      value: 2,
+     },
+    ],
    },
    {
-    greedySelector: "input[list]",
+    greedySelector: 'input[list]',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "email",
-       "search",
-       "tel",
-       "text",
-       "url"
-      ]
-     }
-    ]
-   }
-  ]
+       'email',
+       'search',
+       'tel',
+       'text',
+       'url',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'complementary': {
-  exactSelector: "aside"
+  exactSelector: 'aside',
  },
  'contentinfo': {
   conditionalSelectors: [
    {
-    greedySelector: "footer",
+    greedySelector: 'footer',
     conditions: [
      {
       type: ConditionType.FORBIDDEN_ANCESTORS,
-      forbiddenAncestorSelector: "article,aside,main,nav,section,[role=\"article\"],[role=\"complementary\"],[role=\"main\"],[role=\"navigation\"],[role=\"region\"]"
-     }
-    ]
-   }
-  ]
+      forbiddenAncestorSelector: 'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
+     },
+    ],
+   },
+  ],
  },
  'definition': {
-  exactSelector: "dd"
+  exactSelector: 'dd',
  },
  'dialog': {
-  exactSelector: "dialog"
+  exactSelector: 'dialog',
  },
  'document': {
-  exactSelector: "body"
+  exactSelector: 'body',
  },
  'figure': {
-  exactSelector: "figure"
+  exactSelector: 'figure',
  },
  'form': {
   conditionalSelectors: [
    {
-    greedySelector: "form",
+    greedySelector: 'form',
     conditions: [
      {
-      type: ConditionType.HAS_ACCESSIBLE_NAME
-     }
-    ]
-   }
-  ]
+      type: ConditionType.HAS_ACCESSIBLE_NAME,
+     },
+    ],
+   },
+  ],
  },
  'gridcell': {
   conditionalSelectors: [
    {
-    greedySelector: "td",
+    greedySelector: 'td',
     conditions: [
      {
       type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: "table",
-      role: "grid"
-     }
-    ]
+      tag: 'table',
+      role: 'grid',
+     },
+    ],
    },
    {
-    greedySelector: "td",
+    greedySelector: 'td',
     conditions: [
      {
       type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: "table",
-      role: "treegrid"
-     }
-    ]
+      tag: 'table',
+      role: 'treegrid',
+     },
+    ],
    },
    {
-    greedySelector: "th:not([scope=\"col\"]):not([scope=\"colgroup\"]):not([scope=\"row\"]):not([scope=\"rowgroup\"])",
+    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
     conditions: [
      {
       type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: "table",
-      role: "treegrid"
+      tag: 'table',
+      role: 'treegrid',
      },
      {
       type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: true
+      dataInColumn: true,
      },
      {
       type: ConditionType.DATA_IN_ROW,
-      dataInRow: true
-     }
-    ]
-   }
-  ]
+      dataInRow: true,
+     },
+    ],
+   },
+  ],
  },
  'group': {
-  exactSelector: "details,fieldset,optgroup"
+  exactSelector: 'details,fieldset,optgroup',
  },
  'heading': {
-  exactSelector: "h1,h2,h3,h4,h5,h6"
+  exactSelector: 'h1,h2,h3,h4,h5,h6',
  },
  'img': {
-  exactSelector: "img:not([alt]),img[alt]:not([alt=\"\"])"
+  exactSelector: 'img:not([alt]),img[alt]:not([alt=""])',
  },
  'link': {
-  exactSelector: "a[href],area[href],link[href]"
+  exactSelector: 'a[href],area[href],link[href]',
  },
  'list': {
-  exactSelector: "menu,ol,ul"
+  exactSelector: 'menu,ol,ul',
  },
  'listbox': {
-  exactSelector: "datalist,select[multiple]",
+  exactSelector: 'datalist,select[multiple]',
   conditionalSelectors: [
    {
-    greedySelector: "select",
+    greedySelector: 'select',
     conditions: [
      {
       type: ConditionType.ATTRIBUTE_VALUE_GREATER_THAN,
-      attribute: "size",
-      value: 1
-     }
-    ]
-   }
-  ]
+      attribute: 'size',
+      value: 1,
+     },
+    ],
+   },
+  ],
  },
  'listitem': {
-  exactSelector: "li"
+  exactSelector: 'li',
  },
  'main': {
-  exactSelector: "main"
+  exactSelector: 'main',
  },
  'math': {
-  exactSelector: "math"
+  exactSelector: 'math',
  },
  'navigation': {
-  exactSelector: "nav"
+  exactSelector: 'nav',
  },
  'option': {
-  exactSelector: "datalist > option,select > optgroup > option,select > option"
+  exactSelector: 'datalist > option,select > optgroup > option,select > option',
  },
  'progressbar': {
-  exactSelector: "progress"
+  exactSelector: 'progress',
  },
  'radio': {
   conditionalSelectors: [
    {
-    greedySelector: "input",
+    greedySelector: 'input',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "radio"
-      ]
-     }
-    ]
-   }
-  ]
+       'radio',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'region': {
   conditionalSelectors: [
    {
-    greedySelector: "section",
+    greedySelector: 'section',
     conditions: [
      {
-      type: ConditionType.HAS_ACCESSIBLE_NAME
-     }
-    ]
-   }
-  ]
+      type: ConditionType.HAS_ACCESSIBLE_NAME,
+     },
+    ],
+   },
+  ],
  },
  'row': {
-  exactSelector: "tr"
+  exactSelector: 'tr',
  },
  'rowgroup': {
-  exactSelector: "tbody,tfoot,thead"
+  exactSelector: 'tbody,tfoot,thead',
  },
  'rowheader': {
-  exactSelector: "th[scope=\"row\"],th[scope=\"rowgroup\"]",
+  exactSelector: 'th[scope="row"],th[scope="rowgroup"]',
   conditionalSelectors: [
    {
-    greedySelector: "th:not([scope=\"col\"]):not([scope=\"colgroup\"]):not([scope=\"row\"]):not([scope=\"rowgroup\"])",
+    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
     conditions: [
      {
       type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: false
+      dataInColumn: false,
      },
      {
       type: ConditionType.DATA_IN_ROW,
-      dataInRow: true
-     }
-    ]
-   }
-  ]
+      dataInRow: true,
+     },
+    ],
+   },
+  ],
  },
  'searchbox': {
   conditionalSelectors: [
    {
-    greedySelector: "input:not([list])",
+    greedySelector: 'input:not([list])',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "search"
-      ]
-     }
-    ]
-   }
-  ]
+       'search',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'separator': {
-  exactSelector: "hr"
+  exactSelector: 'hr',
  },
  'slider': {
   conditionalSelectors: [
    {
-    greedySelector: "input",
+    greedySelector: 'input',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "range"
-      ]
-     }
-    ]
-   }
-  ]
+       'range',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'spinbutton': {
   conditionalSelectors: [
    {
-    greedySelector: "input",
+    greedySelector: 'input',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "number"
-      ]
-     }
-    ]
-   }
-  ]
+       'number',
+      ],
+     },
+    ],
+   },
+  ],
  },
  'status': {
-  exactSelector: "output"
+  exactSelector: 'output',
  },
  'table': {
-  exactSelector: "table"
+  exactSelector: 'table',
  },
  'term': {
-  exactSelector: "dfn,dt"
+  exactSelector: 'dfn,dt',
  },
  'textbox': {
-  exactSelector: "textarea",
+  exactSelector: 'textarea',
   conditionalSelectors: [
    {
-    greedySelector: "input:not([list])",
+    greedySelector: 'input:not([list])',
     conditions: [
      {
       type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: "type",
+      propertyName: 'type',
       values: [
-       "email",
-       "tel",
-       "text",
-       "url"
-      ]
-     }
-    ]
-   }
-  ]
- }
+       'email',
+       'tel',
+       'text',
+       'url',
+      ],
+     },
+    ],
+   },
+  ],
+ },
 } as const;
 // clang-format on
 
