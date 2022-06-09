@@ -263,7 +263,7 @@ const CONST_ROLE_MAP = {
   exactSelector: 'dialog',
  },
  'document': {
-  exactSelector: 'body',
+  exactSelector: 'html',
  },
  'figure': {
   exactSelector: 'figure',
@@ -279,6 +279,9 @@ const CONST_ROLE_MAP = {
     ],
    },
   ],
+ },
+ 'graphics-document': {
+  exactSelector: 'svg',
  },
  'gridcell': {
   conditionalSelectors: [
@@ -332,7 +335,7 @@ const CONST_ROLE_MAP = {
   exactSelector: 'img:not([alt]),img[alt]:not([alt=""])',
  },
  'link': {
-  exactSelector: 'a[href],area[href],link[href]',
+  exactSelector: 'a[href],area[href]',
  },
  'list': {
   exactSelector: 'menu,ol,ul',
@@ -525,9 +528,6 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "aside": [
   "complementary"
  ],
- "body": [
-  "document"
- ],
  "button": [
   "button"
  ],
@@ -585,6 +585,9 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "hr": [
   "separator"
  ],
+ "html": [
+  "document"
+ ],
  "img": [
   "img"
  ],
@@ -600,9 +603,6 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  ],
  "li": [
   "listitem"
- ],
- "link": [
-  "link"
  ],
  "main": [
   "main"
@@ -640,6 +640,9 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  ],
  "summary": [
   "button"
+ ],
+ "svg": [
+  "graphics-document"
  ],
  "table": [
   "table"
