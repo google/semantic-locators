@@ -161,7 +161,7 @@ function closestLocator(element: HTMLElement, root: HTMLElement):
     {nodes: SemanticNode[]; element: HTMLElement}|null {
   const presentationalAncestor = closestChildrenPresentationalAncestor(element);
   if (presentationalAncestor !== null) {
-    console.warn(
+    console.info(
         `Element ${presentationalAncestor} has a role of` +
         ` ${getRole(presentationalAncestor)}, so it has presentational` +
         ` children (https://www.w3.org/TR/wai-aria-practices/#children_presentational).` +
@@ -363,7 +363,7 @@ function batch(individualFunction: LocatorGenFunction):
       let done = 0;
       for (const element of elements) {
         if (timeoutMillis !== null && Date.now() > timeoutMillis) {
-          console.warn(`Timed out computing batch locators after ${
+          console.info(`Timed out computing batch locators after ${
               timeoutSeconds}s. Computed ${done}/${
               elements.size} locators before timing out.`);
           return;
