@@ -19,9 +19,8 @@ on:
     branches: [ main ]
   schedule:
     - cron: '25 19 * * 0'
-
-paths-ignore:
-  - pages/playground
+  paths-ignore:
+    - pages/playground
 
 jobs:
   analyze:
