@@ -14,14 +14,15 @@ name: "CodeQL"
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - pages/playground
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
+    paths-ignore:
+      - pages/playground
   schedule:
     - cron: '25 19 * * 0'
-
-paths-ignore:
-  - pages/playground
 
 jobs:
   analyze:
