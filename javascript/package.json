@@ -6,8 +6,8 @@
   "module": "dist/src/semantic_locators.js",
   "types": "dist/src/semantic_locators.d.ts",
   "exports": {
-    ".": {"require": "dist/src/semantic_locators.js"},
-    "./gen":{"require": "dist/src/gen/index.js"}
+    ".": {"require": "./dist/src/semantic_locators.js"},
+    "./gen":{"require": "./dist/src/gen/index.js"}
   },
   "typesVersions": {  "*": { "gen": ["dist/src/gen/index.d.ts"] }},
   "directories": {
