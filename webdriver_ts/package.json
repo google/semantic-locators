@@ -1,0 +1,75 @@
+{
+  "name": "semantic-locators-webdriver",
+  "version": "2.1.0",
+  "description": "Semantic Locators are a human readable, resilient and accessibility-enforcing way to find web elements.",
+  "main": "dist/src/semantic_locators.js",
+  "module": "dist/src/semantic_locators.js",
+  "types": "dist/src/semantic_locators.d.ts",
+  "exports": {
+    ".": {"require": "./dist/src/semantic_locators.js"},
+    "./gen":{"require": "./dist/src/gen/index.js"}
+  },
+  "typesVersions": {  "*": { "gen": ["dist/src/gen/index.d.ts"] }},
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "scripts": {
+    "build": "yarn && tsc",
+    "ibuild": "yarn && tsc --watch",
+    "pretest": "yarn build",
+    "test": "jasmine-ts --config=jasmine.json",
+    "itest": "nodemon --ext ts --exec 'jasmine-ts  --config=./jasmine.json'",
+    "prepack": "yarn test",
+    "fix": "yarn fix-lint && yarn fix-format",
+    "check-lint": "eslint --ext .ts src test",
+    "fix-lint": "eslint --ext .ts --fix src test",
+    "check-format": "clang-format --version; find src test | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file --dry-run -Werror",
+    "fix-format": "clang-format --version; find src test | grep '\\.js$\\|\\.ts$' | xargs clang-format --style=file -i"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/semantic-locators.git"
+  },
+  "keywords": [
+    "testing",
+    "accessibility"
+  ],
+  "author": "Scott Pledger",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/semantic-locators/issues"
+  },
+  "homepage": "https://github.com/google/semantic-locators#readme",
+  "dependencies": {
+    "accname": "^1.1.0",
+    "selenium-webdriver": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.7",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@types/jasmine": "^3.6.2",
+    "@types/node": "^18.11.7",
+    "@types/selenium-webdriver": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "clang-format": "^1.4.0",
+    "eslint-plugin-ban": "^1.5.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^32.2.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint": "^7.21.0",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
+    "jasmine": "^3.6.0",
+    "lit": "^2.0.2",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.1.3"
+  },
+  "publishConfig":{
+    "registry":"https://wombat-dressing-room.appspot.com"
+  }
+}
