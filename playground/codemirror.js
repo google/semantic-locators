@@ -23,9 +23,9 @@
  */
 
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/5/LICENSE
 
-// This is CodeMirror (https://codemirror.net), a code editor
+// This is CodeMirror (https://codemirror.net/5), a code editor
 // implemented in JavaScript on top of the browser's DOM.
 //
 // You can find some technical background for some of the code below
@@ -719,7 +719,15 @@
   var hasCopyEvent = (function () {
     var e = elt("div");
     if ("oncopy" in e) { return true }
-    e.setAttribute("oncopy", "return;");
+    var policy = {
+      createScript: function(ignored) {
+        return "return;";
+      }
+    };
+    if (typeof trustedTypes !== 'undefined') {
+      policy = trustedTypes.createPolicy('codemirror#return', policy);
+    }
+    e.setAttribute("oncopy", policy.createScript(''));
     return typeof e.oncopy == "function"
   })();
 
@@ -1881,7 +1889,14 @@
       var token = elt("span", [content], fullStyle, css);
       if (attributes) {
         for (var attr in attributes) { if (attributes.hasOwnProperty(attr) && attr != "style" && attr != "class")
-          { token.setAttribute(attr, attributes[attr]); } }
+          {
+            if (attr === 'title') {
+              token.setAttribute('title', attributes[attr]);
+            } else {
+              throw new Error('attributes not supported for security reasons');
+            }
+          }
+        }
       }
       return builder.content.appendChild(token)
     }
@@ -3721,13 +3736,13 @@
   NativeScrollbars.prototype.zeroWidthHack = function () {
     var w = mac && !mac_geMountainLion ? "12px" : "18px";
     this.horiz.style.height = this.vert.style.width = w;
-    this.horiz.style.pointerEvents = this.vert.style.pointerEvents = "none";
+    this.horiz.style.visibility = this.vert.style.visibility = "hidden";
     this.disableHoriz = new Delayed;
     this.disableVert = new Delayed;
   };
 
   NativeScrollbars.prototype.enableZeroWidthBar = function (bar, delay, type) {
-    bar.style.pointerEvents = "auto";
+    bar.style.visibility = "";
     function maybeDisable() {
       // To find out whether the scrollbar is still visible, we
       // check whether the element under the pixel in the bottom
@@ -3738,7 +3753,7 @@
       var box = bar.getBoundingClientRect();
       var elt = type == "vert" ? document.elementFromPoint(box.right - 1, (box.top + box.bottom) / 2)
           : document.elementFromPoint((box.right + box.left) / 2, box.bottom - 1);
-      if (elt != bar) { bar.style.pointerEvents = "none"; }
+      if (elt != bar) { bar.style.visibility = "hidden"; }
       else { delay.set(1000, maybeDisable); }
     }
     delay.set(1000, maybeDisable);
@@ -4537,7 +4552,7 @@
     // On Chrome 102, viewport updates somehow stop wheel-based
     // scrolling. Turning off pointer events during the scroll seems
     // to avoid the issue.
-    if (chrome && chrome_version >= 102) {
+    if (chrome && chrome_version == 102) {
       if (cm.display.chromeScrollHack == null) { cm.display.sizer.style.pointerEvents = "none"; }
       else { clearTimeout(cm.display.chromeScrollHack); }
       cm.display.chromeScrollHack = setTimeout(function () {
@@ -5228,7 +5243,7 @@
       var range = sel.ranges[i];
       var old = sel.ranges.length == doc.sel.ranges.length && doc.sel.ranges[i];
       var newAnchor = skipAtomic(doc, range.anchor, old && old.anchor, bias, mayClear);
-      var newHead = skipAtomic(doc, range.head, old && old.head, bias, mayClear);
+      var newHead = range.head == range.anchor ? newAnchor : skipAtomic(doc, range.head, old && old.head, bias, mayClear);
       if (out || newAnchor != range.anchor || newHead != range.head) {
         if (!out) { out = sel.ranges.slice(0, i); }
         out[i] = new Range(newAnchor, newHead);
@@ -9878,7 +9893,7 @@
 
   addLegacyProps(CodeMirror);
 
-  CodeMirror.version = "5.65.5";
+  CodeMirror.version = "5.65.6";
 
   return CodeMirror;
 
@@ -9909,7 +9924,7 @@
  */
 
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/5/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -10138,7 +10153,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
     if (type == "}" || type == "{") return popAndPass(type, stream, state);
     if (type == "(") return pushContext(state, stream, "parens");
 
-    if (type == "hash" && !/^#([0-9a-fA-f]{3,4}|[0-9a-fA-f]{6}|[0-9a-fA-f]{8})$/.test(stream.current())) {
+    if (type == "hash" && !/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(stream.current())) {
       override += " error";
     } else if (type == "word") {
       wordAsValue(stream);
@@ -10796,7 +10811,7 @@ CodeMirror.defineMode("css", function(config, parserConfig) {
  */
 
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/5/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -11781,7 +11796,7 @@ CodeMirror.defineMIME("application/typescript", { name: "javascript", typescript
  */
 
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/5/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -12223,7 +12238,7 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
  */
 
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
+// Distributed under an MIT license: https://codemirror.net/5/LICENSE
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
