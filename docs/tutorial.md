@@ -87,7 +87,7 @@ of browser developer tools can help you easily write semantic locators.
 
 ![Screenshot of the accessibility tree in Chrome developer console. The
 highlighted element is described in the a11y tree as button
-"create"](assets/a11y_tree.png)
+"create"](img/a11y_tree.png)
 
 ## Dynamic or very long accessible names
 
@@ -188,3 +188,5 @@ outermost element.
   </li>
 </ul>
 ```
+
+<!--* freshness: { owner: 'ovn' reviewed: '2023-04-04' } *-->
