@@ -40,7 +40,7 @@ export class SemanticLocator implements CacheableObject {
             ` That means its descendants cannot have semantics, so an element` +
             ` with a role of ${node.role} may only` +
             ` be the final element of a Semantic Locator.` +
-            ` https://www.w3.org/TR/wai-aria-practices/#children_presentational`);
+            ` https://www.w3.org/WAI/ARIA/apg/practices/hiding-semantics/#children_presentational`);
       }
 
       // The TypeScript compiler should check this at compile time, but parsing
