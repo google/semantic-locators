@@ -1,7 +1,7 @@
 # Semantic Locators in Python WebDriver
 
 Semantic locators can be used with Selenium WebDriver in a similar way to
-`ByXPath` or `ByCssSelector`. Currently only available for Python 3.6+.
+`ByXPath` or `ByCssSelector`. Currently only available for Python 3.7+.
 
 Install from PyPi:
 
