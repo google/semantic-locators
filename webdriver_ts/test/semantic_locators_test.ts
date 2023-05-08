@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {By, promise as webDriverPromise, WebElement} from 'selenium-webdriver';  // from //third_party/javascript/typings/selenium_webdriver:selenium_webdriver_3_0_0
+import {By, promise as webDriverPromise, WebElement} from 'selenium-webdriver';  // from //third_party/javascript/typings/selenium_webdriver
 
 import {bySemanticLocator, closestPreciseLocatorFor, closestSimpleLocatorFor, findElementBySemanticLocator, findElementsBySemanticLocator, preciseLocatorFor, simpleLocatorFor} from '../src/semantic_locators';
 import {DRIVERS} from '../src/web_drivers';

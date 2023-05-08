@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {promise as webDriverPromise, WebDriver, WebElement} from 'selenium-webdriver';  // from //third_party/javascript/typings/selenium_webdriver:selenium_webdriver_3_0_0
+import {promise as webDriverPromise, WebDriver, WebElement} from 'selenium-webdriver';  // from //third_party/javascript/typings/selenium_webdriver
 
 import {wrapperBin} from '../data/wrapper_bin';  // from //third_party/semantic_locators/webdriver_ts/data
 
