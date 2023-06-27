@@ -60,12 +60,13 @@ export function cachedDuringBatch<Args extends CacheableArg[], Ret>(
 }
 
 /** A valid key for the map used as a cache. */
-export interface CacheableObject {
+// NOTE: the `declare` here is a signal to some tools to not rename the property
+export declare interface CacheableObject {
   hashCode(): string;
 }
 
 function isCacheableObject(o: CacheableArg): o is CacheableObject {
-  return (o as CacheableObject).hashCode !== undefined;
+  return typeof (o as CacheableObject).hashCode === 'function';
 }
 
 type CacheableArg = HTMLElement|string|number|boolean|CacheableObject;
