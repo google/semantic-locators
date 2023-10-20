@@ -26,9 +26,13 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webdriver import WebElement
 
 
-JS_IMPLEMENTATION = importlib_resources.read_text(
-    "src.data",
-    "wrapper_bin.js")
+JS_IMPLEMENTATION = (
+    importlib_resources.files(
+        "src.data"
+    )
+    .joinpath("wrapper_bin.js")
+    .read_text()
+)
 
 
 def find_elements_by_semantic_locator(
