@@ -11,7 +11,7 @@
 import {ConditionType, RoleSelector} from './types';
 
 /** Role which has no native HTML equivalent. */
-export type AriaOnlyRole = typeof ARIA_ONLY_ROLES_ARRAY[number];
+export type AriaOnlyRole = (typeof ARIA_ONLY_ROLES_ARRAY)[number];
 
 /** Type guard for AriaOnlyRole */
 export function isAriaOnlyRole(role: string): role is AriaOnlyRole {
@@ -26,7 +26,7 @@ export function isImplicitRole(role: string): role is ImplicitRole {
   return ROLE_MAP.hasOwnProperty(role);
 }
 /** Union type of all non-abstract ARIA roles. */
-export type AriaRole = AriaOnlyRole|ImplicitRole;
+export type AriaRole = AriaOnlyRole | ImplicitRole;
 
 /** Type guard for AriaRole */
 export function isAriaRole(role: string): role is AriaRole {
@@ -35,7 +35,7 @@ export function isAriaRole(role: string): role is AriaRole {
 
 /** Map from role to a RoleSelector for finding that role. */
 export type RoleMap = {
-  readonly[role in ImplicitRole]: RoleSelector;
+  readonly [role in ImplicitRole]: RoleSelector;
 };
 
 // clang-format off
@@ -88,7 +88,7 @@ export const CHILDREN_PRESENTATIONAL = [
   'math',
   'menuitemcheckbox',
   'menuitemradio',
-  // 'option', // TODO(b/180594818) enforce for option
+  // 'option', // TODO(b/340325104) Investigate turning this back on.
   'progressbar',
   'radio',
   'scrollbar',
@@ -98,14 +98,15 @@ export const CHILDREN_PRESENTATIONAL = [
   'tab',
 ] as const;
 
-type ChildrenPresentational = typeof CHILDREN_PRESENTATIONAL[number];
+type ChildrenPresentational = (typeof CHILDREN_PRESENTATIONAL)[number];
 
 /**
  * Whether the given role has presentational children.
  * https://www.w3.org/TR/wai-aria-practices/#children_presentational
  */
-export function isChildrenPresentational(role: AriaRole):
-    role is ChildrenPresentational {
+export function isChildrenPresentational(
+  role: AriaRole,
+): role is ChildrenPresentational {
   return CHILDREN_PRESENTATIONAL.includes(role as ChildrenPresentational);
 }
 
