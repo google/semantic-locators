@@ -1,5 +1,7 @@
 # FAQ
 
+<!-- go/semantic-locators-faq -->
+
 ## How can I handle internationalization/localization (i18n/L10n)?
 
 Semantic locators don't yet have built-in support for tests with strong
