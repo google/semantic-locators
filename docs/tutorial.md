@@ -1,5 +1,7 @@
 # Tutorial
 
+<!-- go/semantic-locators-tutorial -->
+
 This doc is a step-by-step guide to writing (or auto-generating) semantic
 locators.
 
