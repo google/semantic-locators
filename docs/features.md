@@ -1,5 +1,7 @@
 # Features
 
+<!-- go/semantic-locators-features -->
+
 ## Basic syntax
 
 The following locator identifies an element anywhere on the page with a role of
