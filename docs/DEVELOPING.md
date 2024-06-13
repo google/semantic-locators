@@ -1,5 +1,7 @@
 # Developing Semantic Locators
 
+<!-- go/semantic-locators-developing -->
+
 ## Get a local copy of the code
 
 ```bash
