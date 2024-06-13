@@ -1,5 +1,11 @@
 # Semantic Locators
 
+<!--* freshness: { owner: 'web-a11y-library' reviewed: '2024-06-21' } *-->
+
+Warning: Semantic Locators is undergoing review for deprecation and migration by
+<!-- go/p4a-tooling. If your project is not already using it, please do not adopt it. -->
+Consider Web Interactor for TypeScript <!-- go/web-interactor#by-role -->
+
 ![Magnifying glass icon](docs/img/icon_64dp.svg)
 
 Semantic Locators let you specify HTML elements in code similar to how you might

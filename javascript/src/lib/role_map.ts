@@ -11,7 +11,7 @@
 import {ConditionType, RoleSelector} from './types';
 
 /** Role which has no native HTML equivalent. */
-export type AriaOnlyRole = typeof ARIA_ONLY_ROLES_ARRAY[number];
+export type AriaOnlyRole = (typeof ARIA_ONLY_ROLES_ARRAY)[number];
 
 /** Type guard for AriaOnlyRole */
 export function isAriaOnlyRole(role: string): role is AriaOnlyRole {
@@ -26,7 +26,7 @@ export function isImplicitRole(role: string): role is ImplicitRole {
   return ROLE_MAP.hasOwnProperty(role);
 }
 /** Union type of all non-abstract ARIA roles. */
-export type AriaRole = AriaOnlyRole|ImplicitRole;
+export type AriaRole = AriaOnlyRole | ImplicitRole;
 
 /** Type guard for AriaRole */
 export function isAriaRole(role: string): role is AriaRole {
@@ -35,7 +35,7 @@ export function isAriaRole(role: string): role is AriaRole {
 
 /** Map from role to a RoleSelector for finding that role. */
 export type RoleMap = {
-  readonly[role in ImplicitRole]: RoleSelector;
+  readonly [role in ImplicitRole]: RoleSelector;
 };
 
 // clang-format off
@@ -43,6 +43,7 @@ const ARIA_ONLY_ROLES_ARRAY = [
  "alert",
  "alertdialog",
  "application",
+ "definition",
  "directory",
  "feed",
  "grid",
@@ -56,7 +57,6 @@ const ARIA_ONLY_ROLES_ARRAY = [
  "note",
  "radiogroup",
  "scrollbar",
- "search",
  "switch",
  "tab",
  "tablist",
@@ -88,7 +88,7 @@ export const CHILDREN_PRESENTATIONAL = [
   'math',
   'menuitemcheckbox',
   'menuitemradio',
-  // 'option', // TODO(b/180594818) enforce for option
+  // 'option', // TODO(b/340325104) Investigate turning this back on.
   'progressbar',
   'radio',
   'scrollbar',
@@ -98,14 +98,15 @@ export const CHILDREN_PRESENTATIONAL = [
   'tab',
 ] as const;
 
-type ChildrenPresentational = typeof CHILDREN_PRESENTATIONAL[number];
+type ChildrenPresentational = (typeof CHILDREN_PRESENTATIONAL)[number];
 
 /**
  * Whether the given role has presentational children.
  * https://www.w3.org/TR/wai-aria-practices/#children_presentational
  */
-export function isChildrenPresentational(role: AriaRole):
-    role is ChildrenPresentational {
+export function isChildrenPresentational(
+  role: AriaRole,
+): role is ChildrenPresentational {
   return CHILDREN_PRESENTATIONAL.includes(role as ChildrenPresentational);
 }
 
@@ -127,8 +128,11 @@ const CONST_ROLE_MAP = {
    },
   ],
  },
+ 'blockquote': {
+  exactSelector: 'blockquote',
+ },
  'button': {
-  exactSelector: 'button,summary',
+  exactSelector: 'button',
   conditionalSelectors: [
    {
     greedySelector: 'input',
@@ -146,6 +150,9 @@ const CONST_ROLE_MAP = {
     ],
    },
   ],
+ },
+ 'caption': {
+  exactSelector: 'caption',
  },
  'cell': {
   conditionalSelectors: [
@@ -194,6 +201,9 @@ const CONST_ROLE_MAP = {
     ],
    },
   ],
+ },
+ 'code': {
+  exactSelector: 'code',
  },
  'columnheader': {
   exactSelector: 'th[scope="col"],th[scope="colgroup"]',
@@ -256,29 +266,26 @@ const CONST_ROLE_MAP = {
    },
   ],
  },
- 'definition': {
-  exactSelector: 'dd',
+ 'deletion': {
+  exactSelector: 'del,s',
  },
  'dialog': {
   exactSelector: 'dialog',
  },
  'document': {
-  exactSelector: 'body',
+  exactSelector: 'html',
+ },
+ 'emphasis': {
+  exactSelector: 'em',
  },
  'figure': {
   exactSelector: 'figure',
  },
  'form': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'form',
-    conditions: [
-     {
-      type: ConditionType.HAS_ACCESSIBLE_NAME,
-     },
-    ],
-   },
-  ],
+  exactSelector: 'form',
+ },
+ 'graphics-document': {
+  exactSelector: 'svg',
  },
  'gridcell': {
   conditionalSelectors: [
@@ -323,16 +330,19 @@ const CONST_ROLE_MAP = {
   ],
  },
  'group': {
-  exactSelector: 'details,fieldset,optgroup',
+  exactSelector: 'address,details,fieldset,hgroup,optgroup',
  },
  'heading': {
   exactSelector: 'h1,h2,h3,h4,h5,h6',
  },
  'img': {
-  exactSelector: 'img:not([alt]),img[alt]:not([alt=""])',
+  exactSelector: 'img[alt]:not([alt=""])',
+ },
+ 'insertion': {
+  exactSelector: 'ins',
  },
  'link': {
-  exactSelector: 'a[href],area[href],link[href]',
+  exactSelector: 'a[href],area[href]',
  },
  'list': {
   exactSelector: 'menu,ol,ul',
@@ -360,6 +370,9 @@ const CONST_ROLE_MAP = {
  },
  'math': {
   exactSelector: 'math',
+ },
+ 'meter': {
+  exactSelector: 'meter',
  },
  'navigation': {
   exactSelector: 'nav',
@@ -422,6 +435,9 @@ const CONST_ROLE_MAP = {
    },
   ],
  },
+ 'search': {
+  exactSelector: 'search',
+ },
  'searchbox': {
   conditionalSelectors: [
    {
@@ -476,11 +492,20 @@ const CONST_ROLE_MAP = {
  'status': {
   exactSelector: 'output',
  },
+ 'strong': {
+  exactSelector: 'strong',
+ },
+ 'subscript': {
+  exactSelector: 'sub',
+ },
+ 'superscript': {
+  exactSelector: 'sup',
+ },
  'table': {
   exactSelector: 'table',
  },
  'term': {
-  exactSelector: 'dfn,dt',
+  exactSelector: 'dfn',
  },
  'textbox': {
   exactSelector: 'textarea',
@@ -502,6 +527,9 @@ const CONST_ROLE_MAP = {
    },
   ],
  },
+ 'time': {
+  exactSelector: 'time',
+ },
 } as const;
 // clang-format on
 
@@ -516,6 +544,9 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "a": [
   "link"
  ],
+ "address": [
+  "group"
+ ],
  "area": [
   "link"
  ],
@@ -525,17 +556,23 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "aside": [
   "complementary"
  ],
- "body": [
-  "document"
+ "blockquote": [
+  "blockquote"
  ],
  "button": [
   "button"
  ],
+ "caption": [
+  "caption"
+ ],
+ "code": [
+  "code"
+ ],
  "datalist": [
   "listbox"
  ],
- "dd": [
-  "definition"
+ "del": [
+  "deletion"
  ],
  "details": [
   "group"
@@ -546,8 +583,8 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "dialog": [
   "dialog"
  ],
- "dt": [
-  "term"
+ "em": [
+  "emphasis"
  ],
  "fieldset": [
   "group"
@@ -582,8 +619,14 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "header": [
   "banner"
  ],
+ "hgroup": [
+  "group"
+ ],
  "hr": [
   "separator"
+ ],
+ "html": [
+  "document"
  ],
  "img": [
   "img"
@@ -598,11 +641,11 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
   "spinbutton",
   "textbox"
  ],
+ "ins": [
+  "insertion"
+ ],
  "li": [
   "listitem"
- ],
- "link": [
-  "link"
  ],
  "main": [
   "main"
@@ -612,6 +655,9 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  ],
  "menu": [
   "list"
+ ],
+ "meter": [
+  "meter"
  ],
  "nav": [
   "navigation"
@@ -631,6 +677,12 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  "progress": [
   "progressbar"
  ],
+ "s": [
+  "deletion"
+ ],
+ "search": [
+  "search"
+ ],
  "section": [
   "region"
  ],
@@ -638,8 +690,17 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
   "combobox",
   "listbox"
  ],
- "summary": [
-  "button"
+ "strong": [
+  "strong"
+ ],
+ "sub": [
+  "subscript"
+ ],
+ "sup": [
+  "superscript"
+ ],
+ "svg": [
+  "graphics-document"
  ],
  "table": [
   "table"
@@ -665,6 +726,9 @@ export const IMPLICIT_ROLES_FOR_TAGNAME:
  ],
  "thead": [
   "rowgroup"
+ ],
+ "time": [
+  "time"
  ],
  "tr": [
   "row"
