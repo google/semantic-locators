@@ -11,7 +11,7 @@
 import {ConditionType, RoleSelector} from './types';
 
 /** Role which has no native HTML equivalent. */
-export type AriaOnlyRole = typeof ARIA_ONLY_ROLES_ARRAY[number];
+export type AriaOnlyRole = (typeof ARIA_ONLY_ROLES_ARRAY)[number];
 
 /** Type guard for AriaOnlyRole */
 export function isAriaOnlyRole(role: string): role is AriaOnlyRole {
@@ -26,7 +26,7 @@ export function isImplicitRole(role: string): role is ImplicitRole {
   return ROLE_MAP.hasOwnProperty(role);
 }
 /** Union type of all non-abstract ARIA roles. */
-export type AriaRole = AriaOnlyRole|ImplicitRole;
+export type AriaRole = AriaOnlyRole | ImplicitRole;
 
 /** Type guard for AriaRole */
 export function isAriaRole(role: string): role is AriaRole {
@@ -35,38 +35,38 @@ export function isAriaRole(role: string): role is AriaRole {
 
 /** Map from role to a RoleSelector for finding that role. */
 export type RoleMap = {
-  readonly[role in ImplicitRole]: RoleSelector;
+  readonly [role in ImplicitRole]: RoleSelector;
 };
 
 // clang-format off
 const ARIA_ONLY_ROLES_ARRAY = [
- "alert",
- "alertdialog",
- "application",
- "directory",
- "feed",
- "grid",
- "log",
- "marquee",
- "menu",
- "menubar",
- "menuitem",
- "menuitemcheckbox",
- "menuitemradio",
- "note",
- "radiogroup",
- "scrollbar",
- "search",
- "switch",
- "tab",
- "tablist",
- "tabpanel",
- "timer",
- "toolbar",
- "tooltip",
- "tree",
- "treegrid",
- "treeitem"
+  'alert',
+  'alertdialog',
+  'application',
+  'definition',
+  'directory',
+  'feed',
+  'grid',
+  'log',
+  'marquee',
+  'menu',
+  'menubar',
+  'menuitem',
+  'menuitemcheckbox',
+  'menuitemradio',
+  'note',
+  'radiogroup',
+  'scrollbar',
+  'switch',
+  'tab',
+  'tablist',
+  'tabpanel',
+  'timer',
+  'toolbar',
+  'tooltip',
+  'tree',
+  'treegrid',
+  'treeitem',
 ] as const;
 // clang-format on
 
@@ -88,7 +88,7 @@ export const CHILDREN_PRESENTATIONAL = [
   'math',
   'menuitemcheckbox',
   'menuitemradio',
-  // 'option', // TODO(b/180594818) enforce for option
+  // 'option', // TODO(b/340325104) Investigate turning this back on.
   'progressbar',
   'radio',
   'scrollbar',
@@ -98,410 +98,419 @@ export const CHILDREN_PRESENTATIONAL = [
   'tab',
 ] as const;
 
-type ChildrenPresentational = typeof CHILDREN_PRESENTATIONAL[number];
+type ChildrenPresentational = (typeof CHILDREN_PRESENTATIONAL)[number];
 
 /**
  * Whether the given role has presentational children.
  * https://www.w3.org/TR/wai-aria-practices/#children_presentational
  */
-export function isChildrenPresentational(role: AriaRole):
-    role is ChildrenPresentational {
+export function isChildrenPresentational(
+  role: AriaRole,
+): role is ChildrenPresentational {
   return CHILDREN_PRESENTATIONAL.includes(role as ChildrenPresentational);
 }
 
 // clang-format off
 const CONST_ROLE_MAP = {
- 'article': {
-  exactSelector: 'article',
- },
- 'banner': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'header',
-    conditions: [
-     {
-      type: ConditionType.FORBIDDEN_ANCESTORS,
-      forbiddenAncestorSelector: 'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
-     },
+  'article': {
+    exactSelector: 'article',
+  },
+  'banner': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'header',
+        conditions: [
+          {
+            type: ConditionType.FORBIDDEN_ANCESTORS,
+            forbiddenAncestorSelector:
+              'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'button': {
-  exactSelector: 'button,summary',
-  conditionalSelectors: [
-   {
-    greedySelector: 'input',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'button',
-       'image',
-       'reset',
-       'submit',
-      ],
-     },
+  },
+  'blockquote': {
+    exactSelector: 'blockquote',
+  },
+  'button': {
+    exactSelector: 'button',
+    conditionalSelectors: [
+      {
+        greedySelector: 'input',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['button', 'image', 'reset', 'submit'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'cell': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'td',
-    conditions: [
-     {
-      type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: 'table',
-      role: 'table',
-     },
+  },
+  'caption': {
+    exactSelector: 'caption',
+  },
+  'cell': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'td',
+        conditions: [
+          {
+            type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
+            tag: 'table',
+            role: 'table',
+          },
+        ],
+      },
+      {
+        greedySelector:
+          'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
+        conditions: [
+          {
+            type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
+            tag: 'table',
+            role: 'table',
+          },
+          {
+            type: ConditionType.DATA_IN_COLUMN,
+            dataInColumn: true,
+          },
+          {
+            type: ConditionType.DATA_IN_ROW,
+            dataInRow: true,
+          },
+        ],
+      },
     ],
-   },
-   {
-    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
-    conditions: [
-     {
-      type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: 'table',
-      role: 'table',
-     },
-     {
-      type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: true,
-     },
-     {
-      type: ConditionType.DATA_IN_ROW,
-      dataInRow: true,
-     },
+  },
+  'checkbox': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'input',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['checkbox'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'checkbox': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'input',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'checkbox',
-      ],
-     },
+  },
+  'code': {
+    exactSelector: 'code',
+  },
+  'columnheader': {
+    exactSelector: 'th[scope="col"],th[scope="colgroup"]',
+    conditionalSelectors: [
+      {
+        greedySelector:
+          'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
+        conditions: [
+          {
+            type: ConditionType.DATA_IN_ROW,
+            dataInRow: false,
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'columnheader': {
-  exactSelector: 'th[scope="col"],th[scope="colgroup"]',
-  conditionalSelectors: [
-   {
-    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
-    conditions: [
-     {
-      type: ConditionType.DATA_IN_ROW,
-      dataInRow: false,
-     },
+  },
+  'combobox': {
+    exactSelector: 'select:not([multiple]):not([size])',
+    conditionalSelectors: [
+      {
+        greedySelector: 'select:not([multiple])',
+        conditions: [
+          {
+            type: ConditionType.ATTRIBUTE_VALUE_LESS_THAN,
+            attribute: 'size',
+            value: 2,
+          },
+        ],
+      },
+      {
+        greedySelector: 'input[list]',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['email', 'search', 'tel', 'text', 'url'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'combobox': {
-  exactSelector: 'select:not([multiple]):not([size])',
-  conditionalSelectors: [
-   {
-    greedySelector: 'select:not([multiple])',
-    conditions: [
-     {
-      type: ConditionType.ATTRIBUTE_VALUE_LESS_THAN,
-      attribute: 'size',
-      value: 2,
-     },
+  },
+  'complementary': {
+    exactSelector: 'aside',
+  },
+  'contentinfo': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'footer',
+        conditions: [
+          {
+            type: ConditionType.FORBIDDEN_ANCESTORS,
+            forbiddenAncestorSelector:
+              'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
+          },
+        ],
+      },
     ],
-   },
-   {
-    greedySelector: 'input[list]',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'email',
-       'search',
-       'tel',
-       'text',
-       'url',
-      ],
-     },
+  },
+  'deletion': {
+    exactSelector: 'del,s',
+  },
+  'dialog': {
+    exactSelector: 'dialog',
+  },
+  'document': {
+    exactSelector: 'html',
+  },
+  'emphasis': {
+    exactSelector: 'em',
+  },
+  'figure': {
+    exactSelector: 'figure',
+  },
+  'form': {
+    exactSelector: 'form',
+  },
+  'graphics-document': {
+    exactSelector: 'svg',
+  },
+  'gridcell': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'td',
+        conditions: [
+          {
+            type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
+            tag: 'table',
+            role: 'grid',
+          },
+        ],
+      },
+      {
+        greedySelector: 'td',
+        conditions: [
+          {
+            type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
+            tag: 'table',
+            role: 'treegrid',
+          },
+        ],
+      },
+      {
+        greedySelector:
+          'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
+        conditions: [
+          {
+            type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
+            tag: 'table',
+            role: 'treegrid',
+          },
+          {
+            type: ConditionType.DATA_IN_COLUMN,
+            dataInColumn: true,
+          },
+          {
+            type: ConditionType.DATA_IN_ROW,
+            dataInRow: true,
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'complementary': {
-  exactSelector: 'aside',
- },
- 'contentinfo': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'footer',
-    conditions: [
-     {
-      type: ConditionType.FORBIDDEN_ANCESTORS,
-      forbiddenAncestorSelector: 'article,aside,main,nav,section,[role="article"],[role="complementary"],[role="main"],[role="navigation"],[role="region"]',
-     },
+  },
+  'group': {
+    exactSelector: 'address,details,fieldset,hgroup,optgroup',
+  },
+  'heading': {
+    exactSelector: 'h1,h2,h3,h4,h5,h6',
+  },
+  'img': {
+    exactSelector: 'img[alt]:not([alt=""])',
+  },
+  'insertion': {
+    exactSelector: 'ins',
+  },
+  'link': {
+    exactSelector: 'a[href],area[href]',
+  },
+  'list': {
+    exactSelector: 'menu,ol,ul',
+  },
+  'listbox': {
+    exactSelector: 'datalist,select[multiple]',
+    conditionalSelectors: [
+      {
+        greedySelector: 'select',
+        conditions: [
+          {
+            type: ConditionType.ATTRIBUTE_VALUE_GREATER_THAN,
+            attribute: 'size',
+            value: 1,
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'definition': {
-  exactSelector: 'dd',
- },
- 'dialog': {
-  exactSelector: 'dialog',
- },
- 'document': {
-  exactSelector: 'body',
- },
- 'figure': {
-  exactSelector: 'figure',
- },
- 'form': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'form',
-    conditions: [
-     {
-      type: ConditionType.HAS_ACCESSIBLE_NAME,
-     },
+  },
+  'listitem': {
+    exactSelector: 'li',
+  },
+  'main': {
+    exactSelector: 'main',
+  },
+  'math': {
+    exactSelector: 'math',
+  },
+  'meter': {
+    exactSelector: 'meter',
+  },
+  'navigation': {
+    exactSelector: 'nav',
+  },
+  'option': {
+    exactSelector:
+      'datalist > option,select > optgroup > option,select > option',
+  },
+  'progressbar': {
+    exactSelector: 'progress',
+  },
+  'radio': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'input',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['radio'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'gridcell': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'td',
-    conditions: [
-     {
-      type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: 'table',
-      role: 'grid',
-     },
+  },
+  'region': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'section',
+        conditions: [
+          {
+            type: ConditionType.HAS_ACCESSIBLE_NAME,
+          },
+        ],
+      },
     ],
-   },
-   {
-    greedySelector: 'td',
-    conditions: [
-     {
-      type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: 'table',
-      role: 'treegrid',
-     },
+  },
+  'row': {
+    exactSelector: 'tr',
+  },
+  'rowgroup': {
+    exactSelector: 'tbody,tfoot,thead',
+  },
+  'rowheader': {
+    exactSelector: 'th[scope="row"],th[scope="rowgroup"]',
+    conditionalSelectors: [
+      {
+        greedySelector:
+          'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
+        conditions: [
+          {
+            type: ConditionType.DATA_IN_COLUMN,
+            dataInColumn: false,
+          },
+          {
+            type: ConditionType.DATA_IN_ROW,
+            dataInRow: true,
+          },
+        ],
+      },
     ],
-   },
-   {
-    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
-    conditions: [
-     {
-      type: ConditionType.CLOSEST_ANCESTOR_TAG_HAS_ROLE,
-      tag: 'table',
-      role: 'treegrid',
-     },
-     {
-      type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: true,
-     },
-     {
-      type: ConditionType.DATA_IN_ROW,
-      dataInRow: true,
-     },
+  },
+  'search': {
+    exactSelector: 'search',
+  },
+  'searchbox': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'input:not([list])',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['search'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'group': {
-  exactSelector: 'details,fieldset,optgroup',
- },
- 'heading': {
-  exactSelector: 'h1,h2,h3,h4,h5,h6',
- },
- 'img': {
-  exactSelector: 'img:not([alt]),img[alt]:not([alt=""])',
- },
- 'link': {
-  exactSelector: 'a[href],area[href],link[href]',
- },
- 'list': {
-  exactSelector: 'menu,ol,ul',
- },
- 'listbox': {
-  exactSelector: 'datalist,select[multiple]',
-  conditionalSelectors: [
-   {
-    greedySelector: 'select',
-    conditions: [
-     {
-      type: ConditionType.ATTRIBUTE_VALUE_GREATER_THAN,
-      attribute: 'size',
-      value: 1,
-     },
+  },
+  'separator': {
+    exactSelector: 'hr',
+  },
+  'slider': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'input',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['range'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'listitem': {
-  exactSelector: 'li',
- },
- 'main': {
-  exactSelector: 'main',
- },
- 'math': {
-  exactSelector: 'math',
- },
- 'navigation': {
-  exactSelector: 'nav',
- },
- 'option': {
-  exactSelector: 'datalist > option,select > optgroup > option,select > option',
- },
- 'progressbar': {
-  exactSelector: 'progress',
- },
- 'radio': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'input',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'radio',
-      ],
-     },
+  },
+  'spinbutton': {
+    conditionalSelectors: [
+      {
+        greedySelector: 'input',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['number'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'region': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'section',
-    conditions: [
-     {
-      type: ConditionType.HAS_ACCESSIBLE_NAME,
-     },
+  },
+  'status': {
+    exactSelector: 'output',
+  },
+  'strong': {
+    exactSelector: 'strong',
+  },
+  'subscript': {
+    exactSelector: 'sub',
+  },
+  'superscript': {
+    exactSelector: 'sup',
+  },
+  'table': {
+    exactSelector: 'table',
+  },
+  'term': {
+    exactSelector: 'dfn',
+  },
+  'textbox': {
+    exactSelector: 'textarea',
+    conditionalSelectors: [
+      {
+        greedySelector: 'input:not([list])',
+        conditions: [
+          {
+            type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
+            propertyName: 'type',
+            values: ['email', 'tel', 'text', 'url'],
+          },
+        ],
+      },
     ],
-   },
-  ],
- },
- 'row': {
-  exactSelector: 'tr',
- },
- 'rowgroup': {
-  exactSelector: 'tbody,tfoot,thead',
- },
- 'rowheader': {
-  exactSelector: 'th[scope="row"],th[scope="rowgroup"]',
-  conditionalSelectors: [
-   {
-    greedySelector: 'th:not([scope="col"]):not([scope="colgroup"]):not([scope="row"]):not([scope="rowgroup"])',
-    conditions: [
-     {
-      type: ConditionType.DATA_IN_COLUMN,
-      dataInColumn: false,
-     },
-     {
-      type: ConditionType.DATA_IN_ROW,
-      dataInRow: true,
-     },
-    ],
-   },
-  ],
- },
- 'searchbox': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'input:not([list])',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'search',
-      ],
-     },
-    ],
-   },
-  ],
- },
- 'separator': {
-  exactSelector: 'hr',
- },
- 'slider': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'input',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'range',
-      ],
-     },
-    ],
-   },
-  ],
- },
- 'spinbutton': {
-  conditionalSelectors: [
-   {
-    greedySelector: 'input',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'number',
-      ],
-     },
-    ],
-   },
-  ],
- },
- 'status': {
-  exactSelector: 'output',
- },
- 'table': {
-  exactSelector: 'table',
- },
- 'term': {
-  exactSelector: 'dfn,dt',
- },
- 'textbox': {
-  exactSelector: 'textarea',
-  conditionalSelectors: [
-   {
-    greedySelector: 'input:not([list])',
-    conditions: [
-     {
-      type: ConditionType.PROPERTY_TAKES_ONE_OF_STRING_VALUES,
-      propertyName: 'type',
-      values: [
-       'email',
-       'tel',
-       'text',
-       'url',
-      ],
-     },
-    ],
-   },
-  ],
- },
+  },
+  'time': {
+    exactSelector: 'time',
+  },
 } as const;
 // clang-format on
 
@@ -511,167 +520,79 @@ const CONST_ROLE_MAP = {
  * element.
  */
 // clang-format off
-export const IMPLICIT_ROLES_FOR_TAGNAME:
-    {[tagName: string]: readonly ImplicitRole[]} = {
- "a": [
-  "link"
- ],
- "area": [
-  "link"
- ],
- "article": [
-  "article"
- ],
- "aside": [
-  "complementary"
- ],
- "body": [
-  "document"
- ],
- "button": [
-  "button"
- ],
- "datalist": [
-  "listbox"
- ],
- "dd": [
-  "definition"
- ],
- "details": [
-  "group"
- ],
- "dfn": [
-  "term"
- ],
- "dialog": [
-  "dialog"
- ],
- "dt": [
-  "term"
- ],
- "fieldset": [
-  "group"
- ],
- "figure": [
-  "figure"
- ],
- "footer": [
-  "contentinfo"
- ],
- "form": [
-  "form"
- ],
- "h1": [
-  "heading"
- ],
- "h2": [
-  "heading"
- ],
- "h3": [
-  "heading"
- ],
- "h4": [
-  "heading"
- ],
- "h5": [
-  "heading"
- ],
- "h6": [
-  "heading"
- ],
- "header": [
-  "banner"
- ],
- "hr": [
-  "separator"
- ],
- "img": [
-  "img"
- ],
- "input": [
-  "button",
-  "checkbox",
-  "combobox",
-  "radio",
-  "searchbox",
-  "slider",
-  "spinbutton",
-  "textbox"
- ],
- "li": [
-  "listitem"
- ],
- "link": [
-  "link"
- ],
- "main": [
-  "main"
- ],
- "math": [
-  "math"
- ],
- "menu": [
-  "list"
- ],
- "nav": [
-  "navigation"
- ],
- "ol": [
-  "list"
- ],
- "optgroup": [
-  "group"
- ],
- "option": [
-  "option"
- ],
- "output": [
-  "status"
- ],
- "progress": [
-  "progressbar"
- ],
- "section": [
-  "region"
- ],
- "select": [
-  "combobox",
-  "listbox"
- ],
- "summary": [
-  "button"
- ],
- "table": [
-  "table"
- ],
- "tbody": [
-  "rowgroup"
- ],
- "td": [
-  "cell",
-  "gridcell"
- ],
- "textarea": [
-  "textbox"
- ],
- "tfoot": [
-  "rowgroup"
- ],
- "th": [
-  "cell",
-  "columnheader",
-  "gridcell",
-  "rowheader"
- ],
- "thead": [
-  "rowgroup"
- ],
- "tr": [
-  "row"
- ],
- "ul": [
-  "list"
- ]
+export const IMPLICIT_ROLES_FOR_TAGNAME: {
+  [tagName: string]: readonly ImplicitRole[];
+} = {
+  'a': ['link'],
+  'address': ['group'],
+  'area': ['link'],
+  'article': ['article'],
+  'aside': ['complementary'],
+  'blockquote': ['blockquote'],
+  'button': ['button'],
+  'caption': ['caption'],
+  'code': ['code'],
+  'datalist': ['listbox'],
+  'del': ['deletion'],
+  'details': ['group'],
+  'dfn': ['term'],
+  'dialog': ['dialog'],
+  'em': ['emphasis'],
+  'fieldset': ['group'],
+  'figure': ['figure'],
+  'footer': ['contentinfo'],
+  'form': ['form'],
+  'h1': ['heading'],
+  'h2': ['heading'],
+  'h3': ['heading'],
+  'h4': ['heading'],
+  'h5': ['heading'],
+  'h6': ['heading'],
+  'header': ['banner'],
+  'hgroup': ['group'],
+  'hr': ['separator'],
+  'html': ['document'],
+  'img': ['img'],
+  'input': [
+    'button',
+    'checkbox',
+    'combobox',
+    'radio',
+    'searchbox',
+    'slider',
+    'spinbutton',
+    'textbox',
+  ],
+  'ins': ['insertion'],
+  'li': ['listitem'],
+  'main': ['main'],
+  'math': ['math'],
+  'menu': ['list'],
+  'meter': ['meter'],
+  'nav': ['navigation'],
+  'ol': ['list'],
+  'optgroup': ['group'],
+  'option': ['option'],
+  'output': ['status'],
+  'progress': ['progressbar'],
+  's': ['deletion'],
+  'search': ['search'],
+  'section': ['region'],
+  'select': ['combobox', 'listbox'],
+  'strong': ['strong'],
+  'sub': ['subscript'],
+  'sup': ['superscript'],
+  'svg': ['graphics-document'],
+  'table': ['table'],
+  'tbody': ['rowgroup'],
+  'td': ['cell', 'gridcell'],
+  'textarea': ['textbox'],
+  'tfoot': ['rowgroup'],
+  'th': ['cell', 'columnheader', 'gridcell', 'rowheader'],
+  'thead': ['rowgroup'],
+  'time': ['time'],
+  'tr': ['row'],
+  'ul': ['list'],
 } as const;
 // clang-format on
 
@@ -680,5 +601,5 @@ export const ROLE_MAP: RoleMap = CONST_ROLE_MAP;
 
 /** Roles ignored by semantic locators. */
 // clang-format off
-export const IGNORED_ROLES = ["none","presentation"];
+export const IGNORED_ROLES = ['none', 'presentation'];
 // clang-format on
