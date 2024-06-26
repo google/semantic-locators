@@ -1,5 +1,13 @@
 # Tutorial
 
+<!-- go/semantic-locators-tutorial -->
+
+<!--* freshness: { owner: 'web-a11y-library' reviewed: '2024-06-21' } *-->
+
+Warning: Semantic Locators is undergoing review for deprecation and migration by
+<!-- go/p4a-tooling. If your project is not already using it, please do not adopt it. -->
+Consider Web Interactor for TypeScript <!-- go/web-interactor#by-role -->
+
 This doc is a step-by-step guide to writing (or auto-generating) semantic
 locators.
 
