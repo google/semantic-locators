@@ -46,7 +46,12 @@ namespace SemanticLocators.Tests
 
         protected void RenderHtml(string html, IWebDriver driver)
         {
-            string browserName = (string)((RemoteWebDriver)driver).Capabilities.GetCapability("browserName");
+            string browserName;
+            if(driver is RemoteWebDriver)
+                browserName = (string)((RemoteWebDriver)driver).Capabilities.GetCapability("browserName");
+            else
+                browserName = (string)((WebDriver)driver).Capabilities.GetCapability("browserName");
+
             // IE doesn't support data URLs
             if (browserName.Equals("internet explorer"))
             {

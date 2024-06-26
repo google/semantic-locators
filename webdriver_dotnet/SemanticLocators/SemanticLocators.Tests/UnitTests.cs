@@ -89,7 +89,7 @@ namespace SemanticLocators.Tests
             RenderHtml(assignment.Html, driver);
 
             IWebElement target = driver.FindElement(By.Id("target"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.PreciseLocatorFor(target));
+            Assert.That(assignment.Semantic == BySemanticLocator.PreciseLocatorFor(target));
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace SemanticLocators.Tests
 
             IWebElement target = driver.FindElement(By.Id("target"));
             IWebElement root = driver.FindElement(By.Id("root"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.PreciseLocatorFor(target, root));
+            Assert.That(assignment.Semantic == BySemanticLocator.PreciseLocatorFor(target, root));
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace SemanticLocators.Tests
             RenderHtml(assignment.Html, driver);
 
             IWebElement target = driver.FindElement(By.Id("target"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.ClosestPreciseLocatorFor(target));
+            Assert.That(assignment.Semantic == BySemanticLocator.ClosestPreciseLocatorFor(target));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace SemanticLocators.Tests
 
             IWebElement target = driver.FindElement(By.Id("target"));
             IWebElement root = driver.FindElement(By.Id("root"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.ClosestPreciseLocatorFor(target, root));
+            Assert.That(assignment.Semantic == BySemanticLocator.ClosestPreciseLocatorFor(target, root));
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace SemanticLocators.Tests
             RenderHtml(assignment.Html, driver);
 
             IWebElement target = driver.FindElement(By.Id("target"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.ClosestSimpleLocatorFor(target));
+            Assert.That(assignment.Semantic == BySemanticLocator.ClosestSimpleLocatorFor(target));
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace SemanticLocators.Tests
 
             IWebElement target = driver.FindElement(By.Id("target"));
             IWebElement root = driver.FindElement(By.Id("root"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.ClosestSimpleLocatorFor(target, root));
+            Assert.That(assignment.Semantic == BySemanticLocator.ClosestSimpleLocatorFor(target, root));
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace SemanticLocators.Tests
             RenderHtml(assignment.Html, driver);
 
             IWebElement target = driver.FindElement(By.Id("target"));
-            Assert.AreEqual(assignment.Semantic, BySemanticLocator.SimpleLocatorFor(target));
+            Assert.That(assignment.Semantic == BySemanticLocator.SimpleLocatorFor(target));
         }
     }
 }

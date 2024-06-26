@@ -36,7 +36,7 @@ namespace SemanticLocators
         static BySemanticLocator()
         {
             string atom = string.Empty;
-            using (Stream atomStream = ResourceUtilities.GetResourceStream("wrapper_bin.js", "wrapper_bin.js"))
+            using (Stream atomStream = File.OpenRead("wrapper_bin.js"))
             {
                 using (StreamReader atomReader = new StreamReader(atomStream))
                 {
@@ -191,9 +191,9 @@ namespace SemanticLocators
             {
                 return (IJavaScriptExecutor)context;
             } 
-            else if (context is RemoteWebElement) 
+            else if (context is WebElement) 
             {
-                return (IJavaScriptExecutor)((RemoteWebElement)context).WrappedDriver;
+                return (IJavaScriptExecutor)((WebElement)context).WrappedDriver;
             } 
             else
             {
