@@ -1,5 +1,11 @@
 # Semantic Locators
 
+<!--* freshness: { owner: 'web-a11y-library' reviewed: '2024-06-21' } *-->
+
+Warning: Semantic Locators in JavaScript+TypeScript is deprecated in favor of
+<!-- go/web-interactor. See go/semantic-locator-ts-migration for a guide on migrating -->
+your code. Please do not adopt Semantic Locators in JavaScript+TypeScript.
+
 ![Magnifying glass icon](docs/img/icon_64dp.svg)
 
 Semantic Locators let you specify HTML elements in code similar to how you might
