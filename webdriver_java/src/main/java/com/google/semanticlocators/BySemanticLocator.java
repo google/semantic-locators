@@ -180,6 +180,8 @@ public class BySemanticLocator extends By {
     return (String) callJsFunction(getExecutor(element), "simpleLocatorFor", element);
   }
 
+  // incompatible types in return.
+  @SuppressWarnings("nullness:return.type.incompatible")
   protected static final Object callJsFunction(
       JavascriptExecutor executor, String function, Object... args) {
     loadDefinition(executor);
@@ -192,6 +194,9 @@ public class BySemanticLocator extends By {
     }
   }
 
+  // condition on a possibly-null value ((Boolean)executor.executeScript("return
+  // window.semanticLocatorsReady !== true;"))
+  @SuppressWarnings("nullness:condition.nullable")
   private static void loadDefinition(JavascriptExecutor executor) {
     // TODO(alexlloyd) it might actually be more efficient to load+call semantic locators in one
     // script each time. It depends how the round trip of a call to executeScript compares with the
@@ -217,6 +222,10 @@ public class BySemanticLocator extends By {
     // "Error in javascript: NoSuchElementError: nothing found...."
     // Where the "Error in javascript" string varies between browsers
     String message = e.getMessage();
+    if (message == null) {
+      return new SemanticLocatorException(
+          "Failed to find elements by semantic locators. Unknown exception.");
+    }
     String[] parts = message.split(":", 3);
     if (parts.length != 3) {
       return new SemanticLocatorException(

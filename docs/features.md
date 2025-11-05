@@ -1,5 +1,13 @@
 # Features
 
+<!-- go/semantic-locators-features -->
+
+<!--* freshness: { owner: 'web-a11y-library' reviewed: '2024-06-21' } *-->
+
+Warning: Semantic Locators in JavaScript+TypeScript is deprecated in favor of
+<!-- go/web-interactor. See go/semantic-locator-ts-migration for a guide on migrating -->
+your code. Please do not adopt Semantic Locators in JavaScript+TypeScript.
+
 ## Basic syntax
 
 The following locator identifies an element anywhere on the page with a role of
